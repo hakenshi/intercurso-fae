@@ -19,7 +19,7 @@ class Time extends Model
     ];
 
     public function modalidade(){
-        return $this->belongsTo(Modalidade::class,"id");
+        return $this->belongsTo(Modalidade::class,"id_modalidade");
     }
 
     public function usuario(){

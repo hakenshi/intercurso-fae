@@ -17,11 +17,18 @@ class UsuariosResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'nome' => $this->nome,
-            'email' => $this->email,
-            'telefone' => $this->telefone,
-            'data_criacao' => Carbon::make($this->created_at)->format('Y-m-d'),
+            'curso' => [
+                'id_curso' => $this->id_curso,
+                'nome_curso' => $this->curso->nome_curso,
+                'descricao' => $this->curso->descricao,
+            ],
+            'usuario' => [
+                'id' => $this->id,
+                'nome' => $this->nome,
+                'email' => $this->email,
+                'telefone' => $this->telefone,
+                'data_criacao' => Carbon::make($this->created_at)->format('Y-m-d')
+            ],
         ];
     }
 }

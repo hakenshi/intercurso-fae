@@ -20,7 +20,7 @@ class ModalidadesResource extends JsonResource
             'nome' => $this->nome,
             'quantidade_participantes' => $this->quantidade_participantes,
             'genero' => $this->genero == 0 ? "Masculino" : "Feminino",
-            'criacao' => Carbon::make($this->created_at)->format("d/m/Y, H:i")
+            'data_adicao' => Carbon::make($this->created_at)->format("d/m/Y, H:i")
         ];
     }
 }

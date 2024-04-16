@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->enum('tipo_usuario', [1,2,3])->after('ra');
+            $table->unsignedBigInteger('id_curso')->after('id');
+            $table->foreign('id_curso')->references('id')->on('cursos');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn('tipo_usuario');
+           $table->dropForeign('id_curso');
         });
     }
 };

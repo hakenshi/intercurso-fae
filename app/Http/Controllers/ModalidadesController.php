@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class ModalidadesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing 2of the resource.
      */
     public function index()
     {
@@ -25,10 +25,14 @@ class ModalidadesController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreUpdateModalidadesRequest $request){
-        // dd($request);
-
-        $data = $request->validated();
+       
         
+        $data = $request->validated();
+
+        if(Modalidade::where('genero', $data['genero'])->first()){
+            return response()->json(['msg' => 'Gênero de modalidade já cadastrado'], 400);
+        }
+
         $modalidade = Modalidade::create($data);
         
         return new ModalidadesResource($modalidade);

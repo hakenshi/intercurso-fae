@@ -18,7 +18,7 @@ class Jogador extends Model
         'id_usuario',
         'status'
     ];
-
+    
     public function time(){
         return $this->belongsTo(Time::class, "id_time");
     }

@@ -24,12 +24,18 @@ class StoreUpdateUsuariosRequest extends FormRequest
     public function rules(): array
     {
        $rules = [
-        'nome' => 'required|min:3|max:255',
+        'id_curso' => 'required',
+        'nome' => [
+            'required',
+            'string',
+            'min: 3',
+            'max: 255',
+        ],
         'email' =>[
             'required',
             'email',
             'max:255',
-            'unique:usuarios'
+            'unique:usuarios,email'
         ],
         'senha' => [
             'required',
@@ -42,12 +48,14 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'max:14'
         ],
         'ra' =>[
-            'required'
+            'required',
+            'unique:usuarios,ra',
+            'max:10'
         ],
         
        ];
 
-       if($this->method() === 'PATCH' or $this->method() === 'PUT'){
+       if($this->method() === 'PATCH'){
         $rules['senha'] =[
             'nullable',
             'min:6',
@@ -57,6 +65,11 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'required',
             'email',
             'max:255',
+            Rule::unique('usuarios')->ignore($this->id),
+        ];
+        $rules['ra'] = [
+            'required',
+            'max:10',
             Rule::unique('usuarios')->ignore($this->id),
         ];
        }

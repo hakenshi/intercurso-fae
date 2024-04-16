@@ -25,9 +25,10 @@ class TimeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $data = $request->all();
+    public function store(UpdateStoreTimesResource $request)
+    {   
+        // dd($request);
+        $data = $request->validated();
         $time = Time::create($data);
 
         return new TimesResource($time);

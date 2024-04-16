@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->enum('tipo_usuario', [1,2,3])->after('ra');
+        Schema::create('cursos', function (Blueprint $table) {
+            $table->id();
+            $table->string("nome_curso");
+            $table->longText("descricao");
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn('tipo_usuario');
-        });
+        Schema::dropIfExists('cursos');
     }
 };

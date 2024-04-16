@@ -58,6 +58,8 @@ class UserController extends Controller
      */
     public function update(StoreUpdateUsuariosRequest $request, string $id)
     {
+        dd($request);
+        
         $data = $request->validated();
         $user = ModelsUser::findOrFail($id);
 
@@ -77,7 +79,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = ModelsUser::findOrFail($id);
         $user->delete();
         return new UsuariosResource($user);
     }

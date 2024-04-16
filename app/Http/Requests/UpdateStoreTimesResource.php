@@ -23,14 +23,19 @@ class UpdateStoreTimesResource extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'id_modal' => 'required',
+            'id_modalidade' => 'required',
             'id_responsavel' => 'required',
-            'nome' => 'required|min:3|max:255',
+            'nome' =>[
+                'required',
+                'min:3',
+                'max:255',
+                'unique:times,nome'
+            ],
             'stauts' => 'boolean',
         ];
 
         if($this->method() === "PATCH"){
-            $rules['id_modal'] = [
+            $rules['id_modalidade'] = [
                 'required',
                 Rule::unique("time")->ignore($this->id)
             ];

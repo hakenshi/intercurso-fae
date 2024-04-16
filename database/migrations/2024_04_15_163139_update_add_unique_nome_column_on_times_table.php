@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->enum('tipo_usuario', [1,2,3])->after('ra');
+        Schema::table('times', function(Blueprint $table){
+            $table->unique("nome");
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn('tipo_usuario');
+        Schema::table('times', function(Blueprint $table){
+            $table->dropUnique('times_nome_unique');
         });
     }
 };
