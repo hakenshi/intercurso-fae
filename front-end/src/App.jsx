@@ -1,11 +1,11 @@
-import Cadastro from "./Views/Cadastro"
-import Login from "./Views/Login"
+import DefaultLayout from "./layouts/DefaultLayout"
 
 function App() {
 
   return (
     <>
-      <Cadastro/>
+      <DefaultLayout/>
+      {/* <Cadastro/> */}
       {/* <Login/> */}
     </>
   )
