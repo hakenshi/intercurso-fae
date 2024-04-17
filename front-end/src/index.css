@@ -15,14 +15,14 @@
 }
 
 .input-login {
-    @apply border border-collapse border-black w-[500px] p-3 rounded-lg shadow-md
+    @apply border border-collapse border-black w-full lg:w-[30vw] p-3 rounded-lg shadow-md
 }
 .input-login:focus{
     @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
 }
 
 .input-cadastro{
-   @apply border border-collapse border-black w-[400px] p-3 rounded-lg
+   @apply border border-collapse border-black w-full lg:w-[20vw] p-3 rounded-lg
 }
 .input-cadastro:focus{
    @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
