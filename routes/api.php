@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\ModalidadesController;
 use App\Http\Controllers\TimeController;
@@ -12,3 +13,5 @@ Route::apiResources([
     '/times' => TimeController::class,
     '/jogadores' => JogadoresController::class,
 ]);
+
+Route::post('/cadastro', [AuthController::class, 'cadastro']);

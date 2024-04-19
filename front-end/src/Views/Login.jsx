@@ -20,7 +20,7 @@ export default function Login(){
                     </div>
                     <p>Esqueceu sua senha? <span className="text-unifae-green-1 font-bold">Clique aqui</span></p>
                     <button className="bg-unifae-green-1 text-unifae-white-1 w-[200px] h-[50px] rounded-md">Entrar</button>
-                    <p>Ainda não tem conta? <Link to={"/cadastro"} className="text-unifae-green-1 font-bold">lique aqui</Link></p>
+                    <p>Ainda não tem conta? <Link to={"/cadastro"} className="text-unifae-green-1 font-bold">Clique aqui</Link></p>
                 </form>
             </div>
         </div>

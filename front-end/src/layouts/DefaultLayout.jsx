@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery } from "@react-hook/media-query";
@@ -7,17 +7,21 @@ import userLogo from "../assets/blank-profile-picture-973460_640.png";
 import { faGamepad, faSignIn, faTrophy, faFlag, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import AsideItem from "../Components/AsideItem";
 import { NavLink, Outlet } from "react-router-dom";
+import { useStateContext } from "../Contexts/ContextProvider";
+import axiosInstance from "../helper/axios-instance";
 
 // Criando o contexto
 const AsideContext = createContext();
 
 export default function DefaultLayout() {
-    const [isAsideVisible, setIsAsideVisible] = useState(true);
     const isMobile = useMediaQuery("(max-width: 768px)");
-
+    const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
+    const { user, token} = useStateContext()
     const toggleAsideVisibility = () => {
         setIsAsideVisible(!isAsideVisible);
     };
+
+    console.log(user)
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -53,8 +57,9 @@ export default function DefaultLayout() {
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
                     <Aside />
                 </AsideContext.Provider>
-                <div className="flex-grow">
+                <div className={`${isAsideVisible ? "flex-grow" : "w-full"}`}>
                     <main>
+                        {}
                         <Outlet />
                     </main>
                 </div>

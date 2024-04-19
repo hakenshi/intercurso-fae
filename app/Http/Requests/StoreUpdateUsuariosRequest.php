@@ -42,11 +42,6 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'min:3',
             'max:100'
         ],
-        'telefone' =>[
-            'required',
-            'min:6',
-            'max:14'
-        ],
         'ra' =>[
             'required',
             'unique:usuarios,ra',

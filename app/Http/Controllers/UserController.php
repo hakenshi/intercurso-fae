@@ -31,16 +31,17 @@ class UserController extends Controller
         // dd($request);
 
         $data = $request->validated();
-
         // dd($data);
-
+        
         $data['senha'] = bcrypt($request->password);
-
+        
         $user = ModelsUser::create($data);
-
+        
+    
         // dd($user);
 
         return new UsuariosResource($user);
+
     }
 
     /**

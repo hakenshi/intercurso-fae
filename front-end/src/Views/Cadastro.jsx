@@ -1,7 +1,91 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import logoPadrao from "../assets/logo-unifae-2021.png";
-
+import { useRef, useState } from "react";
+import axios from "axios";
+import axiosInstance from "../helper/axios-instance";
+import { useStateContext } from "../Contexts/ContextProvider";
 export default function Cadastro() {
+
+    const nomeRef = useRef(null);
+    const emailRef = useRef(null);
+    const senhaRef = useRef(null);
+    const raRef = useRef(null);
+    const cursoRef = useRef(null);
+    const confirmSenhaRef = useRef(null);
+
+    const { token, setUser, setToken } = useStateContext()
+
+    const [errors, setError] = useState("")
+
+
+    const cursos = [
+        { value: "", curso: "Selecione seu curso" },
+        { value: "1", curso: "Administração" },
+        { value: "2", curso: "Ciências Contábeis" },
+        { value: "3", curso: "Direito" },
+        { value: "4", curso: "Educação Física (Bacharelado)" },
+        { value: "5", curso: "Enfermagem" },
+        { value: "6", curso: "Engenharia Civil" },
+        { value: "7", curso: "Engenharia Elétrica" },
+        { value: "8", curso: "Engenharia Mecânica" },
+        { value: "9", curso: "Engenharia Química" },
+        { value: "10", curso: "Engenharia da Computação" },
+        { value: "11", curso: "Engenharia de Produção" },
+        { value: "12", curso: "Engenharia de Software" },
+        { value: "13", curso: "Farmácia" },
+        { value: "14", curso: "Fisioterapia" },
+        { value: "15", curso: "Jornalismo" },
+        { value: "16", curso: "Medicina" },
+        { value: "17", curso: "Odontologia" },
+        { value: "18", curso: "Pedagogia" },
+        { value: "19", curso: "Psicologia" },
+        { value: "20", curso: "Publicidade e Propaganda" },
+        { value: "21", curso: "Engenharia Biomédica" },
+        { value: "22", curso: "Educação Física (Licenciatura)" },
+        { value: "23", curso: "Comunicação e Mídias digitais" },
+        { value: "24", curso: "Economia" }
+    ];
+
+
+    const HandleSubmit = async e => {
+        e.preventDefault()
+
+        // if (senhaRef !== confirmSenhaRef) {
+        //     setError("As senhas não coincidem!")
+        //     alert(error)
+        //     return
+        // }
+
+        const payload = {
+            id_curso: cursoRef.current.value,
+            nome: nomeRef.current.value,
+            email: emailRef.current.value,
+            senha: senhaRef.current.value,
+            confirmSenha: confirmSenhaRef.current.value,
+            ra: raRef.current.value,
+            tipo_usuario: "3",
+        }
+
+        axiosInstance.post('/cadastro', payload)
+        .then(({ data })=>{
+            setUser(data.user)
+            setToken(data.token)
+        })
+        .catch(error => {
+            const response = error.response
+            if(response){
+                setError(response.data.error)
+                console.log(errors)
+            }
+        })
+        .finally(()=>{
+            if(sessionStorage.getItem("ACCESS_TOKEN")){
+                location.href = "/"
+            }
+
+        })
+    }
+
     return (
         <section className="bg-[#262626] min-h-screen flex justify-center items-center">
             <div className="w-full md:h-full max-w-screen-lg p-5 bg-white rounded-md">
@@ -13,56 +97,32 @@ export default function Cadastro() {
                     <div className="flex flex-col w-full md:w-1/2 gap-1">
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="nome">Nome</label>
-                            <input className="input-cadastro" type="text" name="nome" id="nome" placeholder="Insira seu nome" />
+                            <input ref={nomeRef} className="input-cadastro" type="text" name="nome" id="nome" placeholder="Insira seu nome" />
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="email">E-mail</label>
-                            <input className="input-cadastro" type="text" name="email" id="email" placeholder="email@email.com" />
+                            <input ref={emailRef} className="input-cadastro" type="text" name="email" id="email" placeholder="email@email.com" />
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="senha">Senha</label>
-                            <input className="input-cadastro" type="password" name="senha" id="senha" placeholder="••••••••" />
+                            <input ref={senhaRef} className="input-cadastro" type="password" name="senha" id="senha" placeholder="••••••••" />
                         </div>
                     </div>
                     <div className="flex flex-col w-full md:w-1/2 gap-1">
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="ra">RA</label>
-                            <input className="input-cadastro" type="password" name="ra" id="ra" placeholder="00000-0" />
+                            <input ref={raRef} className="input-cadastro" type="text" name="ra" id="ra" placeholder="00000-0" />
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="email">Curso</label>
-                            <select className="input-cadastro bg-white" name="curso" id="curso">
-                                <option value="">Selecione seu curso</option>
-                                <option value="1">Administração</option>
-                                <option value="2">Ciências Contábeis</option>
-                                <option value="3">Direito</option>
-                                <option value="4">Educação Física (Bacharelado)</option>
-                                <option value="5">Enfermagem</option>
-                                <option value="6">Engenharia Civil</option>
-                                <option value="7">Engenharia Elétrica</option>
-                                <option value="8">Engenharia Mecânica</option>
-                                <option value="9">Engenharia Química</option>
-                                <option value="10">Engenharia da Computação</option>
-                                <option value="11">Engenharia de Produção</option>
-                                <option value="12">Engenharia de Software</option>
-                                <option value="13">Farmácia</option>
-                                <option value="14">Fisioterapia</option>
-                                <option value="15">Jornalismo</option>
-                                <option value="16">Medicina</option>
-                                <option value="17">Odontologia</option>
-                                <option value="18">Pedagogia</option>
-                                <option value="19">Psicologia</option>
-                                <option value="20">Publicidade e Propaganda</option>
-                                <option value="21">Engenharia Biomédica</option>
-                                <option value="22">Educação Fisica (Licenciatura)</option>
-                                <option value="23">Comunicação e Mídias digitais</option>
-                                <option value="24">Economia</option>
+                            <select ref={cursoRef} className="input-cadastro bg-white" name="curso" id="curso">
+                                {cursos.map((curso, key) => <option key={key} value={curso.value}>{curso.curso}</option>)}
                             </select>
 
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="confirm-password">Confirme sua senha</label>
-                            <input className="input-cadastro" type="password" name="confirm-password" id="confirm-password" placeholder="••••••••" />
+                            <input ref={confirmSenhaRef} className="input-cadastro" type="password" name="confirm-password" id="confirm-password" placeholder="••••••••" />
                         </div>
                     </div>
                 </form>
@@ -73,7 +133,7 @@ export default function Cadastro() {
                 </div>
                 <div className="flex flex-col w-full items-center p-3">
                     <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>
-                    <button className="bg-unifae-green-1 text-unifae-white-1 w-[200px] h-[50px] rounded-md">Entrar</button>
+                    <button type="submit" onClick={HandleSubmit} className="bg-unifae-green-1 text-unifae-white-1 w-[200px] h-[50px] rounded-md">Entrar</button>
                 </div>
             </div>
         </section>

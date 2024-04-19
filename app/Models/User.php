@@ -6,14 +6,15 @@ namespace App\Models;
 
 use App\Models\Time as ModelsTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Type\Time;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use HasFactory;
-    use Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = "usuarios";
 
@@ -48,9 +49,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'profile_photo_url',
-    ];
 
     /**
      * Get the attributes that should be cast.
