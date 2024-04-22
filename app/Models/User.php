@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Type\Time;
 
-class User extends Model
+class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
@@ -38,7 +38,7 @@ class User extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'senha',
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
@@ -59,7 +59,7 @@ class User extends Model
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'senha' => 'hashed'
         ];
     }
 

@@ -6,8 +6,10 @@ use App\Http\Requests\CadastroRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\StoreUpdateUsuariosRequest;
 use App\Models\User;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -26,22 +28,26 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request){
         $data = $request->validated();
-        if(!Auth::attempt($data)){
+        $user = User::where('email', $data['email'])->first();
+
+        if(!$user) return response(['msg' => 'Usuário não encontrado'], 401);
+
+        if(!$user || !Hash::check($request->senha, $user->senha)){
             return response([
-                'message' => 'email ou senha incorreta'
-            ]);
-        }
-        
-        $user = Auth::user();
-        $user->createToken('ACCESS_TOKEN')->plainTextToken;
+                'msg' => 'Email ou senha incorretos'
+            ], 422);
+        };
+
+        $token = $user->createToken('main')->plainTextToken;
 
         return response(compact('user', 'token'));
-    }   
+
+    }  
 
     public function logout(Request $request){
 
         $user = $request->user();
-        $user->currentAccessToken->delete();
+        $user->currentAccessToken()->delete();
 
         return response('', 204);
 

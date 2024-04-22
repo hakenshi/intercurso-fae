@@ -27,3 +27,7 @@
 .input-cadastro:focus{
    @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
 }
+
+.active{
+    @apply bg-unifae-gray50-2 rounded-md
+}

@@ -17,6 +17,8 @@ axios.interceptors.response.use(response => {
     try {
         const { response } = error
 
+        console.log(response.status)
+
         if(response.status === 401) sessionStorage.removeItem('ACCESS_TOKEN')
     } catch (error) {
         console.log(error)

@@ -1,33 +1,30 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
+import p from "prop-types"
 
 const StateContext = createContext({
     user: null,
     token: null,
     setUser: () => {},
-    setToken: () => {},
+    setSessionToken: () => {},
 })
 
-export const ContextProvider = ({children}) => {
+export const ContextProvider = ({children}) =>{
+    const [user, setUser] = useState({});
+    const [token, setToken] = useState(null);
 
-    const [user, setUser] = useState({})
-    const [token, _setToken] = useState(null)
+    const setSessionToken = (token) =>{
+        setToken(token)
 
-    const setToken = (token) =>{
-        _setToken(token)
         if(token){
-            sessionStorage.setItem('ACCESS_TOKEN', token)
+            sessionStorage.setItem('ACCESS_TOKEN', token);
         }
         else{
             sessionStorage.removeItem('ACCESS_TOKEN')
         }
     }
+
     return(
-        <StateContext.Provider value={{ 
-            user,
-            token,
-            setUser,
-            setToken
-         }}>
+        <StateContext.Provider value={{ user, token, setUser, setSessionToken }}> 
             {children}
         </StateContext.Provider>
     )

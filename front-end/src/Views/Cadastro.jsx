@@ -13,7 +13,7 @@ export default function Cadastro() {
     const cursoRef = useRef(null);
     const confirmSenhaRef = useRef(null);
 
-    const { token, setUser, setToken } = useStateContext()
+    const { setUser, setSessionToken } = useStateContext()
 
     const [errors, setError] = useState("")
 
@@ -52,7 +52,7 @@ export default function Cadastro() {
 
         // if (senhaRef !== confirmSenhaRef) {
         //     setError("As senhas não coincidem!")
-        //     alert(error)
+        //     alert(errors)
         //     return
         // }
 
@@ -63,26 +63,20 @@ export default function Cadastro() {
             senha: senhaRef.current.value,
             confirmSenha: confirmSenhaRef.current.value,
             ra: raRef.current.value,
-            tipo_usuario: "3",
+            tipo_usuario: 3,
         }
 
         axiosInstance.post('/cadastro', payload)
         .then(({ data })=>{
             setUser(data.user)
-            setToken(data.token)
+            setSessionToken(data.token)
         })
         .catch(error => {
             const response = error.response
             if(response){
-                setError(response.data.error)
+                setError(response.data)
                 console.log(errors)
             }
-        })
-        .finally(()=>{
-            if(sessionStorage.getItem("ACCESS_TOKEN")){
-                location.href = "/"
-            }
-
         })
     }
 

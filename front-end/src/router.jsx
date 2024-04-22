@@ -36,6 +36,10 @@ const router = createBrowserRouter([
         element: <GuestLayout/>,
         children: [
             {
+                path: '/',
+                element: <Navigate to={"/login"} />
+            },
+            {
                 path: '/login',
                 element: <Login/>
             },
