@@ -82,7 +82,7 @@ export default function Cadastro() {
 
     return (
         <section className="bg-[#262626] min-h-screen flex justify-center items-center">
-            <div className="w-full md:h-full max-w-screen-lg p-5 bg-white rounded-md">
+            <div className="w-full md:h-full p-3 max-w-screen-lg  bg-white rounded-md">
                 <div className="flex items-center flex-col h-1/5 justify-center">
                     <img src={logoPadrao} alt="unifae-logo" className="w-[300px]" />
                     <span className="text-unifae-green-1 font-semibold">Intercurso</span>
@@ -109,7 +109,7 @@ export default function Cadastro() {
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="email">Curso</label>
-                            <select ref={cursoRef} className="input-cadastro bg-white" name="curso" id="curso">
+                            <select ref={cursoRef} className="input-cadastro bg-white w-[300px]" name="curso" id="curso">
                                 {cursos.map((curso, key) => <option key={key} value={curso.value}>{curso.curso}</option>)}
                             </select>
 
@@ -127,7 +127,7 @@ export default function Cadastro() {
                 </div>
                 <div className="flex flex-col w-full items-center p-3">
                     <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>
-                    <button type="submit" onClick={HandleSubmit} className="bg-unifae-green-1 text-unifae-white-1 w-[200px] h-[50px] rounded-md">Entrar</button>
+                    <button type="submit" onClick={HandleSubmit} className="btn-lg btn-green">Entrar</button>
                 </div>
             </div>
         </section>

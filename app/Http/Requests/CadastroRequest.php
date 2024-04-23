@@ -44,6 +44,9 @@ class CadastroRequest extends FormRequest
                 'required',
                 'unique:usuarios,ra',
                 'max:10'
+            ],
+            'tipo_usuario' => [
+                'required'
             ]
             ];
 
