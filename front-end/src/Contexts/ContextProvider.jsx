@@ -1,5 +1,6 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import p from "prop-types"
+import { Navigate } from "react-router-dom";
 
 const StateContext = createContext({
     user: null,

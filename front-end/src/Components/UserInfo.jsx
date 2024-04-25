@@ -3,8 +3,10 @@ import userLogo from "../assets/blank-profile-picture-973460_640.png";
 import { faGear, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons";
 import p from "prop-types"
 
-export const UserInfo = ({ nome, logout }) =>{
-    return(
+export const UserInfo = ({ nome, logout, isDropDownVisible }) =>{
+    
+   if(isDropDownVisible)
+    return  (
         <div className="w-full flex justify-center p-4">
             <div className="user-dropdown">
                 <span className=" flex w-full text-lg items-center gap-5 p-3"> <img className="min h-10 rounded-full" src={userLogo} alt="" /> {nome} </span>
@@ -18,5 +20,6 @@ export const UserInfo = ({ nome, logout }) =>{
 
 UserInfo.propTypes = {
     nome: p.string,
-    logout: p.func
+    logout: p.func,
+    isDropDownVisible: p.bool
 }

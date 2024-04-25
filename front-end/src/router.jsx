@@ -7,6 +7,10 @@ import Login from "./Views/Login";
 import Cadastro from "./Views/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
 import GuestLayout from "./layouts/GuestLayout";
+import Dashboard from "./Views/Admin/Dashboard";
+// import AdminLayout from "./layouts/AdminLayout";
+import { Jogadores } from "./Views/Admin/Jogadores";
+import { Modalidades } from "./Views/Admin/Modalidades";
 
 const router = createBrowserRouter([
     {
@@ -29,8 +33,25 @@ const router = createBrowserRouter([
                 path: '/times',
                 element: <Times/>
             },
+            {
+                path: '/dashboard',
+                element: <Dashboard/>
+            },
+            {
+                path: '/usuarios',
+                element: <Jogadores/>,
+            },
+            {
+                path: '/modalidades',
+                element: <Modalidades/>,
+            },
+            {
+                path: '/times',
+                element: <Times/>,
+            },
         ]
     },
+
     {
         path: "/",
         element: <GuestLayout/>,

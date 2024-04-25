@@ -26,8 +26,10 @@ class UsuariosResource extends JsonResource
                 'id' => $this->id,
                 'nome' => $this->nome,
                 'email' => $this->email,
+                'ra' => $this->ra,
+                'tipo_usuario' => $this->tipo_usuario == 1 ? "Admin" : ($this->tipo_usuario == 2 ? "Responsável" : "Usuário"),
                 'telefone' => $this->telefone,
-                'data_criacao' => Carbon::make($this->created_at)->format('Y-m-d')
+                // 'data_criacao' => Carbon::make($this->created_at)->format('Y-m-d')
             ],
         ];
     }

@@ -50,11 +50,11 @@ export default function Cadastro() {
     const HandleSubmit = async e => {
         e.preventDefault()
 
-        // if (senhaRef !== confirmSenhaRef) {
-        //     setError("As senhas não coincidem!")
-        //     alert(errors)
-        //     return
-        // }
+        if (senhaRef !== confirmSenhaRef) {
+            setError("As senhas não coincidem!")
+            alert(errors)
+            return
+        }
 
         const payload = {
             id_curso: cursoRef.current.value,

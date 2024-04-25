@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery } from "@react-hook/media-query";
@@ -10,6 +10,7 @@ import { Link, NavLink, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useStateContext } from "../Contexts/ContextProvider";
 import axiosInstance from "../helper/axios-instance";
 import { UserInfo } from "../Components/UserInfo";
+import { Aside } from "../Components/Aside";
 
 // Criando o contexto
 const AsideContext = createContext();
@@ -19,7 +20,8 @@ export default function DefaultLayout() {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
     const [isDropDownVisible, setisDropDownVisible] = useState(false)
     const { user, token, setUser, setSessionToken } = useStateContext()
-
+    const userInfoRef = useRef()
+    const navigate = useNavigate()
     const toggleAsideVisibility = () => {
         setIsAsideVisible(!isAsideVisible);
     };
@@ -29,11 +31,13 @@ export default function DefaultLayout() {
             axiosInstance.get('/user')
             .then(({ data }) => {
                 setUser(data)
+                if(data.tipo_usuario == 1) navigate('/dashboard', {replace: true})
             })
+
         }
         
-    }, [setUser])
-
+    }, [])
+    
     const onLogout = (e) => {
         e.preventDefault()
 
@@ -41,9 +45,20 @@ export default function DefaultLayout() {
             .then(() => {
                 setUser({})
                 setSessionToken(null)
+                navigate("/login", {replace: true})
             })
-            .finally(()=> location.href = "/login")            
         }        
+
+        useEffect(()=>{
+            const handler = (e) =>{
+                if(userInfoRef.current && !userInfoRef.current.contains(e.target)){
+                setisDropDownVisible(false)
+            }
+            }
+            document.addEventListener("mousedown", handler)
+
+            return() => document.removeEventListener("mousedown", handler)
+        }, [])
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -68,18 +83,23 @@ export default function DefaultLayout() {
                         <span className="text-white cursor-pointer">
                             <FontAwesomeIcon icon={faBell} />
                         </span>
+
+                        {user.nome && (
+                       <span ref={userInfoRef} className={`absolute top-11 right-0 ${isDropDownVisible ? 'opacity-100' : "opacity-0"} transition-all duration-500`}>
+                            <UserInfo logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome}/>
+                        </span> 
+                    )}
+
                         <span onClick={() => setisDropDownVisible(!isDropDownVisible)} className="flex justify-center items-center cursor-pointer">
-                            <img  className="w-10 h-10 rounded-full" src={userLogo} alt="" />
+                            <img  className="w-10 h-10 rounded-full" src={userLogo} alt={user.nome} />
                         </span>
-                       {user.nome && <span className={`absolute top-11 right-0 ${isDropDownVisible ? 'opacity-100' : "opacity-0"} transition-all duration-500`}>
-                            <UserInfo logout={onLogout} nome={user.nome}/>
-                        </span> }
+                       
                     </div>
                 </nav>
             </header>
             <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
-                    <Aside/>
+                    <Aside isAsideVisible={isAsideVisible} />
                 </AsideContext.Provider>
                 <div className={`${isAsideVisible ? "flex-grow" : "w-full"}`}>
                     <main>
@@ -91,38 +111,3 @@ export default function DefaultLayout() {
     );
 }
 
-// Componente do aside
-function Aside() {
-    const { isAsideVisible } = useContext(AsideContext);
-
-    return (
-        <aside
-            className={`h-[92.2vh] w-[200px] p-3 bg-zinc-700 ${isAsideVisible ? "translate-x-0" : "-translate-x-full"
-                } transition-transform duration-500`}
-        >
-            <div className="flex flex-col justify-around h-[60%] ">
-                <div className="flex flex-col divide-y-2 divide-unifae-gray50-2 space-y-2">
-                    {!sessionStorage.getItem('ACCESS_TOKEN') && (<>
-                        <Link to="/login">
-                            <AsideItem icon={faSignIn} text="Login" />
-                        </Link>
-                        <Link to="/cadastro">
-                            <AsideItem icon={faUserPlus} text="Cadastro" />
-                        </Link>
-                    </>)}
-                </div>
-                <div className="flex flex-col divide-y-2 divide-unifae-gray50-2 space-y-2">
-                    <NavLink to="/jogos">
-                        <AsideItem icon={faGamepad} text="Jogos" />
-                    </NavLink>
-                    <NavLink to={"/placares"}>
-                        <AsideItem icon={faTrophy} text="Placares" />
-                    </NavLink>
-                    <NavLink to="/times">
-                        <AsideItem icon={faFlag} text="Times" />
-                    </NavLink>
-                </div>
-            </div>
-        </aside>
-    );
-}

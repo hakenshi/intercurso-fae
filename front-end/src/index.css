@@ -20,6 +20,12 @@
 .input-login:focus{
     @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
 }
+.input-modal {
+    @apply border border-collapse border-black w-full lg:w-[30vw] p-2 rounded-lg shadow-md
+}
+.input-modal:focus{
+    @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
+}
 
 .input-cadastro{
    @apply border border-collapse border-black min-w-96 p-3 rounded-lg

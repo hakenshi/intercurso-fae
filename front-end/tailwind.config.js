@@ -21,6 +21,7 @@ export default {
         'unifae-gray50-1': '#58585980',
         'unifae-gray50-2': '#73737380',
         'unifae-gray50-3': '#40404080',
+        'card-white-1': "#EAEAEA"
       }
     },
   },
