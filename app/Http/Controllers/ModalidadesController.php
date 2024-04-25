@@ -29,7 +29,7 @@ class ModalidadesController extends Controller
         
         $data = $request->validated();
 
-        if(Modalidade::where('genero', $data['genero'])->first()){
+        if(Modalidade::where('nome', $data['nome'])->where('genero', $data['genero'])->first()){
             return response()->json(['msg' => 'Gênero de modalidade já cadastrado'], 400);
         }
 

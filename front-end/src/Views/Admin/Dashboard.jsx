@@ -19,7 +19,7 @@ export default function Dashboard(){
     const [usuarios, loading, errors] = useAxios({
         axiosInstance: axiosInstance,
         method: "get",
-        url: "/modalidades",
+        url: "/usuarios",
     })
 
     return (
@@ -63,7 +63,7 @@ export default function Dashboard(){
                             </tr>
                         </thead>
 
-                        <tbody className="text-center">{usuarios.data.map(response =>(
+                        <tbody className="text-center">{usuarios.data.data.map(response =>(
                             <tr key={response.usuario.nome}>
                                 <td className="border p- border-unifae-gray50-2" >{response.usuario.id}</td>
                                 <td className="border p- border-unifae-gray50-2" >{response.usuario.nome}</td>

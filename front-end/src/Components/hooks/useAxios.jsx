@@ -18,7 +18,7 @@ export default function useAxios(configRequest){
                     signal: controller.signal
                 })
 
-                setData(response.data)
+                setData(response)
             } catch (error) {
                 setErrors(error)
             }

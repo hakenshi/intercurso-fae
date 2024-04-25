@@ -42,6 +42,7 @@
     @apply min-w-[150px] h-fit p-2 bg-zinc-700 rounded-[7px] text-white space-y-4 items-center flex flex-col
 }
 
+
 .btn-sm{
     @apply w-[100px] p-2
 }
@@ -55,3 +56,10 @@
 .btn-gray{
     @apply bg-unifae-gray-3 text-unifae-white-1 rounded-md
 }
+.btn-edit{
+    @apply bg-sky-500 text-unifae-white-1 rounded-md
+}
+.btn-delete{
+    @apply bg-red-600 text-unifae-white-1 rounded-md
+}
+
