@@ -75,4 +75,9 @@ class ModalidadesController extends Controller
 
         return new ModalidadesResource($modalidade);
     }
+
+    public function searchModaliades($data){
+        return Modalidade::where('nome', "LIKE", "%".$data."%")->get();
+    }
+
 }

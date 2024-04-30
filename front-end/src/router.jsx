@@ -2,15 +2,16 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Jogos from "./Views/Default/Jogos";
 import Placares from "./Views/Default/Placares";
-import Times from "./Views/Default/Times";
+import VerTimes from "./Views/Default/VerTimes";
 import Login from "./Views/Login";
 import Cadastro from "./Views/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
 import GuestLayout from "./layouts/GuestLayout";
 import Dashboard from "./Views/Admin/Dashboard";
 // import AdminLayout from "./layouts/AdminLayout";
-import { Jogadores } from "./Views/Admin/Jogadores";
 import { Modalidades } from "./Views/Admin/Modalidades";
+import { Times } from "./Views/Admin/Times";
+import { Usuarios } from "./Views/Admin/Usuarios";
 
 const router = createBrowserRouter([
     {
@@ -30,8 +31,8 @@ const router = createBrowserRouter([
                 element: <Placares/>
             },
             {
-                path: '/times',
-                element: <Times/>
+                path: '/times-intercurso',
+                element: <VerTimes/>
             },
             {
                 path: '/dashboard',
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/usuarios',
-                element: <Jogadores/>,
+                element: <Usuarios/>,
             },
             {
                 path: '/modalidades',

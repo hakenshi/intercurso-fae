@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateUsuariosRequest;
+use App\Http\Resources\UsuarioResponsavelResource;
 use App\Http\Resources\UsuariosResource;
 
 use App\Models\User as ModelsUser;
 
 use Illuminate\Foundation\Auth\User;
-
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -17,7 +18,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = ModelsUser::paginate(10);
+        $user = ModelsUser::paginate(6);
+
+        return UsuariosResource::collection($user);
+    }
+    public function indexResponsaveis()
+    {
+        $user = ModelsUser::where("tipo_usuario", 2)->paginate(6);
 
         return UsuariosResource::collection($user);
     }
@@ -37,9 +44,6 @@ class UserController extends Controller
         
         $user = ModelsUser::create($data);
         
-    
-        // dd($user);
-
         return new UsuariosResource($user);
 
     }
@@ -59,7 +63,7 @@ class UserController extends Controller
      */
     public function update(StoreUpdateUsuariosRequest $request, string $id)
     {
-        dd($request);
+        // dd($request);
         
         $data = $request->validated();
         $user = ModelsUser::findOrFail($id);
@@ -86,4 +90,18 @@ class UserController extends Controller
     }
 
     
+    public function responsaveis(Request $request){
+      $data = $request->input('value');
+
+      if(empty($data)){
+        return response()->json([]);
+      }
+
+      $results = ModelsUser::where("tipo_usuario", 2)
+      ->where('nome', "LIKE", "%".$data."%")
+      ->get();
+
+      return response()->json($results);
+    }
+
 }

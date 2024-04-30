@@ -18,8 +18,11 @@ class TimeController extends Controller
     public function index()
     {
         $times = Time::all();
-
-        return TimesResource::collection($times);
+        $modalidades = Modalidade::all("nome", "id");
+        return [
+            'times' => TimesResource::collection($times),
+            'modalidades' => $modalidades,
+        ];
     }
 
     /**
@@ -27,7 +30,6 @@ class TimeController extends Controller
      */
     public function store(UpdateStoreTimesResource $request)
     {   
-        // dd($request);
         $data = $request->validated();
         $time = Time::create($data);
 

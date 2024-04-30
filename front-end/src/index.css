@@ -30,6 +30,9 @@
 .input-cadastro{
    @apply border border-collapse border-black min-w-96 p-3 rounded-lg
 }
+.input-search{
+   @apply border border-collapse border-black min-w-96 p-3 rounded-lg
+}
 .input-cadastro:focus{
    @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
 }

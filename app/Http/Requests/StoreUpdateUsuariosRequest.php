@@ -31,43 +31,60 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'min: 3',
             'max: 255',
         ],
-        'email' =>[
-            'required',
-            'email',
-            'max:255',
-            'unique:usuarios,email'
+        'telefone' =>[
+            'nullable',
+            'max: 11',
         ],
-        'senha' => [
+        // 'email' =>[
+        //     'required',
+        //     'email',
+        //     'max:255',
+        //     'unique:usuarios,email',
+        //     Rule::unique('email')->ignore($this->route('id'))
+        // ],
+
+        'email' => [
             'required',
-            'min:3',
-            'max:100'
+            'email', 
+            Rule::unique('usuarios')->ignore($this->route('id'))->where(function ($query) {
+                return $query->where('id', $this->id); 
+            }),
         ],
+
+        // 'senha' => [
+        //     'required',
+        //     'min:3',
+        //     'max:100'
+        // ],
         'ra' =>[
             'required',
-            'unique:usuarios,ra',
-            'max:10'
+            Rule::unique('usuarios')->ignore($this->route('id'))->where(function($query){
+                return $query->where('id', $this->id);
+            }),
         ],
-        
+        'tipo_usuario' =>[
+            'required'
+        ]
        ];
 
-       if($this->method() === 'PATCH'){
-        $rules['senha'] =[
-            'nullable',
-            'min:6',
-            'max:100'
-        ];
-        $rules['email'] = [
-            'required',
-            'email',
-            'max:255',
-            Rule::unique('usuarios')->ignore($this->id),
-        ];
-        $rules['ra'] = [
-            'required',
-            'max:10',
-            Rule::unique('usuarios')->ignore($this->id),
-        ];
-       }
+    //    if($this->method() === 'PATCH'){
+    //     $rules['senha'] =[
+    //         'nullable',
+    //         'min:6',
+    //         'max:100'
+    //     ];
+    //     $rules['email'] = [
+    //         'nullable',
+    //         'email',
+    //         'max:255',
+    //         Rule::unique('usuarios')->ignore($this->id),
+    //     ];
+    //     $rules['ra'] = [
+    //         'nullable',
+    //         'max:10',
+    //         Rule::unique('usuarios')->ignore($this->id),
+    //     ];
+    //    }
 
         return $rules;
     }

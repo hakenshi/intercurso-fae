@@ -2,6 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import logoPadrao from "../assets/logo-unifae-2021.png";
 import { useRef, useState } from "react";
 import axios from "axios";
+import cursos from "../../public/cursos.json"
 import axiosInstance from "../helper/axios-instance";
 import { useStateContext } from "../Contexts/ContextProvider";
 export default function Cadastro() {
@@ -16,35 +17,6 @@ export default function Cadastro() {
     const { setUser, setSessionToken } = useStateContext()
 
     const [errors, setError] = useState("")
-
-
-    const cursos = [
-        { value: "", curso: "Selecione seu curso" },
-        { value: "1", curso: "Administração" },
-        { value: "2", curso: "Ciências Contábeis" },
-        { value: "3", curso: "Direito" },
-        { value: "4", curso: "Educação Física (Bacharelado)" },
-        { value: "5", curso: "Enfermagem" },
-        { value: "6", curso: "Engenharia Civil" },
-        { value: "7", curso: "Engenharia Elétrica" },
-        { value: "8", curso: "Engenharia Mecânica" },
-        { value: "9", curso: "Engenharia Química" },
-        { value: "10", curso: "Engenharia da Computação" },
-        { value: "11", curso: "Engenharia de Produção" },
-        { value: "12", curso: "Engenharia de Software" },
-        { value: "13", curso: "Farmácia" },
-        { value: "14", curso: "Fisioterapia" },
-        { value: "15", curso: "Jornalismo" },
-        { value: "16", curso: "Medicina" },
-        { value: "17", curso: "Odontologia" },
-        { value: "18", curso: "Pedagogia" },
-        { value: "19", curso: "Psicologia" },
-        { value: "20", curso: "Publicidade e Propaganda" },
-        { value: "21", curso: "Engenharia Biomédica" },
-        { value: "22", curso: "Educação Física (Licenciatura)" },
-        { value: "23", curso: "Comunicação e Mídias digitais" },
-        { value: "24", curso: "Economia" }
-    ];
 
 
     const HandleSubmit = async e => {

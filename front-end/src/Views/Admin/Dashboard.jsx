@@ -6,6 +6,7 @@ import axios from "axios"
 import axiosInstance from "../../helper/axios-instance"
 import useAxios from "../../Components/hooks/useAxios"
 import { Oval } from "react-loader-spinner"
+import { Search } from "../../Components/Search bar/Search"
 
 export default function Dashboard(){    
 
@@ -14,7 +15,7 @@ export default function Dashboard(){
 
     useEffect(()=>{
         if(user.tipo_usuario != 1) navigate('/jogos', {replace: true}) 
-    }, [])
+    }, [user, navigate])
 
     const [usuarios, loading, errors] = useAxios({
         axiosInstance: axiosInstance,
@@ -24,7 +25,7 @@ export default function Dashboard(){
 
     return (
         <div className="w-[1670px] h-[88vh] p-7 flex flex-col gap-5">
-            <div className="bg-card-white-1 rounded-xl ">
+            {/* <div className="bg-card-white-1 rounded-xl ">
                 <div className="w-full h-[300px] flex gap-5 justify-around items-center">
                     <DashboardCard>
                         <p className="text-white p-5">Último usuário logado</p>
@@ -79,7 +80,7 @@ export default function Dashboard(){
                         }   
                 </div>
 
-            </div>
+            </div> */}
         </div>
     )
 

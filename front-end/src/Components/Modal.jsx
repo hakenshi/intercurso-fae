@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import p from "prop-types"
 import { useEffect, useRef, useState } from "react"
 
-export const Modal = ({ children, isOpen, onClose, onSubmit}) => {
+export const Modal = ({ children, isOpen, onClose, onSubmit, texto}) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     // const modalRef = useRef(null)
@@ -22,6 +22,7 @@ export const Modal = ({ children, isOpen, onClose, onSubmit}) => {
                         <FontAwesomeIcon icon={faClose} />
                     </button></span>
                     <form className="flex flex-col justify-center p-2" onSubmit={onSubmit} >
+                    <h1 className="text-center text-xl">{texto}</h1>
                         {children}
                   
                     <div className="flex justify-center p-2">
@@ -39,4 +40,5 @@ Modal.propTypes = {
     isOpen: p.bool,
     onClose: p.func,
     onSubmit: p.func,
+    texto: p.string
 }

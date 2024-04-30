@@ -20,6 +20,9 @@ Route::middleware('auth:sanctum')->group(function(){
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get("/responsaveis", [UserController::class, 'responsaveis']);
+    Route::get("/usuarios-responsaveis", [UserController::class, 'indexResponsaveis']);
+
 });
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);

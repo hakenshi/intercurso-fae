@@ -17,15 +17,16 @@ class TimesResource extends JsonResource
         return [
             'id' => $this->id,
             'modalidade' => [
-               'id_modadlidade' => $this->id_modalidade,
-               'nome_modadlidade' => $this->modalidade->nome,
-         ],
+               'id_modalidade' => $this->modalidade->id,
+               'nome_modalidade' => $this->modalidade->nome,
+            ],
             'usuario' => [
                 'id_responsavel' => $this->id_responsavel,
                 "nome_responsavel" => $this->usuario->nome,
             ],
+            
             'nome' => $this->nome,
-            'status' =>$this->status == 0 ? "Inativo" : "Ativo",
+            'status' =>$this->status == 0 ? "Ativo" : "Inatvio",
         ];
     }
 }

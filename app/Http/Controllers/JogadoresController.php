@@ -24,7 +24,7 @@ class JogadoresController extends Controller
      */
     public function store(JogadoresRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
 
         $jogadores = Jogador::create($data);
         
