@@ -19,18 +19,12 @@ export const Aside = ({ isAsideVisible }) => {
             text: 'Jogos'
         },
         {
-            path: '/cadastrar-time',
-            icon: faUserPlus,
-            text: 'Cadastrar Time',
-
-        },
-        {
-            path: '/meu-time',
+            path: `${user.tipo_usuario == 2 ? "/meus-times" : "/meu-time"}`,
             icon: faUserGroup,
-            text: 'Meu Time'
+            text: `${user.tipo_usuario == 2 ? "Meus Times" : "Meu Time"}`
         },
         {
-            path: '/times',
+            path: '/times-intercurso',
             icon: faFlag,
             text: 'Times'
         },
@@ -41,6 +35,8 @@ export const Aside = ({ isAsideVisible }) => {
         },
 
     ]
+
+
 
     const adminLinks = [
         {

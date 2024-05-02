@@ -65,4 +65,7 @@
 .btn-delete{
     @apply bg-red-600 text-unifae-white-1 rounded-md
 }
+.btn-confirm{
+    @apply bg-green-400 text-unifae-white-1 rounded-md
+}
 

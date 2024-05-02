@@ -16,6 +16,8 @@ class TimesResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'nome' => $this->nome,
+            'status' =>$this->status == 0 ? "Ativo" : "Inativo",
             'modalidade' => [
                'id_modalidade' => $this->modalidade->id,
                'nome_modalidade' => $this->modalidade->nome,
@@ -24,9 +26,16 @@ class TimesResource extends JsonResource
                 'id_responsavel' => $this->id_responsavel,
                 "nome_responsavel" => $this->usuario->nome,
             ],
-            
-            'nome' => $this->nome,
-            'status' =>$this->status == 0 ? "Ativo" : "Inatvio",
+            'informacoes' => [
+                'jogadores' => $this->jogadores->map(fn($jogador) => [
+                    'id' => $jogador->id_usuario,
+                    'nome' => $jogador->usuario->nome,
+                    'email' => $jogador->usuario->email,
+                    'ra' => $jogador->usuario->ra,
+                    'id_time' => $jogador->id_time,
+                ]),
+                'quantidade' => $this->jogadores->count(),
+            ]            
         ];
     }
 }

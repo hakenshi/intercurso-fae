@@ -1,8 +1,8 @@
 import { Link, Navigate } from "react-router-dom"
-import logoPadrao from "../assets/logo-unifae-2021.png"
+import logoPadrao from "../../assets/logo-unifae-2021.png"
 import { useRef, useState } from "react"
-import axiosInstance from "../helper/axios-instance"
-import { useStateContext } from "../Contexts/ContextProvider";
+import axiosInstance from "../../helper/axios-instance"
+import { useStateContext } from "../../Contexts/ContextProvider";
 
 
 export default function Login(){

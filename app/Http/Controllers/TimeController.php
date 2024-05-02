@@ -65,8 +65,6 @@ class TimeController extends Controller
      */
     public function destroy(string $id)
     {
-        $jogadores = Jogador::count("id");
-
         $time = Time::findOrFail($id);
 
         $time->delete();

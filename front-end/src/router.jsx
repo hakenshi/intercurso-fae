@@ -3,8 +3,8 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import Jogos from "./Views/Default/Jogos";
 import Placares from "./Views/Default/Placares";
 import VerTimes from "./Views/Default/VerTimes";
-import Login from "./Views/Login";
-import Cadastro from "./Views/Cadastro";
+import Login from "./Views/Guest/Login";
+import Cadastro from "./Views/Guest/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
 import GuestLayout from "./layouts/GuestLayout";
 import Dashboard from "./Views/Admin/Dashboard";
@@ -12,6 +12,8 @@ import Dashboard from "./Views/Admin/Dashboard";
 import { Modalidades } from "./Views/Admin/Modalidades";
 import { Times } from "./Views/Admin/Times";
 import { Usuarios } from "./Views/Admin/Usuarios";
+import { MeusTimes } from "./Views/Responsavel/MeusTimes";
+import { CadastrarTime } from "./Views/Default/CadastrarTime";
 
 const router = createBrowserRouter([
     {
@@ -50,6 +52,11 @@ const router = createBrowserRouter([
                 path: '/times',
                 element: <Times/>,
             },
+            {
+                path: '/meus-times',
+                element: <MeusTimes/>,
+            },
+
         ]
     },
 
