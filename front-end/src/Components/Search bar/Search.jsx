@@ -40,8 +40,8 @@ export const Search = ({ placeholder, url, handleSelectUser, data }) => {
 
     return (
         <>
-            <div className="space-y-2 w-full">
-                    <input className="input-modal" type="text" placeholder={placeholder} value={input} onChange={(e) => handleChange(e.target.value)} />
+            <div className="space-y-2">
+                    <input className="input-modal space-y-2" type="text" placeholder={placeholder} value={input} onChange={(e) => handleChange(e.target.value)} />
                     <SearchResultList results={results} onClick={handleResultClick}/>
             </div>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\ModalidadesController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -20,10 +21,10 @@ Route::middleware('auth:sanctum')->group(function(){
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get("/responsaveis", [UserController::class, 'responsaveis']);
-    Route::get("/usuarios-responsaveis", [UserController::class, 'indexResponsaveis']);
-
+    Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
+    
 });
 
+Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

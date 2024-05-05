@@ -90,18 +90,5 @@ class UserController extends Controller
     }
 
     
-    public function responsaveis(Request $request){
-      $data = $request->input('value');
-
-      if(empty($data)){
-        return response()->json([]);
-      }
-
-      $results = ModelsUser::where("tipo_usuario", 2)
-      ->where('nome', "LIKE", "%".$data."%")
-      ->get();
-
-      return response()->json($results);
-    }
 
 }

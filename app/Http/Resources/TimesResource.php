@@ -15,9 +15,11 @@ class TimesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'nome' => $this->nome,
-            'status' =>$this->status == 0 ? "Ativo" : "Inativo",
+            'time' => [
+                'id' => $this->id,
+                'nome' => $this->nome,
+                'status' =>$this->status,
+            ],
             'modalidade' => [
                'id_modalidade' => $this->modalidade->id,
                'nome_modalidade' => $this->modalidade->nome,
@@ -29,10 +31,11 @@ class TimesResource extends JsonResource
             'informacoes' => [
                 'jogadores' => $this->jogadores->map(fn($jogador) => [
                     'id' => $jogador->id_usuario,
+                    'id_time' => $jogador->id_time,
                     'nome' => $jogador->usuario->nome,
                     'email' => $jogador->usuario->email,
                     'ra' => $jogador->usuario->ra,
-                    'id_time' => $jogador->id_time,
+                    'status' => $jogador->status,
                 ]),
                 'quantidade' => $this->jogadores->count(),
             ]            

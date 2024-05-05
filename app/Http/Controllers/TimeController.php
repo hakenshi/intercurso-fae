@@ -19,9 +19,19 @@ class TimeController extends Controller
     {
         $times = Time::all();
         $modalidades = Modalidade::all("nome", "id");
+        $jogadores = Jogador::join('usuarios', 'jogadores.id_usuario', '=','usuarios.id')
+        ->select(
+            'jogadores.id_usuario as id',
+            'usuarios.nome as nome',
+            'usuarios.email as email',
+            'usuarios.ra as ra',
+            'jogadores.status as status'
+            )
+        ->get();
         return [
             'times' => TimesResource::collection($times),
             'modalidades' => $modalidades,
+            'jogadores' => $jogadores
         ];
     }
 
