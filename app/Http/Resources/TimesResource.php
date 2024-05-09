@@ -30,7 +30,8 @@ class TimesResource extends JsonResource
             ],
             'informacoes' => [
                 'jogadores' => $this->jogadores->map(fn($jogador) => [
-                    'id' => $jogador->id_usuario,
+                    'id' => $jogador->id,
+                    'id_usuario' => $jogador->id_usuario,
                     'id_time' => $jogador->id_time,
                     'nome' => $jogador->usuario->nome,
                     'email' => $jogador->usuario->email,

@@ -11,11 +11,10 @@ class Jogador extends Model
 
     protected $table = "jogadores";
 
-    protected $primaryKey = 'id'; 
-
     protected $fillable = [
-        'id_time',
+        'id',
         'id_usuario',
+        'id_time',
         'status'
     ];
     

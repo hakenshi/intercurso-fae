@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class JogadoresRequest extends FormRequest
 {
@@ -21,12 +22,17 @@ class JogadoresRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'id_time' => 'required',
-            'id_usuario' => 'required',
-            'status' => 'boolean',
+        $rules = [ 
+            'array',
+            // 'jogadores.*.id_time' => [
+            //     'required',
+            // ],
+            // 'jogadores.*.id_usuario' => [
+            //     'required'
+            // ],
+            // 'jogadores.*.status' => 'required|boolean',
         ];
-        
+
         return $rules;
     }
 }

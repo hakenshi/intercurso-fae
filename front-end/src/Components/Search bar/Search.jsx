@@ -5,7 +5,7 @@ import axiosInstance from "../../helper/axios-instance"
 import p from "prop-types"
 import { SearchResultList } from "./SearchResultList"
 
-export const Search = ({ placeholder, url, handleSelectUser, data }) => {
+export const Search = ({ placeholder, url, handleSelectUser, data, onAddJogador }) => {
 
     const [input, setInput] = useState(data)
     const [results, setResults] = useState([])
@@ -36,6 +36,7 @@ export const Search = ({ placeholder, url, handleSelectUser, data }) => {
         setInput(nome)
         setResults([])
         handleSelectUser(id)
+        onAddJogador()
     }
 
     return (

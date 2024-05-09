@@ -264,11 +264,12 @@ export const Usuarios = () => {
                     <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
                 </div>
 
-                <div className="flex flex-col justify-center items-center p-5">
+                <div className="flex flex-col justify-center items-center p-5  overflow-y-scroll">
                     {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
+                        (<table className=" bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
+                                    <th className="p-5">ID</th>
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Email</th>
                                     <th className="p-5">Curso</th>
@@ -281,6 +282,7 @@ export const Usuarios = () => {
                             <tbody className="divide-y-2 divide-unifae-gray50-2">
                                 {usuarios.map(response => (
                                     <tr key={response.usuario.id} className="text-center">
+                                        <td className="p-5 text-pretty">{response.usuario.id}</td>
                                         <td className="p-5 text-pretty">{response.usuario.nome}</td>
                                         <td className="p-5 text-pretty">{response.usuario.email}</td>
                                         <td className="p-5 text-pretty">{response.curso.nome_curso}</td>

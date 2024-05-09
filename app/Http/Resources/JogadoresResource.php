@@ -17,6 +17,7 @@ class JogadoresResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'status' => $this->status,
             'usuario' => [
                 'id_usuario' => $this->usuario->id,
                 'nome_usuario' => $this->usuario->nome,
@@ -29,7 +30,6 @@ class JogadoresResource extends JsonResource
                 'id_time' => $this->id_time,
                 'nome_time' => $this->time->nome
             ],
-            'status' => $this->status,
         ];
     }
 }

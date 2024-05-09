@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import p from "prop-types"
 import { useEffect, useRef, useState } from "react"
 
-export const Modal = ({ children, isOpen, onClose, onSubmit, texto, id, handleDelete }) => {
+export const Modal = ({ children, isOpen, onClose, onSubmit, texto, id }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     // const modalRef = useRef(null)

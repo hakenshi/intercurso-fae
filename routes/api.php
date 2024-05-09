@@ -16,15 +16,17 @@ Route::apiResources([
     '/jogadores' => JogadoresController::class,
 ]);
 
-Route::middleware('auth:sanctum')->group(function(){
-    Route::get('/user', function(Request $request){
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
-    
+    Route::get("/search-jogadores", [SearchController::class, 'usuarios']);
 });
 
-Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
+Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
+
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

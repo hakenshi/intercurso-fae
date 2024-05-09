@@ -8,6 +8,7 @@ use App\Http\Resources\TimesResource;
 use App\Models\Jogador;
 use App\Models\Modalidade;
 use App\Models\Time;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TimeController extends Controller
@@ -18,16 +19,9 @@ class TimeController extends Controller
     public function index()
     {
         $times = Time::all();
-        $modalidades = Modalidade::all("nome", "id");
-        $jogadores = Jogador::join('usuarios', 'jogadores.id_usuario', '=','usuarios.id')
-        ->select(
-            'jogadores.id_usuario as id',
-            'usuarios.nome as nome',
-            'usuarios.email as email',
-            'usuarios.ra as ra',
-            'jogadores.status as status'
-            )
-        ->get();
+        $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
+        $jogadores = User::all('id', 'nome', 'email', 'ra');
+
         return [
             'times' => TimesResource::collection($times),
             'modalidades' => $modalidades,

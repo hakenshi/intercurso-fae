@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\JogadoresRequest;
 use App\Http\Resources\JogadoresResource;
+use App\Http\Resources\TimeJogadoresResource;
+use App\Http\Resources\TimeJogadorResource;
+use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
 use Illuminate\Http\Request;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 
 class JogadoresController extends Controller
 {
@@ -15,40 +19,65 @@ class JogadoresController extends Controller
     public function index()
     {
         $jogadores = Jogador::all();
-
         return JogadoresResource::collection($jogadores);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(JogadoresRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
+        $jogadores = $request->all();
+        $novosJogadores = [];
 
-        $jogadores = Jogador::create($data);
-        
-        return new JogadoresResource($jogadores);
+        foreach ($jogadores as $jogador) {
+
+            $idUsuario = $jogador['id_usuario'];
+            $idTime = $jogador['id_time'];
+            $status = $jogador['status'];
+
+            $exists = Jogador::where('id_time', $idTime)
+                ->where('id_usuario', $idUsuario)
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            $data = [
+                'id_usuario' => $idUsuario,
+                'id_time' => $idTime,
+                'status' => $status
+            ];
+
+            $novoJogador =  Jogador::create($data);
+            
+            $novosJogadores[] = $novoJogador->id;
+        }
+
+        $jogadores = Jogador::whereIn('id', $novosJogadores)->get();
+
+        // dd(JogadoresResource::collection($novosJogadores));
+
+        return JogadoresResource::collection($jogadores);
     }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
-    {   
+    {
         $jogadores = Jogador::findOrFail($id);
-
-        // dd($jogadores);
-
         return new JogadoresResource($jogadores);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(JogadoresRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
-        $data = $request->validated();
+
+        $data = $request->all();
 
         $jogadores = Jogador::findOrFail($id);
 
@@ -62,9 +91,21 @@ class JogadoresController extends Controller
      */
     public function destroy(string $id)
     {
-        $jogadores = Jogador::findOrFail($id);
-        $jogadores->delete();
-        return new JogadoresResource($jogadores);
+        $jogador = Jogador::findOrFail($id);
+        $jogador->delete();
+     
+        return new JogadoresResource($jogador);
     }
-    
+
+    public function expulsarJogador(string $id)
+    {
+        $jogador = Jogador::findOrFail($id);
+
+        $jogador->id_time = null;
+        $jogador->status = '0';
+
+        $jogador->delete();
+
+        return new TimeJogadorResource($jogador);
+    }
 }

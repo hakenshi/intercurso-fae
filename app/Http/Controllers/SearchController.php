@@ -33,11 +33,9 @@ class SearchController extends Controller
         
      }
      
-     public function jogadores(Request $request){
+     public function usuarios(Request $request){
         $data = $request->input('value');
-        $jogadores = Jogador::join('usuarios', "jogadores.id_usuario", "=", "usuarios.id")
-        ->where("usuarios.ra", 'like', '%'.$data.'%')
-        ->get();
+        $jogadores = User::where('ra', 'LIKE', "%".$data."%")->get();
         // dd($jogadores);
         return $this->search($data, $jogadores);
      }
