@@ -35,14 +35,6 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'nullable',
             'max: 11',
         ],
-        // 'email' =>[
-        //     'required',
-        //     'email',
-        //     'max:255',
-        //     'unique:usuarios,email',
-        //     Rule::unique('email')->ignore($this->route('id'))
-        // ],
-
         'email' => [
             'required',
             'email', 
@@ -50,12 +42,6 @@ class StoreUpdateUsuariosRequest extends FormRequest
                 return $query->where('id', $this->id); 
             }),
         ],
-
-        // 'senha' => [
-        //     'required',
-        //     'min:3',
-        //     'max:100'
-        // ],
         'ra' =>[
             'required',
             Rule::unique('usuarios')->ignore($this->route('id'))->where(function($query){
@@ -66,26 +52,6 @@ class StoreUpdateUsuariosRequest extends FormRequest
             'required'
         ]
        ];
-
-    //    if($this->method() === 'PATCH'){
-    //     $rules['senha'] =[
-    //         'nullable',
-    //         'min:6',
-    //         'max:100'
-    //     ];
-    //     $rules['email'] = [
-    //         'nullable',
-    //         'email',
-    //         'max:255',
-    //         Rule::unique('usuarios')->ignore($this->id),
-    //     ];
-    //     $rules['ra'] = [
-    //         'nullable',
-    //         'max:10',
-    //         Rule::unique('usuarios')->ignore($this->id),
-    //     ];
-    //    }
-
         return $rules;
     }
 }

@@ -89,6 +89,15 @@ class UserController extends Controller
         return new UsuariosResource($user);
     }
 
-    
+    public function tornarResponsavel(string $id, Request $request){
+
+        $user = ModelsUser::findOrFail($id);
+        $user->tipo_usuario = $request->tipo_usuario;
+
+        $user->update();
+
+        return new UsuariosResource($user);
+
+    }    
 
 }

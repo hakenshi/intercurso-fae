@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import p from "prop-types"
 import { useEffect, useRef, useState } from "react"
 
-export const Modal = ({ children, isOpen, onClose, onSubmit, texto, id }) => {
+export const Modal = ({ children, isOpen, onClose, onSubmit, texto, isForm, button}) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-    // const modalRef = useRef(null)
 
     const closeModal = () => {
         setIsModalOpen(false)
@@ -21,16 +20,28 @@ export const Modal = ({ children, isOpen, onClose, onSubmit, texto, id }) => {
                     <span className="flex justify-end text-unifae-gray-2"><button onClick={closeModal} className="flex items-center justify-center p-2 h-[30px] w-[30px] rounded-full hover:text-unifae-white-1 hover:bg-unifae-gray50-3">
                         <FontAwesomeIcon icon={faClose} />
                     </button></span>
-                    <form className="flex flex-col justify-center p-2" onSubmit={onSubmit} >
+
+                    {/* 
+                    
+                     Se por alguma razão ou circunstância eu não quiser que o modal seja um formulário ou que ele não precise ser um formulário, é só passar por prop isForm = false. 
+
+                    */}
+
+                    {isForm ? <form className="flex flex-col justify-center p-2" onSubmit={onSubmit} >
                         <h1 className="text-center text-xl">{texto}</h1>
                         {children}
 
-                        <div className="flex justify-center gap-10 p-2">
+                        {button && <div className="flex justify-center gap-10 p-2">
                             <button type="submit" className="btn-sm btn-green">Enviar</button>
-                            {id && <button onClick={() => handleDelete(id)} className="btn-sm btn-delete">Excluir</button>
-                            }
-                        </div>
-                    </form>
+                        </div>}
+                    </form> : 
+                    <div className="flex flex-col justify-center p-2" onSubmit={() => onSubmit()} >
+                        <h1 className="text-center text-xl">{texto}</h1>
+                        {children}
+                        {button && <div className="flex justify-center gap-10 p-2">
+                            <button onClick={()=>onSubmit()} type="button" className="btn-sm btn-green">Enviar</button>
+                        </div>}
+                    </div>}
                 </div>
             </dialog>
         )
@@ -42,5 +53,6 @@ Modal.propTypes = {
     isOpen: p.bool,
     onClose: p.func,
     onSubmit: p.func,
-    texto: p.string
+    texto: p.string,
+    isForm: p.bool,
 }

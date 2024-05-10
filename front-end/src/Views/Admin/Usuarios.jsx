@@ -7,6 +7,8 @@ import useAxios from "../../Components/hooks/useAxios"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
 import cursos from "../../../public/cursos.json"
+import usePagiante from "../../Components/hooks/usePaginate"
+import { Paginate } from "../../Components/Paginate"
 
 export const Usuarios = () => {
 
@@ -25,29 +27,14 @@ export const Usuarios = () => {
 
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [editUsuario, setEditUsuario] = useState(null)
-    const [usuarios, setUsuarios] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [erros, setErrors] = useState(null);
-
-
+    const {data: usuarios, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/usuarios")
+    
     useEffect(() => {
         if (user.tipo_usuario != 1) navigate('/jogos', { replace: true })
     }, [user, navigate])
 
-    useEffect(() => {
-        if (!usuarios) {
-            axiosInstance.get("/usuarios")
-                .then(response => {
-                    setUsuarios(response.data.data)
-                    setLoading(false)
-                })
-                .catch(error => {
-                    setErrors(error.message)
-                    setLoading(false)
-                })
-        }
-    }, [usuarios])
-
+    
 
     const handleEditModal = (usuario) => {
         setIsEditAlertOpen(true)
@@ -84,7 +71,7 @@ export const Usuarios = () => {
                 .then(({ data }) => {
                     if (data) {
                         alert("Usuário Editado com sucesso!")
-                        setUsuarios(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? { ...usuario, ...data.data } : usuario))
+                        setData(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? { ...usuario, ...data.data } : usuario))
                     }
 
                 })
@@ -102,7 +89,7 @@ export const Usuarios = () => {
                 .then(({ data }) => {
                     if (data) {
                         alert("Usuário cadastrado com sucesso!")
-                        setUsuarios(u => [...u, data.data])
+                        setData(u => [...u, data.data])
                     }
                 })
                 .catch(error => {
@@ -122,7 +109,7 @@ export const Usuarios = () => {
             axiosInstance.delete(`/usuarios/${id}`)
                 .then(() => {
                     alert("Usuário excluido com sucesso")
-                    setUsuarios((u) => u.filter(({ usuario }) => usuario.id !== id))
+                    setData((u) => u.filter(({ usuario }) => usuario.id !== id))
                 })
                 .catch(error => {
                     const response = error.response
@@ -134,41 +121,51 @@ export const Usuarios = () => {
 
         return
     }
-    const handleTornarResponsavel = (data) => {
+    const handleTornarResponsavel = ({usuario}) => {
 
-        if (data.usuario.tipo_usuario === "Responsável") {
+        if (usuario.tipo_usuario === "2") {
             alert('Esse usuário já é um responsável.')
             return
         }
-        
+    
+    
             const confirm = window.confirm("Tem certeza de que deseja tornar esse usuário responsável?")
 
             const payload = {
-                id_curso: data.curso.id_curso,
-                nome: data.usuario.nome,
-                email: data.usuario.email,
-                ra: data.usuario.ra,
                 tipo_usuario: 2
             }
 
             if (confirm) {
-                axiosInstance.patch(`/usuarios/${data.usuario.id}`, payload)
-                    .then(() => {
+                axiosInstance.patch(`/tornar-responsavel/${usuario.id}`, payload)
+                    .then(({data}) => {
+
+                        console.log(data.data.usuario)
+
+                        console.log(usuario)
+
                         alert("Esse usuário agora é responsável.")
-                        setUsuarios(u => u.map(u => u.usuario.id === data.usuario.id ? { ...u, tipo_usuario: 2 } : u))
+                        setData(u => u.map((usuario) => usuario.usuario.id === data.data.usuario.id ? {
+                            ...usuario,
+                                usuario: {
+                                    ...usuario.usuario,
+                                    tipo_usuario: "2"
+                                }
+                            } : usuario
+                        ))
                     })
                     .catch(error => {
                         const response = error.response
                         if (response) {
-                            alert(response.data.msg)
+                            alert(response)
                         }
                     })
             }
     }
+    
 
     return (
         <>
-            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Responsável">
+            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -203,13 +200,13 @@ export const Usuarios = () => {
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="curso">Curso</label>
                     <select className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
-                        {cursos.map(curso => <option ref={cursoRef} key={curso.id} value={curso.value}>{curso.curso}</option>)}
+                        {cursos.map((curso, index) => <option ref={cursoRef} key={index} value={curso.value}>{curso.curso}</option>)}
                     </select>
                 </div>
 
             </Modal>
 
-            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Cadastrar Responsável">
+            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -239,7 +236,7 @@ export const Usuarios = () => {
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="quantidade-pariticpantes">Curso</label>
                     <select ref={cursoRef} className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
-                        {cursos.map(curso => <option selected={editUsuario ? editUsuario.curso.nome_curso == curso.curso : ""} key={curso.id} value={curso.value}>{curso.curso}</option>)}
+                        {cursos.map((curso, index) => <option selected={editUsuario ? editUsuario.curso.nome_curso == curso.curso : ""} key={index} value={curso.value}>{curso.curso}</option>)}
                     </select>
                 </div>
                 <div className="flex flex-col justify-center p-2">
@@ -264,9 +261,9 @@ export const Usuarios = () => {
                     <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
                 </div>
 
-                <div className="flex flex-col justify-center items-center p-5  overflow-y-scroll">
+                <div className="flex flex-col justify-center items-center p-5 h-11/12">
                     {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className=" bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5">
+                        (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
                                     <th className="p-5">ID</th>
@@ -279,28 +276,29 @@ export const Usuarios = () => {
                                     <th className="p-5" colSpan={2}></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y-2 divide-unifae-gray50-2">
-                                {usuarios.map(response => (
+                            <tbody className="divide-y-2 divide-unifae-gray50-2  overflow-auto h-1/2">
+                                {usuarios.map((response) => (
                                     <tr key={response.usuario.id} className="text-center">
-                                        <td className="p-5 text-pretty">{response.usuario.id}</td>
-                                        <td className="p-5 text-pretty">{response.usuario.nome}</td>
-                                        <td className="p-5 text-pretty">{response.usuario.email}</td>
-                                        <td className="p-5 text-pretty">{response.curso.nome_curso}</td>
-                                        <td className="p-5 text-pretty">{!response.usuario.telefone ? "Sem Telefone" : response.usuario.telefone}</td>
-                                        <td className="p-5 text-pretty">{response.usuario.ra}</td>
-                                        <td className="p-5 text-pretty">{response.usuario.tipo_usuario}</td>
-                                        <td className="p-5 text-pretty">
-                                            <button onClick={() => handleTornarResponsavel(response)} className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar Responsável</button>
-                                        </td>
-                                        <td className="p-5 flex gap-3">
-                                            <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
-                                            <button onClick={() => handleDelete(response.usuario.id)} className="btn-sm btn-delete">Excluir</button>
-                                        </td>
-                                    </tr>
+                                    <td className="p-5 text-pretty">{response.usuario.id}</td>
+                                    <td className="p-5 text-pretty">{response.usuario.nome}</td>
+                                    <td className="p-5 text-pretty">{response.usuario.email}</td>
+                                    <td className="p-5 text-pretty">{response.curso.nome_curso}</td>
+                                    <td className="p-5 text-pretty">{!response.usuario.telefone ? "Sem Telefone" : response.usuario.telefone}</td>
+                                    <td className="p-5 text-pretty">{response.usuario.ra}</td>
+                                    <td className="p-5 text-pretty">{(response.usuario.tipo_usuario == 1) ? "Admin" : (response.usuario.tipo_usuario == 2) ? "Responsável" : "Usuário"}</td>
+                                    <td className="p-5 text-pretty">
+                                        <button onClick={() => handleTornarResponsavel(response)} className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar Responsável</button>
+                                    </td>
+                                    <td className="p-5 flex gap-3">
+                                        <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
+                                        <button onClick={() => handleDelete(response.usuario.id)} className="btn-sm btn-delete">Excluir</button>
+                                    </td>
+                                </tr>
                                 ))}
                             </tbody>
                         </table>)}
                 </div>
+            <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
             </div>
 
         </>

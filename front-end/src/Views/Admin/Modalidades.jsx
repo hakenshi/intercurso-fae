@@ -125,7 +125,7 @@ export const Modalidades = () => {
 
     return (
         <>
-            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Modalidade">
+            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Modalidade" button={true} isForm={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -145,7 +145,7 @@ export const Modalidades = () => {
                 </div>
             </Modal>
 
-            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto={"Editar Modalidade"}>
+            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto={"Editar Modalidade"} button={true} isForm={true}>
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
                     <input ref={nomeRef} type="text" className="input-modal" name="nome" defaultValue={editModalidade ? editModalidade.nome : ""} />

@@ -31,6 +31,8 @@ export const Times = (props) => {
     const [loading, setLoading] = useState(true);
     const [erros, setErrors] = useState(null);
     const [novoJogador, setNovoJogador] = useState([])
+    const [isEditing, setIsEditing] = useState(false)
+
     useEffect(() => {
         if (user.tipo_usuario != 1 && user.tipo_usuario != 2) navigate('/jogos', { replace: true })
     }, [user, navigate])
@@ -61,9 +63,6 @@ export const Times = (props) => {
     }
 
     const handleJogadoresModal = (jogadores, id, idModalidade) => {
-
-        console.log(jogadores)
-
         setEditJogadores(jogadores)
         setTimeId(id)
         setIdModalidade(idModalidade)
@@ -72,6 +71,7 @@ export const Times = (props) => {
 
     const handleCloseJogadores = () => {
         setisJogadoresAlertOpen(false)
+        if (isEditing) setIsEditing(false)
         setEditJogadores(null)
     }
 
@@ -82,33 +82,43 @@ export const Times = (props) => {
     const handleSelectJogador = (jogador) => {
         setNovoJogador(jogador)
     }
-    const handleAddJogador = () => {
-
+    const handleAddJogador = () => {    
         const aluno = jogadores.find(jogador => jogador.id === novoJogador)
 
         const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador)
 
-        const { quantidade_participantes, nome } = modalidades.find(modalidade => modalidade.id === idModalidade)
+        const modalidade = modalidades.find(modalidade => modalidade.id === idModalidade)
 
-        if (editJogadores.length >= quantidade_participantes) {
-            alert(`Quantidade máxima de jogadores na modalidade ${nome} é de ${quantidade_participantes}. O time está cheio.`)
+        const {time, usuario, modalidadeTime} = times.find(time => time.time.id === timeId)
+
+        const jogadorComModalidadeDuplicada = times.some(time =>
+        time.time.id !== timeId &&    
+        modalidade.id_modalidade === idModalidade &&
+        time.informacoes.jogadores.some(jogador => jogador.id === novoJogador))
+        
+        console.log(jogadorComModalidadeDuplicada)
+
+        if (editJogadores.length >= modalidade.quantidade_participantes) {
+            alert(`Quantidade máxima de jogadores na modalidade ${modalidade.nome} é de ${modalidade.quantidade_participantes}. O time está cheio.`)
             return
         }
 
-        else if (novoJogador == null || !novoJogador || novoJogador == '') {
-            alert("Por favor, escolha um aluno")
-            return
-        }
-
-        else if (jogadorExistente) {
+        if (jogadorExistente) {
             alert("Esse aluno já está no time.")
             return
         }
 
-        else {
-            setNovoJogador(null)
-            setEditJogadores([...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '1' }])
+        if(jogadorComModalidadeDuplicada){
+            alert(`${aluno.nome} já pertence a um time com a modalidade ${modalidade.nome}.\nO nome do time é ${time.nome}\nseu responsável é: ${usuario.nome_responsavel}`)
+            return
         }
+
+        if (novoJogador == null || !novoJogador || novoJogador == '') {
+            alert("Por favor, escolha um aluno")
+            return
+        }
+
+        setEditJogadores([...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '1' }])
 
     }
 
@@ -123,7 +133,7 @@ export const Times = (props) => {
             nome: nomeRef.current.value,
             id_modalidade: modalidadeRef.current.value,
             id_responsavel: user.tipo_usuario == 2 ? props.id : getResponasavelId(),
-            status: 1,
+            status: "1",
         }
 
         if (isEditAlertOpen) {
@@ -155,26 +165,26 @@ export const Times = (props) => {
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        console.log(response.data)
                     }
                 })
                 .finally(() => setIsAlertOpen(false))
         }
     }
 
-    const handleDelete = (id) => {
+    const handleDeleteTime = (id) => {
         const confirm = window.confirm("Tem certeza de que deseja apagar?")
 
         if (confirm) {
             axiosInstance.delete(`/times/${id}`)
                 .then(() => {
                     alert("Time excluido com sucesso")
-                    setTimes(m => m.filter(item => item.id !== id))
+                    setTimes(t => t.filter(time => time.time.id !== id))
                 })
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        alert(response)
                     }
                 })
         }
@@ -185,14 +195,12 @@ export const Times = (props) => {
     const handleDeleteJogador = (id) => {
         const confirm = window.confirm("Tem certeza de que deseja este jogador do time?")
 
-
-
         if (confirm) {
             axiosInstance.patch(`/expulsar-jogador/${id}`)
                 .then(() => {
                     alert("Jogador excluido com sucesso")
                     setEditJogadores(j => j.filter(item => item.id !== id))
-                    setTimes(t => t.map(time => time.informacoes.jogadores.some(jogador=> jogador.id === id) ? ({
+                    setTimes(t => t.map(time => time.informacoes.jogadores.some(jogador => jogador.id === id) ? ({
                         ...time,
                         informacoes: {
                             ...time.informacoes,
@@ -201,7 +209,6 @@ export const Times = (props) => {
                         }
                     }) : time))
                 })
-                0
                 .catch(error => {
                     const response = error.response
                     if (response) {
@@ -213,7 +220,7 @@ export const Times = (props) => {
         return
     }
 
-    const handleInativar = (times) => {
+    const handleInativarTime = (times) => {
 
 
         const status = times.time.status === "1" ? "0" : "1"
@@ -253,6 +260,17 @@ export const Times = (props) => {
                 .then(() => {
                     alert(`Jogador ${jogador.status === '1' ? "inativado" : "ativado"} com sucesso`)
                     setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
+
+                    setTimes(t => Array.isArray(t) ? t.map(time => ({
+                        ...time,
+                        informacoes: {
+                            ...time.informacoes,
+                            jogadores: time.informacoes.jogadores.map(j =>
+                                j.id === jogador.id ? { ...j, status: status } : j
+                            ),
+                        }
+                    })) : t);
+
                 })
                 .catch(error => {
                     const response = error.response
@@ -265,20 +283,18 @@ export const Times = (props) => {
         return
     }
 
-    const handleJogadoresSubmit = e => {
-        e.preventDefault()
-
+    const handleJogadoresSubmit = () => {
         const payload = editJogadores.map(jogador => ({
             id_usuario: jogador.id_usuario,
             id_time: jogador.id_time,
             status: jogador.status
         }))
-        
+
         axiosInstance.post('/jogadores', payload)
-        .then(({ data }) => {
+            .then(({ data }) => {
                 alert(`${data.data.length === 1 ? 'Jogador inserido com sucesso no time' : "Jogadores inseridos com sucesso no time"}`)
 
-                setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? { 
+                setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
                     ...time,
                     informacoes: {
                         jogadores: [
@@ -296,11 +312,12 @@ export const Times = (props) => {
                         quantidade: time.informacoes.quantidade + data.data.length,
                     }
                 } : time));
-                
+
                 // setTimes(t => t.map(time => time.time.id === editTimes.time.id ? { ...time, ...data.data } : time))
 
-                
+
                 setisJogadoresAlertOpen(false)
+                setIsEditing(false)
             })
             .catch(error => {
                 const response = error.message
@@ -311,7 +328,7 @@ export const Times = (props) => {
     return (
         <>
             {/* Modal de cadastro */}
-            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Time">
+            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Time" isForm={true} button={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome do time</label>
@@ -335,7 +352,7 @@ export const Times = (props) => {
             </Modal>
 
             {/* Modal de edição */}
-            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Editar Time" id={editTimes ? editTimes.id : ""}>
+            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Editar Time" id={editTimes ? editTimes.id : ""} isForm={true} button={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome do time</label>
@@ -359,55 +376,81 @@ export const Times = (props) => {
             </Modal>
 
             {/* Modal de jogadores */}
-            <Modal isOpen={isJogadoresAlertOpen} onClose={handleCloseJogadores} texto={'Jogadores'} onSubmit={handleJogadoresSubmit}>
+            <Modal isOpen={isJogadoresAlertOpen} onClose={handleCloseJogadores} texto={'Jogadores'} onSubmit={handleJogadoresSubmit} isForm={false} button={false}>
                 <div className="py-5">
-                    <div className="flex justify-center items-center p-2 gap-3 w-full">
+
+                    {!isEditing &&  <div className="flex justify-center pb-3"><button onClick={() => setIsEditing(true)} className="btn-green p-2 w-32">Editar</button></div>}
+
+                    {isEditing && <div className="flex justify-center items-center p-2 gap-3 w-full">
                         <Search placeholder={"Insira o RA de um aluno"} url={"/search-jogadores"} handleSelectUser={handleSelectJogador} />
                         <button type="button" onClick={handleAddJogador} className="btn-green p-2">Adicionar jogador</button>
                     </div>
 
-                    <table className="w-full table-auto divide-y divide-gray-200">
-                        <thead className="bg-unifae-green-4">
-                            <tr className="text-center">
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Nome
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Email
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    RA
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {editJogadores && editJogadores.map((jogador, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {jogador.nome}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {jogador.email}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {jogador.ra}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {jogador.status === "1" ? "Ativo" : "Inativo"}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap flex gap-6">
-                                        <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>{jogador.status === "1" ? "Inativar" : "Ativar"}</button>
-                                        <button type="button" onClick={() => handleDeleteJogador(jogador.id)} className={`btn-sm btn-delete`}>Retirar</button>
-                                    </td>
+                    }
+
+                    {editJogadores && editJogadores.length > 0 ? (
+                        <table className="w-full table-auto divide-y divide-gray-200">
+                            <thead className="bg-unifae-green-4">
+                                <tr className="text-center">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Nome
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        RA
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {editJogadores.map((jogador, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.nome}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.email}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.ra}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.status === "1" ? "Ativo" : "Inativo"}
+                                        </td>
+                                        {isEditing && (
+                                            <td className="px-6 py-4 whitespace-nowrap flex gap-6">
+                                                <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
+                                                    {jogador.status === "1" ? "Inativar" : "Ativar"}
+                                                </button>
+                                                <button type="button" onClick={() => handleDeleteJogador(jogador.id)} className={`btn-sm btn-delete`}>
+                                                    Retirar
+                                                </button>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                       !isEditing  && <div className="w-full h-[10vh] flex justify-center items-center">
+                            <p>Este time ainda não tem jogadores, clique em editar para adicioná-los!</p>
+                        </div>
+                    )}
+                    {isEditing && (
+                        <div className="flex justify-center gap-10 p-2">
+                            <button onClick={() => handleJogadoresSubmit()} type="button" className="btn-sm btn-green">
+                                Enviar
+                            </button>
+                        </div>
+                    )}
+
+
                 </div>
 
             </Modal>
@@ -421,9 +464,11 @@ export const Times = (props) => {
                     <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
                 </div>
 
-                <div className="flex flex-col justify-center items-center p-5">
+                {times && times.length <= 0  ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
+                    <p className=""> Você ainda não é responsável por nenhum time.</p>
+                </div> : <div className="flex flex-col justify-center items-center p-5">
                     {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
+                        (<table className="bg-card-white-1 w-[80vw] flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
                                     {/* <th className="p-5">ID</th> */}
@@ -436,7 +481,7 @@ export const Times = (props) => {
                                     <th className="p-5"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y-2 divide-unifae-gray50-2">
+                            <tbody className="divide-y divide-unifae-gray50-2">
                                 {times
                                     .filter(response => props.id ? response.usuario.id_responsavel == props.id : true)
                                     .map(response => (
@@ -450,20 +495,19 @@ export const Times = (props) => {
                                                 <button onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id, response.modalidade.id_modalidade)} className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver jogadores</button>
 
                                             </td>
-                                            <td className="p-5 flex gap-5">
-                                                <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
-                                                <button onClick={() => handleInativar(response)} className={`btn-sm ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
+                                            <td className="p-5 flex justify-center gap-5">
+                                                <button onClick={() => handleEditModal(response)} className="p-2 btn-edit">Editar</button>
+                                                <button onClick={() => handleDeleteTime(response.time.id)} className={`p-2 btn-delete`}>Excluir</button>
+                                                <button onClick={() => handleInativarTime(response)} className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
                                             </td>
                                         </tr>
                                     ))}
                             </tbody>
                         </table>)}
-                </div>
+                </div>}
             </div>
 
         </>
-
-
     )
 }
 

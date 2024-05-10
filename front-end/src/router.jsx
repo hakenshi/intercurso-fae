@@ -8,12 +8,13 @@ import Cadastro from "./Views/Guest/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
 import GuestLayout from "./layouts/GuestLayout";
 import Dashboard from "./Views/Admin/Dashboard";
-// import AdminLayout from "./layouts/AdminLayout";
 import { Modalidades } from "./Views/Admin/Modalidades";
 import { Times } from "./Views/Admin/Times";
 import { Usuarios } from "./Views/Admin/Usuarios";
 import { MeusTimes } from "./Views/Responsavel/MeusTimes";
-import { CadastrarTime } from "./Views/Default/CadastrarTime";
+import { Perfil } from "./Views/Default/Perfil";
+// import { EditarPerfil } from "./Views/Default/EditarPerfil";
+import { Configuracoes } from "./Views/Default/Configuracoes";
 
 const router = createBrowserRouter([
     {
@@ -56,7 +57,14 @@ const router = createBrowserRouter([
                 path: '/meus-times',
                 element: <MeusTimes/>,
             },
-
+            {
+                path: '/usuario/meu-perfil',
+                element: <Perfil/>
+            },
+            {
+                path: '/usuario/configuracoes',
+                element: <Configuracoes/>
+            }
         ]
     },
 
