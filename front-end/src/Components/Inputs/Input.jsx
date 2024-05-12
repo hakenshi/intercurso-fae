@@ -1,3 +1,4 @@
+import React from 'react'
 import ReactInputMask from 'react-input-mask'
 
 const inputClass = {
@@ -6,12 +7,18 @@ const inputClass = {
     inputLogin: "input-login",
 }
 
-export const Input = ({ ref, mask, name, label, className, value }) => {
+// export const Input = React.forwardRef((props, ref) => {
 
-    return (
-        <div className="flex flex-col justify-center p-2">
-            <label htmlFor={name}>{label}</label>
-            <ReactInputMask mask={mask} ref={ref} type="text" className={`${className}`} name={name} value={value} />
-        </div>
+//     return (
+//         <div className="flex flex-col justify-center p-2">
+//             <label htmlFor={name}>{label}</label>
+//             <ReactInputMask ref={ref} mask={mask} type="text" className={`${className}`} name={name} defaultValue={value} placeholder={placholder}/>
+//         </div>
+//     )
+// })
+
+export const Input = React.forwardRef((props, ref) => {
+    return(
+        'banana'
     )
-}
+})

@@ -11,5 +11,5 @@ export default function GuestLayout(){
         return <Navigate to={"/"} replace={true}/>
     }
 
-    return <><Outlet/></>
+    return <Outlet/>
 }

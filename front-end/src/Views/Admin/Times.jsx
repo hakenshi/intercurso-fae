@@ -455,7 +455,7 @@ export const Times = (props) => {
 
             </Modal>
 
-            <div className="w-full h-[88vh] flex items-center flex-col">
+            <div className="w-full flex items-center flex-col">
                 <h1 className="text-center p-5 text-3xl font-medium">Times</h1>
                 <div className="flex flex-col">
                     <span className="flex justify-around p-5">

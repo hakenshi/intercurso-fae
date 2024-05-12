@@ -52,4 +52,25 @@ class CadastroRequest extends FormRequest
 
         return $rules;
     }
+
+    public function messages()
+    {
+        return [
+            'id_curso.required' => "Por favor, escolha seu curso",
+            'nome.required' => 'Por favor, insira seu nome completo',
+            'nome.min' => "Por favor, insira um nome que tenha no mínimo 3 letras",
+            'nome.max' => "O nome fornecido é grande de mais",
+            'email.required' => "Por favor, insira seu email",
+            'email.email' => "Por favor insira um email válido",
+            'email.max' => "O email fornecido é grande de mais",
+            'email.unique' => "Parece que esse email já está sendo utilizado",
+            'senha.required' => 'Por favor, insira uma senha',
+            'senha.min' => "Por favor, insira uma senha que contenha no mínimo 3 caracteres",
+            'senha.max' => "A senha inserida é grande de mais",
+            'ra.required' => 'Por favor insira um ra',
+            'ra.unique' => "Parece que esse ra já está sendo utilizado",
+            'ra.max' => "Esse ra é muito grande, tem certeza de que ele está correto?",
+        ];
+    }
+
 }

@@ -16,10 +16,11 @@ export const Modal = ({ children, isOpen, onClose, onSubmit, texto, isForm, butt
         return (
             <dialog className="flex items-center justify-center min-w-full min-h-full bg-unifae-gray50-1 z-10 absolute left-0 top-0">
 
-                <div className="bg-unifae-white-1 w-fit h-fit p-5 rounded-xl z-20">
+                <div className="bg-unifae-white-1 w-full h-screen md:w-fit md:h-fit md:p-5 md:rounded-xl z-20">
                     <span className="flex justify-end text-unifae-gray-2"><button onClick={closeModal} className="flex items-center justify-center p-2 h-[30px] w-[30px] rounded-full hover:text-unifae-white-1 hover:bg-unifae-gray50-3">
                         <FontAwesomeIcon icon={faClose} />
-                    </button></span>
+                    </button>
+                    </span>
 
                     {/* 
                     
@@ -27,7 +28,7 @@ export const Modal = ({ children, isOpen, onClose, onSubmit, texto, isForm, butt
 
                     */}
 
-                    {isForm ? <form className="flex flex-col justify-center p-2" onSubmit={onSubmit} >
+                    {isForm ? <form className="flex flex-col justify-center md:p-2" onSubmit={onSubmit} >
                         <h1 className="text-center text-xl">{texto}</h1>
                         {children}
 

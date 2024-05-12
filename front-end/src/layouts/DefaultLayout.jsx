@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBars, faL } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery } from "@react-hook/media-query";
 import logoBranca from "../assets/logo-unifae-2021-branca.png";
 import userLogo from "../assets/blank-profile-picture-973460_640.png";
@@ -20,7 +20,7 @@ export default function DefaultLayout() {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
     const [isDropDownVisible, setisDropDownVisible] = useState(false)
     const { user, token, setUser, setSessionToken } = useStateContext()
-    const userInfoRef = useRef()
+    const userInfoRef = useRef(null)
     const navigate = useNavigate()
     const toggleAsideVisibility = () => {
         setIsAsideVisible(!isAsideVisible);
@@ -36,8 +36,30 @@ export default function DefaultLayout() {
 
         }
         
-    }, [])
+    }, [navigate, setUser])
     
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (userInfoRef.current && !userInfoRef.current.contains(e.target)) {
+                setisDropDownVisible(false);
+            }
+        };
+    
+        if (isDropDownVisible) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isDropDownVisible]);
+    
+    
+    
+
     const onLogout = (e) => {
         e.preventDefault()
 
@@ -49,29 +71,18 @@ export default function DefaultLayout() {
             })
         }        
 
-        useEffect(()=>{
-            const handler = (e) =>{
-                if(userInfoRef.current && !userInfoRef.current.contains(e.target)){
-                setisDropDownVisible(false)
-            }
-            document.addEventListener("mousedown", handler)
-        }
-
-            return() => document.removeEventListener("mousedown", handler)
-        }, [])
-
     return (
-        <div className="flex flex-col max-h-screen">
+        <div className="flex flex-col">
             <header className="bg-unifae-green-1 w-screen shadow-xl">
                 <nav className="p-4 flex justify-between">
                     <div className="flex items-center gap-3 text-white">
-                        {isMobile && (
-                            <button className="block md:hidden" onClick={toggleAsideVisibility}>
+                        {isMobile ? (
+                            <button className="block " onClick={toggleAsideVisibility}>
                                 <FontAwesomeIcon icon={faBars} />
                             </button>
-                        )}
-                        {!isMobile && (
+                       ): (
                             <div className="flex items-center gap-3">
+                                
                                 <a href="https://www.fae.br/unifae2/" target="_blank">
                                     <img className="w-[125px]" src={logoBranca} alt="unifae-logo" />
                                 </a>
@@ -85,7 +96,7 @@ export default function DefaultLayout() {
                         </span>
 
                         {user.nome && (
-                       <span ref={userInfoRef} className={`absolute top-11 right-0 ${isDropDownVisible ? 'opacity-100' : "opacity-0"} transition-all duration-500`}>
+                       <span ref={userInfoRef} className={`absolute top-11 right-0 ${isDropDownVisible ? 'opacity-100' : "opacity-0 hidden"} transition-opacity duration-500`}>
                             <UserInfo logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome}/>
                         </span> 
                     )}
@@ -97,12 +108,12 @@ export default function DefaultLayout() {
                     </div>
                 </nav>
             </header>
-            <div className="flex flex-grow sm:h-[120vh]">
+            <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
                     <Aside isAsideVisible={isAsideVisible} />
                 </AsideContext.Provider>
-                <div className={`${isAsideVisible ? "flex-grow" : "w-full"}`}>
-                    <main className="flex justify-center items-center">
+                <div className={`${isAsideVisible ? "flex-grow" : "flex-grow-0"}`}>
+                    <main className="flex justify-center items-center xl:w-full w-screen">
                         <Outlet />
                     </main>
                 </div>

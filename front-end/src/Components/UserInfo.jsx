@@ -6,7 +6,7 @@ import { Link, NavLink } from "react-router-dom";
 
 export const UserInfo = ({ nome, logout, isDropDownVisible }) =>{
     
-   if(isDropDownVisible)
+//    if(!isDropDownVisible)
     return  (
         <div className="w-full flex justify-center p-4">
             <div className="user-dropdown">
