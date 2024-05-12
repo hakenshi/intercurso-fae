@@ -33,7 +33,7 @@ class StoreUpdateUsuariosRequest extends FormRequest
         ],
         'telefone' =>[
             'nullable',
-            'max: 11',
+            'max: 20',
         ],
         'email' => [
             'required',
@@ -48,8 +48,8 @@ class StoreUpdateUsuariosRequest extends FormRequest
                 return $query->where('id', $this->id);
             }),
         ],
-        'tipo_usuario' =>[
-            'required'
+        'foto_perfil' => [
+            'image|mimes:jpeg,jpg,png',
         ]
        ];
         return $rules;

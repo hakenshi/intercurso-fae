@@ -1,17 +1,15 @@
-import { faCamera, faCog, faHeart, faPencil, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faCog, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import userLogo from "../../assets/blank-profile-picture-973460_640.png";
 import logoBranca from "../../assets/logo-unifae-2021-branca.png";
 import React, { useRef, useState } from 'react'
 import { useStateContext } from '../../Contexts/ContextProvider';
-import { Link, Navigate } from 'react-router-dom';
 import { Container } from '../../Components/Container';
 import { Modal } from '../../Components/Modal';
-import ReactInputMask from 'react-input-mask';
 import { Input } from '../../Components/Inputs/Input';
-import { FileInput } from '../../Components/Inputs/FileInput';
-import cursos from "../../../public/cursos.json"
 import { TextArea } from '../../Components/Inputs/TextArea';
+import { onlyNumbers } from '../../utils/onlyNumbers';
+import axiosInstance from '../../helper/axios-instance';
 
 export const Perfil = () => {
 
@@ -27,8 +25,7 @@ export const Perfil = () => {
   const telefoneRef = useRef(null)
   const raRef = useRef(null)
   const dataNascimentoRef = useRef(null)
-
-
+  const cursoRef = useRef(null)
   const handleImageChange = (e) => {
 
     const file = e.target.files[0]
@@ -39,17 +36,25 @@ export const Perfil = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     const formData = new FormData()
+    
+      formData.append("nome", nomeRef.current ? nomeRef.current.value : user.nome)
+      formData.append("email", emailRef.current ? emailRef.current.value : user.email)
+      formData.append("senha", senhaRef.current ? senhaRef.current.value : "")
+      formData.append("telefone", telefoneRef.current ? telefoneRef.current.value : user.senha)
+      formData.append("bio", bioRef.current ? bioRef.current.value : user.bio)
+      formData.append("ra", raRef.current ? raRef.current.value : user.ra)
+      formData.append("id_curso", cursoRef.current ? cursoRef.current.value : user.id_curso)
+      formData.append("data_de_nascimento", dataNascimentoRef.current ? dataNascimentoRef.current.value : user.data_de_nascimento)
+      formData.append("foto_perfil", fileRef.current.files[0])
 
-    formData.append('nome', nomeRef.current.value)
-    formData.append('email', emailRef.current.value)
-    formData.append('senha', senhaRef.current.value)
-    formData.append('bio', bioRef.current.value)
-    formData.append('telefone', telefoneRef.current.value)
-    formData.append('ra', raRef.current.value)
-    formData.append('data_de_nascimento', dataNascimentoRef.current.value)
-    formData.append('foto_perfil', fileRef.current.files[0])
-
-    console.log(formData)
+    const headers = {
+      'headers': {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    axiosInstance.patch(`/usuarios/${user.id}`,formData, headers )
+    .then(response => console.log(response))
+    .catch(response => console.log(response))
 
   }
 
