@@ -19,6 +19,7 @@ class TimeController extends Controller
     public function index()
     {
         $times = Time::all();
+        
         $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
         $jogadores = User::all('id', 'nome', 'email', 'ra');
 

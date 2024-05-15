@@ -49,8 +49,12 @@ class StoreUpdateUsuariosRequest extends FormRequest
             }),
         ],
         'foto_perfil' => [
-            'image|mimes:jpeg,jpg,png',
-        ]
+            'nullable',
+            'image',
+        ],
+        'bio' => 'nullable|max:120',
+        'data_nascimento' => 'nullable',
+        'tipo_usuario' => 'nullable|integer',
        ];
         return $rules;
     }

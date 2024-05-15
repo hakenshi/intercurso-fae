@@ -9,6 +9,8 @@ import { Oval } from "react-loader-spinner"
 import cursos from "../../../public/cursos.json"
 import usePagiante from "../../Components/hooks/usePaginate"
 import { Paginate } from "../../Components/Paginate"
+import { images } from "../../assets"
+import { ProfileImage } from "../../Components/ProfileImage"
 
 export const Usuarios = () => {
 
@@ -127,8 +129,6 @@ export const Usuarios = () => {
             alert('Esse usuário já é um responsável.')
             return
         }
-    
-    
             const confirm = window.confirm("Tem certeza de que deseja tornar esse usuário responsável?")
 
             const payload = {
@@ -266,7 +266,7 @@ export const Usuarios = () => {
                         (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
-                                    <th className="p-5">ID</th>
+                                    <th className="p-5"></th>
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Email</th>
                                     <th className="p-5">Curso</th>
@@ -276,10 +276,16 @@ export const Usuarios = () => {
                                     <th className="p-5" colSpan={2}></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y-2 divide-unifae-gray50-2  overflow-auto h-1/2">
+                            <tbody className="divide-y divide-unifae-gray50-2  overflow-auto h-1/2">
                                 {usuarios.map((response) => (
                                     <tr key={response.usuario.id} className="text-center">
-                                    <td className="p-5 text-pretty">{response.usuario.id}</td>
+                                    <td className="p-5 text-pretty">
+                                    <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.usuario.foto_perfil}/>
+
+                                    </td>
+
+                                    {/* className="w-10 rounded-full object-cover" */}
+
                                     <td className="p-5 text-pretty">{response.usuario.nome}</td>
                                     <td className="p-5 text-pretty">{response.usuario.email}</td>
                                     <td className="p-5 text-pretty">{response.curso.nome_curso}</td>

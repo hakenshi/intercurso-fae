@@ -11,6 +11,9 @@ import { useStateContext } from "../Contexts/ContextProvider";
 import axiosInstance from "../helper/axios-instance";
 import { UserInfo } from "../Components/UserInfo";
 import { Aside } from "../Components/Aside/Aside";
+import { ProfileImage } from "../Components/ProfileImage";
+import { Notficacao } from "../Components/Notficacao";
+import { useClickOutSide } from "../Components/hooks/useClickOutside";
 
 // Criando o contexto
 const AsideContext = createContext();
@@ -20,11 +23,17 @@ export default function DefaultLayout() {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
     const [isDropDownVisible, setisDropDownVisible] = useState(false)
     const { user, token, setUser, setSessionToken } = useStateContext()
-    const userInfoRef = useRef(null)
+    const notificacaoRef = useRef(null)
     const navigate = useNavigate()
+
+    
     const toggleAsideVisibility = () => {
-        setIsAsideVisible(!isAsideVisible);
+        setIsAsideVisible(a => !a);
     };
+    const toggleDropdownVisibility = () => {
+        setisDropDownVisible( d => !d);
+    };
+    const domNode = useClickOutSide(() => toggleDropdownVisibility())
 
     useEffect(() => {
         if(sessionStorage.getItem('ACCESS_TOKEN')){
@@ -33,33 +42,10 @@ export default function DefaultLayout() {
                 setUser(data)
                 if(data.tipo_usuario == 1) navigate('/dashboard', {replace: true})
             })
-
         }
         
     }, [navigate, setUser])
     
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (userInfoRef.current && !userInfoRef.current.contains(e.target)) {
-                setisDropDownVisible(false);
-            }
-        };
-    
-        if (isDropDownVisible) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-    
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isDropDownVisible]);
-    
-    
-    
-
     const onLogout = (e) => {
         e.preventDefault()
 
@@ -69,15 +55,15 @@ export default function DefaultLayout() {
                 setSessionToken(null)
                 navigate("/login", {replace: true})
             })
-        }        
-
+        }
+                
     return (
         <div className="flex flex-col">
             <header className="bg-unifae-green-1 w-screen shadow-xl">
                 <nav className="p-4 flex justify-between">
                     <div className="flex items-center gap-3 text-white">
                         {isMobile ? (
-                            <button className="block " onClick={toggleAsideVisibility}>
+                            <button className="block" onClick={toggleAsideVisibility}>
                                 <FontAwesomeIcon icon={faBars} />
                             </button>
                        ): (
@@ -91,20 +77,8 @@ export default function DefaultLayout() {
                         )}
                     </div>
                     <div className="flex justify-center items-center gap-3">
-                        <span className="text-white cursor-pointer">
-                            <FontAwesomeIcon icon={faBell} />
-                        </span>
-
-                        {user.nome && (
-                       <span ref={userInfoRef} className={`absolute top-11 right-0 ${isDropDownVisible ? 'opacity-100' : "opacity-0 hidden"} transition-opacity duration-500`}>
-                            <UserInfo logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome}/>
-                        </span> 
-                    )}
-
-                        <span onClick={() => setisDropDownVisible(!isDropDownVisible)} className="flex justify-center items-center cursor-pointer">
-                            <img  className="w-10 h-10 rounded-full" src={userLogo} alt={user.nome} />
-                        </span>
-                       
+                            <ProfileImage onClick={(e) =>toggleDropdownVisibility(e)} className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={user.foto_perfil}/>
+                            {isDropDownVisible && <UserInfo ref={domNode} logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome} foto={user.foto_perfil}/>}
                     </div>
                 </nav>
             </header>

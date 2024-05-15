@@ -3,10 +3,12 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\ModalidadesController;
+use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\UsuariosResource;
+use App\Models\Notificacao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/search-jogadores", [SearchController::class, 'usuarios']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
+    Route::get("/notificacoes/{id}", [NotificacaoController::class, 'enviarNotificacao']);
 });
 
 

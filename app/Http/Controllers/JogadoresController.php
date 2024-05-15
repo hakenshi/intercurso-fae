@@ -8,6 +8,9 @@ use App\Http\Resources\TimeJogadoresResource;
 use App\Http\Resources\TimeJogadorResource;
 use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
+use App\Models\Notificacao;
+use App\Models\Time;
+use App\Models\User;
 use Illuminate\Http\Request;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 
@@ -31,10 +34,12 @@ class JogadoresController extends Controller
         $novosJogadores = [];
 
         foreach ($jogadores as $jogador) {
-
+            
             $idUsuario = $jogador['id_usuario'];
             $idTime = $jogador['id_time'];
             $status = $jogador['status'];
+            $usuario = User::findOrFail($idUsuario);
+            $time = Time::findOrFail($idTime);
 
             $exists = Jogador::where('id_time', $idTime)
                 ->where('id_usuario', $idUsuario)
@@ -52,6 +57,11 @@ class JogadoresController extends Controller
 
             $novoJogador =  Jogador::create($data);
             
+            $notificacoes = new Notificacao();
+            $notificacoes->id_usuario = $idUsuario;
+            $notificacoes->mensagem = $usuario->nome . "foi adicionado no time" . $time->nome;
+            $notificacoes->save();
+
             $novosJogadores[] = $novoJogador->id;
         }
 

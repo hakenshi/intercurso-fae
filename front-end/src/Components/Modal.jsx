@@ -28,7 +28,7 @@ export const Modal = ({ children, isOpen, onClose, onSubmit, texto, isForm, butt
 
                     */}
 
-                    {isForm ? <form className="flex flex-col justify-center md:p-2" onSubmit={onSubmit} encType="multipart/form-data">
+                    {isForm ? <form className="flex flex-col justify-center md:p-2" onSubmit={onSubmit}>
                         <h1 className="text-center text-xl">{texto}</h1>
                         {children}
 

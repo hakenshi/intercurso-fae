@@ -25,11 +25,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'id_curso',
+        'foto_perfil',
         'nome',
         'email',
         'senha',
         'telefone',
         'ra',
+        'data_de_nascimento',
+        'bio',
         'tipo_usuario',
     ];
 
@@ -81,4 +84,8 @@ class User extends Authenticatable
         return $this->belongsTo(Cursos::class, 'id_curso');
     }
 
+    public function notificacoes()
+    {
+        return $this->hasMany(Notificacao::class, 'id_usuario');
+    }
 }

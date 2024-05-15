@@ -1,6 +1,5 @@
-import { faCamera, faCog, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faCog, faL, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import userLogo from "../../assets/blank-profile-picture-973460_640.png";
 import logoBranca from "../../assets/logo-unifae-2021-branca.png";
 import React, { useRef, useState } from 'react'
 import { useStateContext } from '../../Contexts/ContextProvider';
@@ -10,13 +9,22 @@ import { Input } from '../../Components/Inputs/Input';
 import { TextArea } from '../../Components/Inputs/TextArea';
 import { onlyNumbers } from '../../utils/onlyNumbers';
 import axiosInstance from '../../helper/axios-instance';
+import { useAlert } from '../../Components/hooks/useAlert';
+import { AlertErro } from '../../Components/Alerts/AlertErro';
+import { ProfileImage } from '../../Components/ProfileImage';
+import { PreviewImage } from '../../Components/Image/PreviewImage';
 
 export const Perfil = () => {
 
-  const { user } = useStateContext()
-  
+  const { user, setUser } = useStateContext()
+  const { isAlertOpen, setIsAlertOpen } = useAlert()
+
+
+
   const [editModal, setEditModal] = useState(false)
   const [profileImage, setProfileImage] = useState(null)
+  const [errors, setErros] = useState("")
+
   const fileRef = useRef(null)
   const nomeRef = useRef(null)
   const emailRef = useRef(null)
@@ -26,78 +34,93 @@ export const Perfil = () => {
   const raRef = useRef(null)
   const dataNascimentoRef = useRef(null)
   const cursoRef = useRef(null)
+
   const handleImageChange = (e) => {
 
     const file = e.target.files[0]
+    setProfileImage(file ? URL.createObjectURL(file) : null)
 
-    setProfileImage(file ? URL.createObjectURL(file) : undefined)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const formData = new FormData()
-    
-      formData.append("nome", nomeRef.current ? nomeRef.current.value : user.nome)
-      formData.append("email", emailRef.current ? emailRef.current.value : user.email)
-      formData.append("senha", senhaRef.current ? senhaRef.current.value : "")
-      formData.append("telefone", telefoneRef.current ? telefoneRef.current.value : user.senha)
-      formData.append("bio", bioRef.current ? bioRef.current.value : user.bio)
-      formData.append("ra", raRef.current ? raRef.current.value : user.ra)
-      formData.append("id_curso", cursoRef.current ? cursoRef.current.value : user.id_curso)
-      formData.append("data_de_nascimento", dataNascimentoRef.current ? dataNascimentoRef.current.value : user.data_de_nascimento)
-      formData.append("foto_perfil", fileRef.current.files[0])
 
-    const headers = {
-      'headers': {
-        'Content-Type': 'multipart/form-data'
-      }
-    }
-    axiosInstance.patch(`/usuarios/${user.id}`,formData, headers )
-    .then(response => console.log(response))
-    .catch(response => console.log(response))
+    formData.append("nome", emailRef.current ? nomeRef.current.value : user.nome)
+    formData.append("email", emailRef.current ? emailRef.current.value : user.email)
+    formData.append("senha", senhaRef.current ? senhaRef.current.value : "")
+    formData.append("telefone", telefoneRef.current ? onlyNumbers(telefoneRef.current.value) : user.telefone)
+    formData.append("bio", bioRef.current ? bioRef.current.value : user.bio)
+    formData.append("ra", raRef.current ? raRef.current.value : user.ra)
+    formData.append("id_curso", cursoRef.current ? cursoRef.current.value : user.id_curso)
+    formData.append("data_de_nascimento", dataNascimentoRef.current ? dataNascimentoRef.current.value : user.data_de_nascimento)
+    formData.append("foto_perfil", fileRef.current.files[0] !== undefined ? fileRef.current.files[0] : "")
 
+    axiosInstance.post(`/usuarios/${user.id}?_method=PUT`, formData)
+      .then(({ data }) => {
+        if (data) {
+          console.log(data.data)
+          setProfileImage(null)
+          setEditModal(false)
+        }
+      })
+      .catch(errors => {
+        const response = errors.response
+        if (response) {
+          setErros(response.data)
+        }
+      })
+  }
+
+  function handleClose() {
+    setEditModal(e => e = false)
+    setProfileImage(null)
   }
 
   return (
     <>
-      <Modal isOpen={editModal} button={true} isForm={true} onClose={() => setEditModal(e => e = false)} onSubmit={handleSubmit}>
+      <Modal isOpen={editModal} button={true} isForm={true} onClose={handleClose} onSubmit={handleSubmit}>
         {/* <div className="grid grid-cols- lg:grid-cols-2 gap-4"> */}
-        <div className="flex justify-center items-center p-5 bg-gradient-to-tr from-unifae-green-1 via-unifae-green-2 to-unifae-green-3 h-1/3 md:rounded-t-lg">
-        <div className='flex justify-center items-center flex-col gap-5'>
-              <div className="relative z-0">
-                <img className='rounded-full lg:w-56 lg:h-56 w-28 h-28 border-collapse border-4 border-unifae-green-4 shadow-xl object-cover' src={profileImage ? profileImage : userLogo} alt={user.nome}/> 
-                <FontAwesomeIcon icon={faCamera} className='cursor-pointer absolute bottom-0 right-0 md:bottom-2 md:right-6 bg-unifae-green-4 p-2 rounded-full text-white xl:text-2xl' onClick={()=> fileRef.current.click()}/>
-                  <input type="file" accept='.jpg, jpeg, png' hidden ref={fileRef} onChange={handleImageChange}/>
-              </div>
-              <div className='text-unifae-white-1 font-medium text-2xl md:text-3xl'>
-                <p>{user.nome}
-                </p>
-              </div>
-            </div>
-        </div>
-          <div>
-            <Input ref={nomeRef}  value={user.nome} label={"Nome"} className={"input-modal"} placholder={"Insira seu nome"}/>
-            <TextArea ref={bioRef} label={"Bio"} className={"input-modal resize-none"} name={"bio"} >
-            {user.bio}
-            </TextArea>
-            {/* <Input value={user.email} label={"Email"} className={"input-modal"} /> */}
-            {/* <Input label={"Senha"} className={"input-modal"} /> */}
-            <Input ref={telefoneRef} mask={"(99) 99999-9999"} value={user.telefone} label={"Telefone"} className={"input-modal"} placholder={"Insira seu telefone"}/>
-            <Input ref={dataNascimentoRef} value={user.data_de_nascimento} label={"Data de nascimento"} className={"input-modal"} placholder={"Insira uma data de nascimento"} mask={"99/99/9999"}/>
-            {/* <Input value={user.ra} label={"RA"} className={"input-modal"} /> */}
-            {/* <Input label={"Confirmar Senha"} className={"input-modal"} /> */}
+        <div className="flex justify-center items-center p-5 bg-gradient-to-tr from-unifae-green-3 via-unifae-green-2 to-unifae-green-4 h-1/3 md:rounded-t-lg">
+          <div className='flex justify-center items-center flex-col gap-5'>
+            <div className="relative z-0">
+              {/* <img className='' src={profileImage ? profileImage : (user.foto_perfil ? imagePath : userLogo)} alt={user.nome} /> */}
 
+              <PreviewImage className={"rounded-full lg:w-56 lg:h-56 w-28 h-28 border-collapse border-4 border-unifae-green-4 shadow-xl object-cover"} fotoPerfil={user.foto_perfil} preview={profileImage} alt={user.nome} />
+
+              <FontAwesomeIcon icon={faCamera} className='cursor-pointer absolute bottom-0 right-0 md:bottom-2 md:right-6 bg-unifae-green-4 p-2 rounded-full text-white xl:text-2xl' onClick={() => fileRef.current.click()} />
+              <input className='hidden' hidden type="file" accept='.jpg, jpeg, png' ref={fileRef} onChange={handleImageChange} name='foto_perfil' />
+            </div>
+            <div className='text-unifae-white-1 font-medium text-2xl md:text-3xl'>
+              <p>
+                {user.nome}
+              </p>
+            </div>
           </div>
+        </div>
+        <div>
+          <Input ref={nomeRef} value={user.nome} label={"Nome"} name={"nome"} className={"input-modal"} placholder={"Insira seu nome"} />
+          <TextArea ref={bioRef} label={"Bio"} className={"input-modal resize-none"} name={"bio"} value={user.bio} />
+          {/* <Input value={user.email} label={"Email"} className={"input-modal"} /> */}
+          {/* <Input label={"Senha"} className={"input-modal"} /> */}
+          <Input ref={telefoneRef} mask={"(99) 99999-9999"} value={user.telefone} label={"Telefone"} name={"telefone"} className={"input-modal"} placholder={"Insira seu telefone"} />
+          <Input ref={dataNascimentoRef} value={user.data_de_nascimento} label={"Data de nascimento"} name={"data_de_nascimento"} className={"input-modal"} placholder={"Insira uma data de nascimento"} mask={"99/99/9999"} />
+          {/* <Input value={user.ra} label={"RA"} className={"input-modal"} /> */}
+          {/* <Input label={"Confirmar Senha"} className={"input-modal"} /> */}
+
+        </div>
         {/* </div> */}
       </Modal>
 
+      {isAlertOpen && (<AlertErro mensagem={errors.msg} onClose={() => setIsAlertOpen(false)} isAlertOpen={isAlertOpen} />)}
+
       <Container>
-        <div className="flex items-center p-5 bg-gradient-to-tr from-unifae-green-1 via-unifae-green-2 to-unifae-green-3 lg:w-[80vw] h-1/3 rounded-t-lg">
+        <div className="flex items-center p-5 bg-gradient-to-tr from-unifae-green-3 via-unifae-green-2 to-unifae-green-4 lg:w-[80vw] h-1/3 rounded-t-lg">
           <div className="flex justify-between gap-10 h-full w-full">
             <div className='flex justify-center items-center gap-10'>
               <div className="relative z-0">
-                <img className='rounded-full lg:w-56 lg:h-56 w-28 h-28 border-collapse border-4 border-unifae-green-4 shadow-xl' src={userLogo} alt={user.nome}/> 
-                
+                {/* <img className='rounded-full lg:w-56 lg:h-56 w-28 h-28 border-collapse border-4 border-unifae-green-4 shadow-xl' src={user.foto_perfil ? imagePath : userLogo} alt={user.nome} /> */}
+                <ProfileImage className={"rounded-full lg:w-56 lg:h-56 w-28 h-28 border-collapse border-4 border-unifae-green-4 shadow-xl object-cover"} fotoPerfil={user.foto_perfil} />
               </div>
               <div className='text-unifae-white-1 font-medium text-2xl md:text-3xl'>
                 <p>{user.nome}</p>

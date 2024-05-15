@@ -9,7 +9,8 @@ import { Oval } from "react-loader-spinner"
 import { Search } from "../../Components/Search bar/Search"
 import p from "prop-types"
 import { faL } from "@fortawesome/free-solid-svg-icons"
-
+import { images } from "../../assets"
+import { ProfileImage } from "../../Components/ProfileImage"
 export const Times = (props) => {
 
 
@@ -82,20 +83,20 @@ export const Times = (props) => {
     const handleSelectJogador = (jogador) => {
         setNovoJogador(jogador)
     }
-    const handleAddJogador = () => {    
+    const handleAddJogador = () => {
         const aluno = jogadores.find(jogador => jogador.id === novoJogador)
 
         const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador)
 
         const modalidade = modalidades.find(modalidade => modalidade.id === idModalidade)
 
-        const {time, usuario, modalidadeTime} = times.find(time => time.time.id === timeId)
+        const { time, usuario, modalidadeTime } = times.find(time => time.time.id === timeId)
 
         const jogadorComModalidadeDuplicada = times.some(time =>
-        time.time.id !== timeId &&    
-        modalidade.id_modalidade === idModalidade &&
-        time.informacoes.jogadores.some(jogador => jogador.id === novoJogador))
-        
+            time.time.id !== timeId &&
+            modalidade.id_modalidade === idModalidade &&
+            time.informacoes.jogadores.some(jogador => jogador.id === novoJogador))
+
         console.log(jogadorComModalidadeDuplicada)
 
         if (editJogadores.length >= modalidade.quantidade_participantes) {
@@ -108,7 +109,7 @@ export const Times = (props) => {
             return
         }
 
-        if(jogadorComModalidadeDuplicada){
+        if (jogadorComModalidadeDuplicada) {
             alert(`${aluno.nome} já pertence a um time com a modalidade ${modalidade.nome}.\nO nome do time é ${time.nome}\nseu responsável é: ${usuario.nome_responsavel}`)
             return
         }
@@ -379,7 +380,7 @@ export const Times = (props) => {
             <Modal isOpen={isJogadoresAlertOpen} onClose={handleCloseJogadores} texto={'Jogadores'} onSubmit={handleJogadoresSubmit} isForm={false} button={false}>
                 <div className="py-5">
 
-                    {!isEditing &&  <div className="flex justify-center pb-3"><button onClick={() => setIsEditing(true)} className="btn-green p-2 w-32">Editar</button></div>}
+                    {!isEditing && <div className="flex justify-center pb-3"><button onClick={() => setIsEditing(true)} className="btn-green p-2 w-32">Editar</button></div>}
 
                     {isEditing && <div className="flex justify-center items-center p-2 gap-3 w-full">
                         <Search placeholder={"Insira o RA de um aluno"} url={"/search-jogadores"} handleSelectUser={handleSelectJogador} />
@@ -392,6 +393,8 @@ export const Times = (props) => {
                         <table className="w-full table-auto divide-y divide-gray-200">
                             <thead className="bg-unifae-green-4">
                                 <tr className="text-center">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Nome
                                     </th>
@@ -411,6 +414,9 @@ export const Times = (props) => {
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {editJogadores.map((jogador, index) => (
                                     <tr key={index}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <ProfileImage className="w-10 h-10 object-cover rounded-full" fotoPerfil={jogador.foto_perfil} />
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             {jogador.nome}
                                         </td>
@@ -438,7 +444,7 @@ export const Times = (props) => {
                             </tbody>
                         </table>
                     ) : (
-                       !isEditing  && <div className="w-full h-[10vh] flex justify-center items-center">
+                        !isEditing && <div className="w-full h-[10vh] flex justify-center items-center">
                             <p>Este time ainda não tem jogadores, clique em editar para adicioná-los!</p>
                         </div>
                     )}
@@ -464,7 +470,7 @@ export const Times = (props) => {
                     <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
                 </div>
 
-                {times && times.length <= 0  ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
+                {times && times.length <= 0 ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
                     <p className=""> Você ainda não é responsável por nenhum time.</p>
                 </div> : <div className="flex flex-col justify-center items-center p-5">
                     {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
@@ -482,18 +488,17 @@ export const Times = (props) => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-unifae-gray50-2">
-                                {times
+                                {times && times
                                     .filter(response => props.id ? response.usuario.id_responsavel == props.id : true)
                                     .map(response => (
                                         <tr key={response.time.id} className="text-center">
                                             <td className="p-5">{response.time.nome}</td>
-                                            <td className="p-5">{response.usuario.nome_responsavel}</td>
+                                            <td className="p-5">{response.usuario.nome_responsavel ? response.usuario.nome_responsavel : "Sem responsável"}</td>
                                             <td className="p-5">{response.modalidade.nome_modalidade}</td>
                                             <td className="p-5">{response.informacoes.quantidade}</td>
                                             <td className="p-5">{response.time.status === "0" ? "Inativo" : "Ativo"}</td>
                                             <td className="p-5">
                                                 <button onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id, response.modalidade.id_modalidade)} className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver jogadores</button>
-
                                             </td>
                                             <td className="p-5 flex justify-center gap-5">
                                                 <button onClick={() => handleEditModal(response)} className="p-2 btn-edit">Editar</button>
@@ -501,7 +506,9 @@ export const Times = (props) => {
                                                 <button onClick={() => handleInativarTime(response)} className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
                                             </td>
                                         </tr>
-                                    ))}
+                                    ))
+                                }
+
                             </tbody>
                         </table>)}
                 </div>}

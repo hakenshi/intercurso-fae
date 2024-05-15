@@ -29,6 +29,9 @@ class UsuariosResource extends JsonResource
                 'ra' => $this->ra,
                 'tipo_usuario' => $this->tipo_usuario,
                 'telefone' => $this->telefone,
+                'data_nascimento' => $this->data_nascimento,
+                'bio' => $this->bio,
+                'foto_perfil' => $this->foto_perfil,
                 // 'data_criacao' => Carbon::make($this->created_at)->format('Y-m-d')
             ],
         ];

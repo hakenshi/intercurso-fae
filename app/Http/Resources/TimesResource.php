@@ -25,13 +25,14 @@ class TimesResource extends JsonResource
                'nome_modalidade' => $this->modalidade->nome,
             ],
             'usuario' => [
-                'id_responsavel' => $this->id_responsavel,
-                "nome_responsavel" => $this->usuario->nome,
+                'id_responsavel' => $this->id_responsavel ? $this->id_responsavel : "",
+                "nome_responsavel" => $this->id_responsavel != null ? $this->usuario->nome : "Sem responsavel",
             ],
             'informacoes' => [
                 'jogadores' => $this->jogadores->map(fn($jogador) => [
                     'id' => $jogador->id,
                     'id_usuario' => $jogador->id_usuario,
+                    'foto_perfil' => $jogador->usuario->foto_perfil,
                     'id_time' => $jogador->id_time,
                     'nome' => $jogador->usuario->nome,
                     'email' => $jogador->usuario->email,

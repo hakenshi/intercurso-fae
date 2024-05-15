@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateUsuariosRequest;
 use App\Http\Resources\UsuarioResponsavelResource;
 use App\Http\Resources\UsuariosResource;
-
+use App\Models\Jogador;
+use App\Models\Time;
 use App\Models\User as ModelsUser;
-
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\ErrorHandler\Debug;
 
 class UserController extends Controller
 {
@@ -22,6 +25,7 @@ class UserController extends Controller
 
         return UsuariosResource::collection($user);
     }
+
     public function indexResponsaveis()
     {
         $user = ModelsUser::where("tipo_usuario", 2)->paginate(6);
@@ -33,19 +37,14 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreUpdateUsuariosRequest $request)
-    {   
-
-        // dd($request);
-
+    {
         $data = $request->validated();
-        // dd($data);
-        
-        $data['senha'] = bcrypt($request->password);
-        
-        $user = ModelsUser::create($data);
-        
-        return new UsuariosResource($user);
 
+        $data['senha'] = bcrypt($request->password);
+
+        $user = ModelsUser::create($data);
+
+        return new UsuariosResource($user);
     }
 
     /**
@@ -61,18 +60,28 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreUpdateUsuariosRequest $request, string $id)
     {
-        dd($request->all());
-        
+
         $data = $request->validated();
+                
         $user = ModelsUser::findOrFail($id);
 
-        if(!empty($data['senha'])) $data['senha'] = bcrypt($request->password);
+        if ($request->hasFile('foto_perfil')) {
 
-        if(!empty($data['email'])) $data['email'] = $request->email;
+            if ($user->foto_perfil !== null) {
+                Storage::disk('public')->delete($user->foto_perfil);
+            }
 
-        if(!empty($data['ra'])) $data['ra'] = $request->ra;
+            $image = $request->file('foto_perfil')->store('profile', 'public');
+            $data['foto_perfil'] = $image;
+        }
+
+        if (!empty($data['senha'])) $data['senha'] = bcrypt($request->password);
+
+        if (!empty($data['email'])) $data['email'] = $request->email;
+
+        if (!empty($data['ra'])) $data['ra'] = $request->ra;
 
         $user->update($data);
 
@@ -84,12 +93,28 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = ModelsUser::findOrFail($id);
-        $user->delete();
+        $user = ModelsUser::findOrFail($id);        
+        $jogador = Jogador::where('id_usuario', $user->id);
+        $timeResponsavel = Time::where('id_responsavel', $user->id)->get();
+        
+        if($timeResponsavel){
+           foreach ($timeResponsavel as $responsavel) {
+            $responsavel->id_responsavel = null;
+            $responsavel->update();
+        }
+        }
+
+        if($jogador){
+            $jogador->delete();
+        }
+
+        
+
         return new UsuariosResource($user);
     }
 
-    public function tornarResponsavel(string $id, Request $request){
+    public function tornarResponsavel(string $id, Request $request)
+    {
 
         $user = ModelsUser::findOrFail($id);
         $user->tipo_usuario = $request->tipo_usuario;
@@ -97,7 +122,5 @@ class UserController extends Controller
         $user->update();
 
         return new UsuariosResource($user);
-
-    }    
-
+    }
 }

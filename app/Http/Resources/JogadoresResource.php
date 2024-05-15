@@ -20,6 +20,7 @@ class JogadoresResource extends JsonResource
             'status' => $this->status,
             'usuario' => [
                 'id_usuario' => $this->usuario->id,
+                'foto_perfil' => $this->usuario->foto_perfil,
                 'nome_usuario' => $this->usuario->nome,
                 'email_usuario' => $this->usuario->email,
                 'telefone_usuario' => $this->usuario->telefone,
