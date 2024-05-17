@@ -12,10 +12,10 @@ export const UserInfo = ({ nome, logout, foto }) => {
     const perfilRef = useClickOutSide(() => setIsOpen(false))
 
     return (
-        <div ref={perfilRef}>
+        <div ref={perfilRef} className="relative">
         <ProfileImage onClick={() => setIsOpen(o => !o)} className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={foto}/>
-        <div className={`absolute top-11 right-0 overflow-hidden transition-h duration-500 ${isOpen ? "h-96 ease-in" : "h-0 ease-out"}`}>
-            {isOpen && <div className="w-full flex justify-center p-4">
+        <div className={`absolute top-11 right-0 overflow-hidden transition-all duration-[400ms] ${isOpen ? "max-h-96 ease-in" : "max-h-0 ease-out"}`}>
+            <div className="w-full flex justify-center p-4">
                 <div className="user-dropdown">
                     <span className=" flex w-full text-lg items-center gap-5 p-3">
                         <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={foto} />
@@ -24,7 +24,7 @@ export const UserInfo = ({ nome, logout, foto }) => {
                     <span className=" flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"> <FontAwesomeIcon icon={faGear} />  Configurações </span>
                     {nome && <span onClick={logout} className="cursor-pointer flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"> <FontAwesomeIcon icon={faSignOut} />  Logout </span>}
                 </div>
-            </div>}
+            </div>
         </div>
         </div>
 

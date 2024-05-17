@@ -6,12 +6,14 @@ import axiosInstance from '../helper/axios-instance'
 import useNotification from './hooks/useNotification'
 import { useAlert } from './hooks/useAlert'
 import { AlertConfirm } from './Alerts/AlertConfirm'
+import { useClickOutSide } from './hooks/useClickOutside'
 
 export const Notficacao = forwardRef(({ id }, ref) => {
 
     const { notificacao, readNotification } = useNotification(id)
     const {isAlertOpen, setIsAlertOpen, handleClose} = useAlert()
     const [mostrarNotficacao, setMostrarNotificacao] = useState(false)
+    const notificaoRef = useClickOutSide(()=> setMostrarNotificacao(false))
 
     const handleDeleteNotificacao = () =>{
         readNotification(notificacao)
@@ -29,8 +31,7 @@ export const Notficacao = forwardRef(({ id }, ref) => {
                 {notificacao.length > 0 && <div className='relative bottom-2 -right-5 bg-red-600 text-center w-4 h-4 text-xs rounded-full'>{notificacao.length}</div>}
                 <FontAwesomeIcon className='text-base' icon={notificacao.length > 0 ? faBell : faBellRegular} />
             </div>
-            {mostrarNotficacao && (
-                <div className={`absolute top-12 right-0 transition-opacity duration-500`}>
+                <div ref={notificaoRef} className={`absolute top-12 right-0 overflow-hidden transition-all duration-[400ms] ${mostrarNotficacao ? "max-h-96 ease-in" : "max-h-0 ease-out"}`}>
                     <div className="w-full flex justify-center p-4">
                         <div className="user-dropdown">
                             <p className="text-center">Notificações</p>
@@ -45,7 +46,6 @@ export const Notficacao = forwardRef(({ id }, ref) => {
                         </div>
                     </div>
                 </div>
-            )}
         </>
     )
     
