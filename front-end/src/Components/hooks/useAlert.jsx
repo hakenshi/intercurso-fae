@@ -6,15 +6,10 @@ export const useAlert = () =>{
     const handleClose = () =>{
         setIsAlertOpen(false)
     }
-    const handleConfirm = () =>{
-        setIsAlertOpen(false)
-    }
-
     return{
         isAlertOpen,
         setIsAlertOpen,
         handleClose,
-        handleConfirm
     }
 }
 

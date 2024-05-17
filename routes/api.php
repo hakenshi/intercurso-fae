@@ -29,9 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/search-jogadores", [SearchController::class, 'usuarios']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
-    Route::get("/notificacoes/{id}", [NotificacaoController::class, 'enviarNotificacao']);
 });
 
-
+Route::prefix('/notificacao')->group(function(){
+    Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
+    Route::post('create', [NotificacaoController::class, 'create']);
+    Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
+});
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

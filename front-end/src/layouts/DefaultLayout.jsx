@@ -23,17 +23,12 @@ export default function DefaultLayout() {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
     const [isDropDownVisible, setisDropDownVisible] = useState(false)
     const { user, token, setUser, setSessionToken } = useStateContext()
-    const notificacaoRef = useRef(null)
+
     const navigate = useNavigate()
 
-    
     const toggleAsideVisibility = () => {
         setIsAsideVisible(a => !a);
     };
-    const toggleDropdownVisibility = () => {
-        setisDropDownVisible( d => !d);
-    };
-    const domNode = useClickOutSide(() => toggleDropdownVisibility())
 
     useEffect(() => {
         if(sessionStorage.getItem('ACCESS_TOKEN')){
@@ -76,9 +71,9 @@ export default function DefaultLayout() {
                             </div>
                         )}
                     </div>
-                    <div className="flex justify-center items-center gap-3">
-                            <ProfileImage onClick={(e) =>toggleDropdownVisibility(e)} className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={user.foto_perfil}/>
-                            {isDropDownVisible && <UserInfo ref={domNode} logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome} foto={user.foto_perfil}/>}
+                    <div className="flex justify-center items-center gap-7">
+                            <Notficacao id={user.id} />
+                            <UserInfo logout={onLogout} isDropDownVisible={isDropDownVisible} nome={user.nome} foto={user.foto_perfil}/>
                     </div>
                 </nav>
             </header>
