@@ -1,7 +1,9 @@
 import { faClose, faWarning } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useClickOutSide } from "../hooks/useClickOutside"
 
 export const AlertConfirm = ({isOpen, onClose, onConfirm, text}) =>{
+
     if(isOpen){
         return(
             <div className="absolute bg-unifae-gray50-1 w-full h-full top-0 bottom-0 left-0 right-0 z-[60]">
