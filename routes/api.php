@@ -21,20 +21,29 @@ Route::apiResources([
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    
+    //Essa rota é responsável por pegar o usuário que está logado no sistema
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+   //Ações simples
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
-    Route::get("/search-jogadores", [SearchController::class, 'usuarios']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
+    // Rota de notificação
+    Route::prefix('/notificacao')->group(function(){
+        Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
+        Route::post('create', [NotificacaoController::class, 'create']);
+        Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
+    });
+    //Rotas de busca
+    Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
+    Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
 });
 
-Route::prefix('/notificacao')->group(function(){
-    Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
-    Route::post('create', [NotificacaoController::class, 'create']);
-    Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
-});
+Route::get('/search-usuarios', [SearchController::class, 'usuarios']);
+
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

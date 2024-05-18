@@ -3,21 +3,28 @@ import { useStateContext } from "../../Contexts/ContextProvider"
 import { useNavigate } from "react-router-dom"
 import { Modal } from "../../Components/Modal"
 import { useAlert } from "../../Components/hooks/useAlert"
-import useAxios from "../../Components/hooks/useAxios"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
 import cursos from "../../../public/cursos.json"
 import usePagiante from "../../Components/hooks/usePaginate"
 import { Paginate } from "../../Components/Paginate"
-import { images } from "../../assets"
 import { ProfileImage } from "../../Components/ProfileImage"
-
+import { useSearch } from "../../Components/hooks/useSearch"
+import Alerts from "../../Components/Alerts"
+import { AlertErro } from "../../Components/Alerts/AlertErro"
+import { AlertSucesso } from "../../Components/Alerts/AlertSucesso"
+import { AlertConfirm } from "../../Components/Alerts/AlertConfirm"
+import { faL } from "@fortawesome/free-solid-svg-icons"
 export const Usuarios = () => {
 
 
     const { user } = useStateContext()
     const navigate = useNavigate()
-    const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
+    const { isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
+        isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen } = useAlert()
+    const { fetchData, input, results, setInput } = useSearch("", "/search-usuarios")
+    const { data: usuarios, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/search-usuarios")
+
     const nomeRef = useRef(null);
     const emailRef = useRef(null);
     const senhaRef = useRef(null);
@@ -27,34 +34,32 @@ export const Usuarios = () => {
     const telefoneRef = useRef(null);
     const tipoUsuarioRef = useRef(null)
 
-    const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
+    const [isEditModal, setIsEditModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [editUsuario, setEditUsuario] = useState(null)
     const [erros, setErrors] = useState(null);
-    const {data: usuarios, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/usuarios")
-    
+    const [id, setId] = useState("")
+
     useEffect(() => {
         if (user.tipo_usuario != 1) navigate('/jogos', { replace: true })
     }, [user, navigate])
 
-    
-
     const handleEditModal = (usuario) => {
-        setIsEditAlertOpen(true)
+        setIsEditModalOpen(true)
         setEditUsuario(usuario)
     }
 
     const handleCloseEditModal = () => {
-        setIsEditAlertOpen(false)
+        setIsEditModalOpen(false)
         setEditUsuario(null)
     }
-
-    if (erros) alert(erros)
 
     const handleSubmit = e => {
         e.preventDefault()
 
         if (senhaRef.current.value != confirmSenhaRef.current.value) {
-            alert("As senhas não coincidem")
+            setMensagem("As senhas não coincidem")
+            setIsErrorAlertOpen(true)
             return
         }
 
@@ -68,11 +73,11 @@ export const Usuarios = () => {
             tipo_usuario: tipoUsuarioRef.current.value ? tipoUsuarioRef.current.value : 3,
         }
 
-        if (isEditAlertOpen) {
+        if (isEditModal) {
             axiosInstance.patch(`/usuarios/${editUsuario.usuario.id}`, payload)
                 .then(({ data }) => {
                     if (data) {
-                        alert("Usuário Editado com sucesso!")
+                        setMensagem("Usuário Editado com sucesso!")
                         setData(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? { ...usuario, ...data.data } : usuario))
                     }
 
@@ -80,92 +85,117 @@ export const Usuarios = () => {
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        setErrors(response.data.msg)
                     }
                 })
-                .finally(() => setIsEditAlertOpen(false))
+                .finally(() => {
+                    setIsEditModalOpen(false)
+                    setIsAlertOpen(true)
+                })
         }
 
         else {
             axiosInstance.post('/usuarios', payload)
                 .then(({ data }) => {
                     if (data) {
-                        alert("Usuário cadastrado com sucesso!")
+                        setMensagem("Usuário cadastrado com sucesso!")
                         setData(u => [...u, data.data])
                     }
                 })
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        setErrors(response.data.msg)
                     }
                 })
-                .finally(() => setIsAlertOpen(false))
+                .finally(() => {
+                    setIsModalOpen(false)
+                    setIsAlertOpen(true)
+                })
         }
     }
 
     const handleDelete = (id) => {
-        const confirm = window.confirm("Tem certeza de que deseja apagar?")
+        axiosInstance.delete(`/usuarios/${id}`)
+            .then(() => {
+                setIsConfirmAlertOpen(false)
+                setMensagem("Usuário excluido com sucesso")
+                setIsAlertOpen(true)
+                setData((u) => u.filter(({ usuario }) => usuario.id !== id))
+            })
+            .catch(error => {
+                const response = error.response
+                if (response) {
+                    setErrors(response.data.msg)
+                }
+            })
+    }
+
+
+
+
+    const handleTornarResponsavel = ({ usuario }) => {
+
+        if (usuario.tipo_usuario === "2") {
+            setMensagem('Esse usuário já é um responsável.')
+            setIsErrorAlertOpen(true)
+            return
+        }
+
+        else if (usuario.tipo_usuario === "1") {
+            setMensagem("Esse usuário é um admin")
+            setIsErrorAlertOpen(true)
+            return
+        }
+        const confirm = window.confirm("Tem certeza de que deseja tornar esse usuário responsável?")
+
+        const payload = {
+            tipo_usuario: 2
+        }
 
         if (confirm) {
-            axiosInstance.delete(`/usuarios/${id}`)
-                .then(() => {
-                    alert("Usuário excluido com sucesso")
-                    setData((u) => u.filter(({ usuario }) => usuario.id !== id))
+            axiosInstance.patch(`/tornar-responsavel/${usuario.id}`, payload)
+                .then(({ data }) => {
+
+                    setMensagem("Esse usuário agora é responsável.")
+                    setIsAlertOpen (true)
+                    setData(u => u.map((usuario) => usuario.usuario.id === data.data.usuario.id ? {
+                        ...usuario,
+                        usuario: {
+                            ...usuario.usuario,
+                            tipo_usuario: "2"
+                        }
+                    } : usuario
+                    ))
                 })
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        setErrors(response)
                     }
                 })
         }
-
-        return
     }
-    const handleTornarResponsavel = ({usuario}) => {
 
-        if (usuario.tipo_usuario === "2") {
-            alert('Esse usuário já é um responsável.')
-            return
-        }
-            const confirm = window.confirm("Tem certeza de que deseja tornar esse usuário responsável?")
-
-            const payload = {
-                tipo_usuario: 2
-            }
-
-            if (confirm) {
-                axiosInstance.patch(`/tornar-responsavel/${usuario.id}`, payload)
-                    .then(({data}) => {
-
-                        console.log(data.data.usuario)
-
-                        console.log(usuario)
-
-                        alert("Esse usuário agora é responsável.")
-                        setData(u => u.map((usuario) => usuario.usuario.id === data.data.usuario.id ? {
-                            ...usuario,
-                                usuario: {
-                                    ...usuario.usuario,
-                                    tipo_usuario: "2"
-                                }
-                            } : usuario
-                        ))
-                    })
-                    .catch(error => {
-                        const response = error.response
-                        if (response) {
-                            alert(response)
-                        }
-                    })
-            }
+    const handleSearch = e => {
+        const value = e.target.value;
+        setInput(value)
+        fetchData(value)
     }
-    
+
+    const handleConfirm = (id, mensagem) => {
+        setId(id)
+        setMensagem(mensagem)
+        setIsConfirmAlertOpen(true)
+    }
 
     return (
         <>
-            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
+
+            <AlertErro mensagem={mensagem} isAlertOpen={isErrorAlertOpen} onClose={() => setIsErrorAlertOpen(false)} />
+            <AlertConfirm text={mensagem} isOpen={isConfirmAlertOpen} onConfirm={() => handleDelete(id)} onClose={() => setIsConfirmAlertOpen(false)} />
+            <AlertSucesso mensagem={mensagem} isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -206,7 +236,7 @@ export const Usuarios = () => {
 
             </Modal>
 
-            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
+            <Modal isOpen={isEditModal} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -255,10 +285,10 @@ export const Usuarios = () => {
                 <h1 className="text-center p-5 text-3xl font-medium">Usuários</h1>
                 <div className="flex flex-col">
                     <span className="flex justify-around p-5">
-                        <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Usuário</button>
+                        <button onClick={() => setIsModalOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Usuário</button>
                         {/* <button onClick={() => setIsAlertOpen(true)} className="btn-sm btn-green text-sm ">Filtrar</button> */}
                     </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
+                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" onChange={handleSearch} />
                 </div>
 
                 <div className="flex flex-col justify-center items-center p-5 h-11/12">
@@ -266,7 +296,7 @@ export const Usuarios = () => {
                         (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
-                                    <th className="p-5"></th>
+                                    <th className="p-5"><button onClick={()=> setIsConfirmAlertOpen(true)}>abrir modal</button></th>
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Email</th>
                                     <th className="p-5">Curso</th>
@@ -277,34 +307,34 @@ export const Usuarios = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-unifae-gray50-2  overflow-auto h-1/2">
-                                {usuarios.map((response) => (
+                                {(input.trim() !== "" ? results : usuarios).map((response) => (
                                     <tr key={response.usuario.id} className="text-center">
-                                    <td className="p-5 text-pretty">
-                                    <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.usuario.foto_perfil}/>
+                                        <td className="p-5 text-pretty">
+                                            <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.usuario.foto_perfil} />
 
-                                    </td>
+                                        </td>
 
-                                    {/* className="w-10 rounded-full object-cover" */}
+                                        {/* className="w-10 rounded-full object-cover" */}
 
-                                    <td className="p-5 text-pretty">{response.usuario.nome}</td>
-                                    <td className="p-5 text-pretty">{response.usuario.email}</td>
-                                    <td className="p-5 text-pretty">{response.curso.nome_curso}</td>
-                                    <td className="p-5 text-pretty">{!response.usuario.telefone ? "Sem Telefone" : response.usuario.telefone}</td>
-                                    <td className="p-5 text-pretty">{response.usuario.ra}</td>
-                                    <td className="p-5 text-pretty">{(response.usuario.tipo_usuario == 1) ? "Admin" : (response.usuario.tipo_usuario == 2) ? "Responsável" : "Usuário"}</td>
-                                    <td className="p-5 text-pretty">
-                                        <button onClick={() => handleTornarResponsavel(response)} className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar Responsável</button>
-                                    </td>
-                                    <td className="p-5 flex gap-3">
-                                        <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
-                                        <button onClick={() => handleDelete(response.usuario.id)} className="btn-sm btn-delete">Excluir</button>
-                                    </td>
-                                </tr>
+                                        <td className="p-5 text-pretty">{response.usuario.nome}</td>
+                                        <td className="p-5 text-pretty">{response.usuario.email}</td>
+                                        <td className="p-5 text-pretty">{response.curso.nome_curso}</td>
+                                        <td className="p-5 text-pretty">{!response.usuario.telefone ? "Sem Telefone" : response.usuario.telefone}</td>
+                                        <td className="p-5 text-pretty">{response.usuario.ra}</td>
+                                        <td className="p-5 text-pretty">{(response.usuario.tipo_usuario == 1) ? "Admin" : (response.usuario.tipo_usuario == 2) ? "Responsável" : "Usuário"}</td>
+                                        <td className="p-5 text-pretty">
+                                            <button onClick={() => handleTornarResponsavel(response)} className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar Responsável</button>
+                                        </td>
+                                        <td className="p-5 flex gap-3">
+                                            <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
+                                            <button onClick={() => handleConfirm(response.usuario.id, "Tem certeza de que quer excluir esse usuário?")} className="btn-sm btn-delete">Excluir</button>
+                                        </td>
+                                    </tr>
                                 ))}
                             </tbody>
                         </table>)}
                 </div>
-            <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
+                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
             </div>
 
         </>

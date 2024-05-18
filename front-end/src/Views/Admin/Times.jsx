@@ -84,44 +84,53 @@ export const Times = (props) => {
         setNovoJogador(jogador)
     }
     const handleAddJogador = () => {
-        const aluno = jogadores.find(jogador => jogador.id === novoJogador)
+    const aluno = jogadores.find(jogador => jogador.id === novoJogador);
 
-        const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador)
-
-        const modalidade = modalidades.find(modalidade => modalidade.id === idModalidade)
-
-        const { time, usuario, modalidadeTime } = times.find(time => time.time.id === timeId)
-
-        const jogadorComModalidadeDuplicada = times.some(time =>
-            time.time.id !== timeId &&
-            modalidade.id_modalidade === idModalidade &&
-            time.informacoes.jogadores.some(jogador => jogador.id === novoJogador))
-
-        console.log(jogadorComModalidadeDuplicada)
-
-        if (editJogadores.length >= modalidade.quantidade_participantes) {
-            alert(`Quantidade máxima de jogadores na modalidade ${modalidade.nome} é de ${modalidade.quantidade_participantes}. O time está cheio.`)
-            return
-        }
-
-        if (jogadorExistente) {
-            alert("Esse aluno já está no time.")
-            return
-        }
-
-        if (jogadorComModalidadeDuplicada) {
-            alert(`${aluno.nome} já pertence a um time com a modalidade ${modalidade.nome}.\nO nome do time é ${time.nome}\nseu responsável é: ${usuario.nome_responsavel}`)
-            return
-        }
-
-        if (novoJogador == null || !novoJogador || novoJogador == '') {
-            alert("Por favor, escolha um aluno")
-            return
-        }
-
-        setEditJogadores([...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '1' }])
-
+    if (!aluno) {
+        alert("Jogador não encontrado.");
+        return;
     }
+
+    const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador);
+
+    const { id_modalidade: modalidadeAtualId, quantidade_participantes: quantidade } = times.find(time => time.time.id === timeId).modalidade;
+
+    const {nome} = modalidades.find(modalidade => modalidade.id === modalidadeAtualId)
+
+    const jogadorComModalidadeDuplicada = times.some(time =>
+        time.time.id !== timeId &&
+        time.modalidade.id_modalidade === modalidadeAtualId &&
+        time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
+    );
+
+    if (jogadorExistente) {
+        alert("Esse aluno já está no time.");
+        return;
+    }
+
+    if (jogadorComModalidadeDuplicada) {
+        const timeDuplicado = times.find(time =>
+            time.time.id !== timeId &&
+            time.modalidade.id_modalidade === modalidadeAtualId &&
+            time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
+        );
+
+        alert(`${aluno.nome} já pertence a um time com a modalidade ${timeDuplicado.modalidade.nome_modalidade}.\nO nome do time é ${timeDuplicado.time.nome}\nseu responsável é: ${timeDuplicado.usuario.nome_responsavel}`);
+        return;
+    }
+
+    if (editJogadores.length >= quantidade) {
+        alert(`Quantidade máxima de jogadores na modalidade ${nome} é de ${quantidade}. O time está cheio.`);
+        return;
+    }
+
+    if (!novoJogador) {
+        alert("Por favor, escolha um aluno");
+        return;
+    }
+
+    setEditJogadores([...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '1' }]);
+};
 
     const getResponasavelId = () => {
         return localStorage.getItem("responsavelId")
@@ -194,7 +203,7 @@ export const Times = (props) => {
     }
 
     const handleDeleteJogador = (id) => {
-        const confirm = window.confirm("Tem certeza de que deseja este jogador do time?")
+        const confirm = window.confirm("Tem certeza de que deseja remover este jogador do time?")
 
         if (confirm) {
             axiosInstance.patch(`/expulsar-jogador/${id}`)
@@ -220,7 +229,6 @@ export const Times = (props) => {
 
         return
     }
-
     const handleInativarTime = (times) => {
 
 
@@ -285,6 +293,12 @@ export const Times = (props) => {
     }
 
     const handleJogadoresSubmit = () => {
+
+        if(!editJogadores || editJogadores.length === 0){
+            alert("O time deve ter ao menos 1 jogador")
+            return
+        }
+
         const payload = editJogadores.map(jogador => ({
             id_usuario: jogador.id_usuario,
             id_time: jogador.id_time,
@@ -348,7 +362,7 @@ export const Times = (props) => {
                 </div>
                 {user.tipo_usuario == 1 && <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Responsável pelo time</label>
-                    <Search placeholder={"Digite para pesquisar"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
+                    <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
                 </div>}
             </Modal>
 
@@ -372,7 +386,7 @@ export const Times = (props) => {
                 </div>
                 {user.tipo_usuario == 1 && <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Responsável pelo time</label>
-                    <Search placeholder={"Digite para pesquisar"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
+                    <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
                 </div>}
             </Modal>
 

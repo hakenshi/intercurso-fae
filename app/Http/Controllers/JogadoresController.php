@@ -57,10 +57,7 @@ class JogadoresController extends Controller
 
             $novoJogador =  Jogador::create($data);
             
-            $notificacoes = new Notificacao();
-            $notificacoes->id_usuario = $idUsuario;
-            $notificacoes->mensagem = $usuario->nome . "foi adicionado no time" . $time->nome;
-            $notificacoes->save();
+           
 
             $novosJogadores[] = $novoJogador->id;
         }

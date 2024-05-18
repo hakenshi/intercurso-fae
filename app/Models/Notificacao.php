@@ -24,4 +24,14 @@ class Notificacao extends Model
         return $this->belongsTo(User::class, "id_usuario");
     }
 
+    public static function criarNotificacao($id, $mensagem, $tipo)
+    {
+        $notificacao = new Notificacao();
+        $notificacao->id_usuario = $id;
+        $notificacao->mensagem = $mensagem;
+        $notificacao->lida = "0";
+        $notificacao->save();
+
+        return $notificacao;
+    }
 }

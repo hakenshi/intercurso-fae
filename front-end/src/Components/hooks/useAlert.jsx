@@ -1,15 +1,27 @@
 import { useState } from "react"
 
-export const useAlert = () =>{
+export const useAlert = () => {
     const [isAlertOpen, setIsAlertOpen] = useState(false)
+    const [isErrorAlertOpen, setIsErrorAlertOpen] = useState(false)
+    const [isConfirmAlertOpen, setIsConfirmAlertOpen] = useState(false)
 
-    const handleClose = () =>{
+    const [mensagem, setMensagem] = useState("")
+
+    const handleClose = () => {
         setIsAlertOpen(false)
     }
-    return{
+
+    return {
         isAlertOpen,
         setIsAlertOpen,
         handleClose,
+        mensagem,
+        setMensagem,
+        isErrorAlertOpen,
+        setIsErrorAlertOpen,
+        isConfirmAlertOpen,
+        setIsConfirmAlertOpen,
     }
+
 }
 

@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateUsuariosRequest;
-use App\Http\Resources\UsuarioResponsavelResource;
 use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
 use App\Models\Time;
 use App\Models\User as ModelsUser;
-use Illuminate\Contracts\Cache\Store;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\ErrorHandler\Debug;
 
 class UserController extends Controller
 {
@@ -94,7 +90,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = ModelsUser::findOrFail($id);        
-        $jogador = Jogador::where('id_usuario', $user->id);
+        $jogador = Jogador::where('id_usuario', $user->id)->first();
         $timeResponsavel = Time::where('id_responsavel', $user->id)->get();
         
         if($timeResponsavel){
@@ -108,7 +104,7 @@ class UserController extends Controller
             $jogador->delete();
         }
 
-        
+        $user->delete();
 
         return new UsuariosResource($user);
     }

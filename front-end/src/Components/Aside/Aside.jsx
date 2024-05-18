@@ -69,7 +69,7 @@ export const Aside = ({ isAsideVisible }) => {
 
     return (
         <aside
-            className={`xl:relative absolute z-50 xl:h-[92.4vh] h-[92.1vh] w-[200px] p-3 bg-zinc-700 transform ${isAsideVisible ? "translate-x-0" : "-translate-x-full"
+            className={`xl:relative absolute z-[1] xl:h-[92.4vh] h-[92.1vh] w-[200px] p-3 bg-zinc-700 transform ${isAsideVisible ? "translate-x-0" : "-translate-x-full"
                 } transition-transform duration-500 ease-in-out`}
         >
             <div className="flex flex-col justify-around h-[60%] ">

@@ -59,16 +59,16 @@
 }
 
 .btn-green{
-    @apply bg-unifae-green-1 text-unifae-white-1 rounded-md
+    @apply bg-unifae-green-1 text-unifae-white-1 rounded-md hover:bg-unifae-green-2/90
 }
 .btn-gray{
-    @apply bg-unifae-gray-3 text-unifae-white-1 rounded-md
+    @apply bg-unifae-gray-3 text-unifae-white-1 rounded-md hover:bg-unifae-black-1/60
 }
 .btn-edit{
-    @apply bg-sky-500 text-unifae-white-1 rounded-md
+    @apply bg-sky-500 text-unifae-white-1 rounded-md hover:bg-sky-600
 }
 .btn-delete{
-    @apply bg-red-600 text-unifae-white-1 rounded-md
+    @apply bg-red-600 text-unifae-white-1 rounded-md hover:bg-red-700/80
 }
 .btn-confirm{
     @apply bg-green-400 text-unifae-white-1 rounded-md

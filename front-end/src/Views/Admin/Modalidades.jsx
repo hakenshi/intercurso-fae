@@ -187,8 +187,8 @@ export const Modalidades = () => {
                                     <th className="p-5"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y-2 divide-unifae-gray50-2">
-                                {modalidades.map((response, index) => (
+                            <tbody className="divide-y divide-unifae-gray50-2">
+                                {modalidades.map(response => (
 
                                     <tr key={response.id} className="text-center">
                                         {/* <td className="p-5">{response.id}</td> */}
