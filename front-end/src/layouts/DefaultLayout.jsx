@@ -20,22 +20,22 @@ const AsideContext = createContext();
 const userLinks = [
 
     {
-        path: '/jogos',
+        path: '/usuario/jogos',
         icon: faGamepad,
         text: 'Jogos'
     },
     {
-        path: `/meu-time`,
+        path: `/usuario/meu-time`,
         icon: faUserGroup,
         text: "Meu Time"
     },
     {
-        path: '/times-intercurso',
+        path: '/usuario/times-intercurso',
         icon: faFlag,
         text: 'Times'
     },
     {
-        path: '/placares',
+        path: '/usuario/placares',
         icon: faTrophy,
         text: 'Placares'
     },
@@ -75,7 +75,7 @@ export default function DefaultLayout({isMobile}) {
                 
     return (
         <div className="flex flex-col">
-            <Navbar foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
+            <Navbar tipo={"/usuario"} foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
             <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
                     <Aside links={userLinks} isAsideVisible={isAsideVisible} />

@@ -19,25 +19,25 @@ const AsideContext = createContext();
 
 const adminLinks = [
     {
-        path: '/dashboard',
+        path: '/admin/dashboard',
         icon: faChartLine,
         text: 'Dashboard',
 
     },
     {
-        path: '/usuarios',
+        path: '/admin/usuarios',
         icon: faUserGroup,
         text: 'Usuarios',
 
     },
     {
-        path: '/modalidades',
+        path: '/admin/modalidades',
         icon: faMedal,
         text: 'Modalidades',
 
     },
     {
-        path: '/times',
+        path: '/admin/times',
         icon: faFlag,
         text: 'Times',
 
@@ -79,7 +79,7 @@ export default function AdminLayout({isMobile}) {
                 
     return (
         <div className="flex flex-col">
-            <Navbar foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
+            <Navbar tipo={"/admin"} foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
             <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
                     <Aside links={adminLinks} isAsideVisible={isAsideVisible} />

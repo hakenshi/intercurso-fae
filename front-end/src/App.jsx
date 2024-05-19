@@ -23,68 +23,61 @@ import { MeuTime } from './Views/Default/MeuTime.jsx';
 import { PublicRoutes } from './utils/PublicRoutes.jsx';
 import LoginLayout from './layouts/LoginLayout.jsx';
 import GuestLayout from './layouts/GuestLayout.jsx';
-import { AdminRoute } from './utils/AdminRoute.jsx';
-import { ResponsavelRoute } from './utils/ResponsavelRoute.jsx';
-import { UsuarioRoute } from './utils/UsuarioRoute.jsx';
+import { ProtectedRoute } from './utils/ProtectedRoute.jsx';
+
 
 export const App = () => {
 
     const isMobile = useMediaQuery("(max-width: 768px)");
 
-    
-
     return (
-        <ContextProvider>
-            <BrowserRouter>
                 <Routes >
-                    <Route element={<PublicRoutes/>}>
-                    <Route element={<GuestLayout />}>
-                    <Route index element={<Navigate to="/jogos" />} />
+                    <Route path='/' element={<GuestLayout />}>
                         <Route path="jogos" element={<Jogos />} />
                         <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />
                     </Route>
+
                     <Route path="/" element={<LoginLayout />}>
                         <Route path="login" element={<Login />} />
                         <Route path="cadastro" element={<Cadastro />} />
                     </Route>
-                    </Route>
-                    <Route element={<AdminRoute />} path='/'>
-                    <Route element={<AdminLayout isMobile={isMobile} />} >
-                        <Route index element={<Navigate to="/dashboard" />} />
-                        <Route path="dashboard" element={<Dashboard />} />
+
+                    <Route element={<ProtectedRoute role={"1"} />}>
+                    <Route path='/admin' element={<AdminLayout isMobile={isMobile} />} >
+                        <Route index path="dashboard" element={<Dashboard />} />
                         <Route path="usuarios" element={<Usuarios />} />
                         <Route path="modalidades" element={<Modalidades />} />
                         <Route path="times" element={<Times />} />
                         <Route path="usuario/meu-perfil" element={<Perfil />} />
                         <Route path="usuario/configuracoes" element={<Configuracoes />} />
                     </Route>
+
                     </Route>
-                    <Route element={<ResponsavelRoute/>} path='/'>
-                    <Route element={<ResponsavelLayout isMobile={isMobile} />} >
-                        <Route index element={<Navigate to="/meus-times" />} />
-                        <Route path="jogos" element={<Jogos />} />
+                    <Route element={<ProtectedRoute role={"2"}/>}>
+                    <Route path='/responsavel' element={<ResponsavelLayout isMobile={isMobile} />} >
                         <Route path="meus-times" element={<MeusTimes />} />
-                        <Route path="modalidades" element={<Modalidades />} />
-                        <Route path="times-intercurso" element={<VerTimes />} />
-                        <Route path="usuario/meu-perfil" element={<Perfil />} />
-                        <Route path="usuario/configuracoes" element={<Configuracoes />} />
-                    </Route>
-                    </Route>
-                    <Route element={<UsuarioRoute />} path='/'>
-                    <Route element={<DefaultLayout isMobile={isMobile} />} >
-                        <Route index element={<Navigate to="/jogos" />} />
                         <Route path="jogos" element={<Jogos />} />
-                        <Route path="meu-time" element={<MeuTime />} />
-                        <Route path="modalidades" element={<Modalidades />} />
+                        <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />
-                        <Route path="usuario/meu-perfil" element={<Perfil />} />
-                        <Route path="usuario/configuracoes" element={<Configuracoes />} />
+                        <Route path="meu-perfil" element={<Perfil />} />
+                        <Route path="configuracoes" element={<Configuracoes />} />
                     </Route>
                     </Route>
+                    
+                    <Route element={<ProtectedRoute role={"3"} />}>
+                    <Route path='/usuario' element={<DefaultLayout isMobile={isMobile} />} >
+                        <Route path="meu-time" element={<MeuTime />} />
+                        <Route path="jogos" element={<Jogos />} />
+                        <Route path="placares" element={<Placares />} />
+                        <Route path="times-intercurso" element={<VerTimes />} />
+                        <Route path="meu-perfil" element={<Perfil />} />
+                        <Route path="configuracoes" element={<Configuracoes />} />
+                    </Route>
+                    </Route>
+
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-            </BrowserRouter>
-        </ContextProvider>
+
     )
 }

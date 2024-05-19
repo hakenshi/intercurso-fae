@@ -6,7 +6,7 @@ import { UserInfo } from '../UserInfo';
 import { images } from '../../assets';
 
 
-export const Navbar = ({isMobile, toggleAsideVisibility, id, onLogout, nome, foto}) => {
+export const Navbar = ({isMobile, toggleAsideVisibility, id, onLogout, nome, foto, tipo}) => {
   return (
     <header className="bg-unifae-green-1 w-screen shadow-xl">
                 <nav className="p-4 flex justify-between">
@@ -27,7 +27,7 @@ export const Navbar = ({isMobile, toggleAsideVisibility, id, onLogout, nome, fot
                     </div>
                     <div className="flex justify-center items-center gap-7">
                             <Notficacao id={id} />
-                            <UserInfo logout={onLogout} nome={nome} foto={foto}/>
+                            <UserInfo tipo={tipo} logout={onLogout} nome={nome} foto={foto}/>
                     </div>
                 </nav>
             </header>

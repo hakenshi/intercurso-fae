@@ -4,7 +4,9 @@ import { useStateContext } from "../Contexts/ContextProvider";
 
 export default function LoginLayout(){
 
-    const{ token } = useStateContext()
+    const{ token, user } = useStateContext()
     
-    return token ? <Navigate to={"/"} replace={true}/> : <Outlet/>
+    
+    
+    return token ? <Navigate to={user.tipo_usuario == 1 ? "/admin" : user.tipo_usuario == 2 ? "/responsavel" : "/usuario"} replace={true}/> : <Outlet/>
 }

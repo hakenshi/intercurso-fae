@@ -7,7 +7,7 @@ import { ProfileImage } from "./ProfileImage";
 import { forwardRef, useRef, useState } from "react";
 import { useClickOutSide } from "./hooks/useClickOutside";
 
-export const UserInfo = ({ nome, logout, foto }) => {
+export const UserInfo = ({ nome, logout, foto, tipo }) => {
     const [isOpen, setIsOpen] = useState(false);
     const perfilRef = useClickOutSide(() => setIsOpen(false))
 
@@ -20,7 +20,7 @@ export const UserInfo = ({ nome, logout, foto }) => {
                     <span className=" flex w-full text-lg items-center gap-5 p-3">
                         <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={foto} />
                         {nome} </span>
-                    <Link onClick={() => setIsOpen(false)} to={"/usuario/meu-perfil"} className=" flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"><FontAwesomeIcon icon={faUser} />  Perfil </Link>
+                    <Link onClick={() => setIsOpen(false)} to={`${tipo}/meu-perfil`} className=" flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"><FontAwesomeIcon icon={faUser} />  Perfil </Link>
                     <span className=" flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"> <FontAwesomeIcon icon={faGear} />  Configurações </span>
                     {nome && <span onClick={logout} className="cursor-pointer flex w-full text-lg items-center gap-3 p-3 hover:bg-unifae-gray50-2 hover:rounded-md"> <FontAwesomeIcon icon={faSignOut} />  Logout </span>}
                 </div>
