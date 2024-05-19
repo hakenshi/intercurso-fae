@@ -17,7 +17,7 @@ import { Navbar } from "../Components/Navbar/Navbar";
 // Criando o contexto
 const AsideContext = createContext();
 
-const userLinks = [
+const responsavelLinks = [
 
     {
         path: '/jogos',
@@ -25,9 +25,9 @@ const userLinks = [
         text: 'Jogos'
     },
     {
-        path: `/meu-time`,
+        path: `/meu-times`,
         icon: faUserGroup,
-        text: "Meu Time"
+        text: "Meu Times"
     },
     {
         path: '/times-intercurso',
@@ -43,7 +43,7 @@ const userLinks = [
 ]
 
 
-export default function DefaultLayout({isMobile}) {
+export default function ResponsavelLayout({isMobile}) {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
     const { user, setUser, setSessionToken } = useStateContext()
 
@@ -78,7 +78,7 @@ export default function DefaultLayout({isMobile}) {
             <Navbar foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
             <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
-                    <Aside links={userLinks} isAsideVisible={isAsideVisible} />
+                    <Aside links={responsavelLinks} isAsideVisible={isAsideVisible} />
                 </AsideContext.Provider>
                 <div className={`${isAsideVisible ? "flex-grow" : "flex-grow-0"}`}>
                     <main className="flex justify-center items-center md:w-full w-screen">

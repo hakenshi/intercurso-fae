@@ -23,5 +23,12 @@ export const useSearch = (data,url) => {
         }
     }, [url])
 
-    return { input, setInput, results, setResults, fetchData }
+    const handleSearch = e => {
+        const value = e.target.value;
+        setInput(value)
+        fetchData(value)
+    }
+
+
+    return { input, setInput, results, setResults, handleSearch }
 }

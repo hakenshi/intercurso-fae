@@ -24,7 +24,6 @@ export const Times = (props) => {
 
     const [times, setTimes] = useState(null);
     const [timeId, setTimeId] = useState(null);
-    const [idModalidade, setIdModalidade] = useState(null);
     const [editTimes, setEditTimes] = useState(null)
     const [modalidades, setModalidades] = useState([])
     const [jogadores, setJogadores] = useState([])
@@ -33,10 +32,6 @@ export const Times = (props) => {
     const [erros, setErrors] = useState(null);
     const [novoJogador, setNovoJogador] = useState([])
     const [isEditing, setIsEditing] = useState(false)
-
-    useEffect(() => {
-        if (user.tipo_usuario != 1 && user.tipo_usuario != 2) navigate('/jogos', { replace: true })
-    }, [user, navigate])
 
     useEffect(() => {
         if (!times) {
@@ -63,10 +58,9 @@ export const Times = (props) => {
         setEditTimes(null)
     }
 
-    const handleJogadoresModal = (jogadores, id, idModalidade) => {
+    const handleJogadoresModal = (jogadores, id) => {
         setEditJogadores(jogadores)
         setTimeId(id)
-        setIdModalidade(idModalidade)
         setisJogadoresAlertOpen(true)
     }
 

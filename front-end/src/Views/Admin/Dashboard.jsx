@@ -12,11 +12,7 @@ export default function Dashboard(){
 
     const {user} = useStateContext()   
     const navigate = useNavigate()
-
-    useEffect(()=>{
-        if(user.tipo_usuario != 1) navigate('/jogos', {replace: true}) 
-    }, [user, navigate])
-
+    
     const [usuarios, loading, errors] = useAxios({
         axiosInstance: axiosInstance,
         method: "get",

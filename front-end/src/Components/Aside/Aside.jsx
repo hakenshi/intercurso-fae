@@ -7,65 +7,11 @@ import { icon, text } from "@fortawesome/fontawesome-svg-core";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useStateContext } from "../../Contexts/ContextProvider";
 
-export const Aside = ({ isAsideVisible }) => {
+export const Aside = ({ isAsideVisible, links }) => {
 
     const { user } = useStateContext()
 
-    const userLinks = [
-
-        {
-            path: '/jogos',
-            icon: faGamepad,
-            text: 'Jogos'
-        },
-        {
-            path: `${user.tipo_usuario == 2 ? "/meus-times" : "/meu-time"}`,
-            icon: faUserGroup,
-            text: `${user.tipo_usuario == 2 ? "Meus Times" : "Meu Time"}`
-        },
-        {
-            path: '/times-intercurso',
-            icon: faFlag,
-            text: 'Times'
-        },
-        {
-            path: '/placares',
-            icon: faTrophy,
-            text: 'Placares'
-        },
-
-    ]
-
-
-
-    const adminLinks = [
-        {
-            path: '/dashboard',
-            icon: faChartLine,
-            text: 'Dashboard',
-
-        },
-        {
-            path: '/usuarios',
-            icon: faUserGroup,
-            text: 'Usuarios',
-
-        },
-        {
-            path: '/modalidades',
-            icon: faMedal,
-            text: 'Modalidades',
-
-        },
-        {
-            path: '/times',
-            icon: faFlag,
-            text: 'Times',
-
-        },
-
-    ]
-
+    
 
     return (
         <aside
@@ -84,11 +30,7 @@ export const Aside = ({ isAsideVisible }) => {
                     </>)}
                 </div>
                 <div className="flex flex-col divide-y-2 divide-unifae-gray50-2 space-y-2">
-                    {user.tipo_usuario == 1 ? adminLinks.map((userLink, index) => (
-                        <NavLink key={index} to={userLink.path}>
-                            <AsideItem icon={userLink.icon} text={userLink.text} />
-                        </NavLink>
-                    )) : userLinks.map((userLink, index) => (
+                    {links.map((userLink, index) => (
                         <NavLink key={index} to={userLink.path}>
                             <AsideItem icon={userLink.icon} text={userLink.text} />
                         </NavLink>

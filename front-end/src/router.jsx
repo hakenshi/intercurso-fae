@@ -6,7 +6,7 @@ import VerTimes from "./Views/Default/VerTimes";
 import Login from "./Views/Guest/Login";
 import Cadastro from "./Views/Guest/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
-import GuestLayout from "./layouts/GuestLayout";
+import GuestLayout from "./layouts/LoginLayout";
 import Dashboard from "./Views/Admin/Dashboard";
 import { Modalidades } from "./Views/Admin/Modalidades";
 import { Times } from "./Views/Admin/Times";

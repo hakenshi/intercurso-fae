@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     //Rotas de busca
     Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
+    Route::get("/search-modalidades", [SearchController::class, 'modalidades']);
     Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
 });
 

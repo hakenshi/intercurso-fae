@@ -6,6 +6,9 @@ import { useAlert } from "../../Components/hooks/useAlert"
 import useAxios from "../../Components/hooks/useAxios"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
+import { useSearch } from "../../Components/hooks/useSearch"
+import usePagiante from "../../Components/hooks/usePaginate"
+import { Paginate } from "../../Components/Paginate"
 
 export const Modalidades = () => {
 
@@ -13,33 +16,31 @@ export const Modalidades = () => {
     const { user } = useStateContext()
     const navigate = useNavigate()
     const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
+    const {handleSearch, input, results,} = useSearch("", "/search-modalidades")
+    const { data: modalidades, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/modalidades")
+
     const nomeRef = useRef(null)
     const quantidadeRef = useRef(null)
     const generoRef = useRef(null)
 
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [editModalidade, setEditModalidade] = useState(null)
-    const [modalidades, setModalidades] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [erros, setErrors] = useState(null);
-
-    useEffect(() => {
-        if (user.tipo_usuario != 1) navigate('/jogos', { replace: true })
-    }, [user, navigate])
-
-    useEffect(() => {
-        if (!modalidades) {
-            axiosInstance.get("/modalidades")
-                .then(response => {
-                    setModalidades(response.data.data)
-                    setLoading(false)
-                })
-                .catch(error => {
-                    setErrors(error.message)
-                    setLoading(false)
-                })
-        }
-    }, [modalidades])
+    // const [modalidades, setModalidades] = useState(null);
+    // const [loading, setLoading] = useState(true);
+    // const [erros, setErrors] = useState(null);
+    // useEffect(() => {
+    //     if (!modalidades) {
+    //         axiosInstance.get("/modalidades")
+    //             .then(response => {
+    //                 setModalidades(response.data.data)
+    //                 setLoading(false)
+    //             })
+    //             .catch(error => {
+    //                 setErrors(error.message)
+    //                 setLoading(false)
+    //             })
+    //     }
+    // }, [modalidades])
 
 
     const handleEditModal = (modalidade) => {
@@ -69,7 +70,7 @@ export const Modalidades = () => {
                 .then(({ data }) => {
                     if (data) {
                         alert("Modalidade Editada com sucesso!")
-                        setModalidades(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade ))
+                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade ))
                     }
 
                 })
@@ -87,7 +88,7 @@ export const Modalidades = () => {
                 .then(({ data }) => {
                     if (data) {
                         alert("Modalidade cadastrada com sucesso!")
-                        setModalidades(m => [...m, data.data])
+                        setData(m => [...m, data.data])
                     }
                 })
                 .catch(error => {
@@ -107,7 +108,7 @@ export const Modalidades = () => {
             axiosInstance.delete(`/modalidades/${id}`)
                 .then(() => {
                     alert("Modalidade excluida com sucesso")
-                    setModalidades(m => m.filter(item => item.id !== id))
+                    setData(m => m.filter(item => item.id !== id))
                 })
                 .catch(error => {
                     const response = error.response
@@ -119,10 +120,6 @@ export const Modalidades = () => {
 
         return
     }
-
-    // if(errors) alert(errors)
-
-
     return (
         <>
             <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Modalidade" button={true} isForm={true}>
@@ -169,9 +166,8 @@ export const Modalidades = () => {
                 <div className="flex flex-col">
                     <span className="flex justify-around p-5">
                         <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Modalidade</button>
-                        {/* <button onClick={() => setIsAlertOpen(true)} className="btn-sm btn-green text-sm ">Filtrar</button> */}
                     </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
+                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" onChange={handleSearch} />
                 </div>
 
                 <div className="flex flex-col justify-center items-center p-5">
@@ -188,8 +184,7 @@ export const Modalidades = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-unifae-gray50-2">
-                                {modalidades.map(response => (
-
+                                {(input.trim() !== "" ? results : modalidades).map(response => (
                                     <tr key={response.id} className="text-center">
                                         {/* <td className="p-5">{response.id}</td> */}
                                         <td className="p-5">{response.nome}</td>
@@ -202,6 +197,7 @@ export const Modalidades = () => {
                             </tbody>
                         </table>)}
                 </div>
+                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
             </div>
 
         </>

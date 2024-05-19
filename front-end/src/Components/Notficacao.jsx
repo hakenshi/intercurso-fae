@@ -4,20 +4,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
 import useNotification from './hooks/useNotification'
 import { useAlert } from './hooks/useAlert'
-import { AlertConfirm, AlertError } from './Alerts'
 import { useClickOutSide } from './hooks/useClickOutside'
+import {AlertConfirm} from "./Alerts/AlertConfirm.jsx";
+import {AlertErro} from "./Alerts/AlertErro.jsx";
 
 export const Notficacao = ({ id }) => {
 
     const { notificacao, readNotification } = useNotification(id)
-    const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
+    const {handleClose, isErrorAlertOpen, setIsConfirmAlertOpen, mensagem, setMensagem, setIsErrorAlertOpen, isConfirmAlertOpen} = useAlert()
     const [mostrarNotficacao, setMostrarNotificacao] = useState(false)
     const notificaoRef = useClickOutSide(() => setMostrarNotificacao(false))
 
     const handleDeleteNotificacao = () => {
-     
             readNotification(notificacao)
-            setIsAlertOpen(false)
+            setIsConfirmAlertOpen(false)
             setMostrarNotificacao(false)
     }
 
@@ -28,19 +28,20 @@ export const Notficacao = ({ id }) => {
     const handleOpenAlert = () => {
         {
             if (notificacao.length === 0) {
-              alert("Você não tem notificações")
-              setMostrarNotificacao(false)
+              setMensagem("Você não tem notificações")
+              setIsErrorAlertOpen(true)
+              isErrorAlertOpen ? "" : setMostrarNotificacao(false)
           }
           else{
-              setIsAlertOpen(true)
+              setIsConfirmAlertOpen(true)
           }
       }
     }
 
     return (
         <>
-            <AlertConfirm onConfirm={handleDeleteNotificacao} isOpen={isAlertOpen} text={"Tem certeza de que deseja apagar suas notificações?"} onClose={handleClose} />
-            <AlertError  />
+            <AlertConfirm onConfirm={handleDeleteNotificacao} isOpen={isConfirmAlertOpen} text={"Tem certeza de que deseja apagar suas notificações?"} onClose={handleClose} />
+            <AlertErro isAlertOpen={isErrorAlertOpen} onClose={()=>setIsErrorAlertOpen(false)} mensagem={mensagem} />
             <div ref={notificaoRef}>
                 <div onClick={handleMostrarNotificacao} className="text-white cursor-pointer flex items-center">
                     {notificacao.length > 0 && <div className='relative bottom-2 -right-5 bg-red-600 text-center w-4 h-4 text-xs rounded-full'>{notificacao.length}</div>}

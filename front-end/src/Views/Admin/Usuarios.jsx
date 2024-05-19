@@ -22,7 +22,7 @@ export const Usuarios = () => {
     const navigate = useNavigate()
     const { isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
         isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen } = useAlert()
-    const { fetchData, input, results, setInput } = useSearch("", "/search-usuarios")
+    const { handleSearch, input, results } = useSearch("", "/search-usuarios")
     const { data: usuarios, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/search-usuarios")
 
     const nomeRef = useRef(null);
@@ -39,11 +39,7 @@ export const Usuarios = () => {
     const [editUsuario, setEditUsuario] = useState(null)
     const [erros, setErrors] = useState(null);
     const [id, setId] = useState("")
-
-    useEffect(() => {
-        if (user.tipo_usuario != 1) navigate('/jogos', { replace: true })
-    }, [user, navigate])
-
+    
     const handleEditModal = (usuario) => {
         setIsEditModalOpen(true)
         setEditUsuario(usuario)
@@ -177,12 +173,7 @@ export const Usuarios = () => {
         }
     }
 
-    const handleSearch = e => {
-        const value = e.target.value;
-        setInput(value)
-        fetchData(value)
-    }
-
+    
     const handleConfirm = (id, mensagem) => {
         setId(id)
         setMensagem(mensagem)

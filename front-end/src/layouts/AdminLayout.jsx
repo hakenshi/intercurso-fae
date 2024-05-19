@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faBars, faL, faUserGroup } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBars, faL, faUserGroup, faChartLine, faMedal } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery } from "@react-hook/media-query";
 import { faGamepad, faSignIn, faTrophy, faFlag, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import AsideItem from "../Components/Aside/AsideItem";
@@ -17,35 +17,38 @@ import { Navbar } from "../Components/Navbar/Navbar";
 // Criando o contexto
 const AsideContext = createContext();
 
-const userLinks = [
+const adminLinks = [
+    {
+        path: '/dashboard',
+        icon: faChartLine,
+        text: 'Dashboard',
 
-    {
-        path: '/jogos',
-        icon: faGamepad,
-        text: 'Jogos'
     },
     {
-        path: `/meu-time`,
+        path: '/usuarios',
         icon: faUserGroup,
-        text: "Meu Time"
+        text: 'Usuarios',
+
     },
     {
-        path: '/times-intercurso',
+        path: '/modalidades',
+        icon: faMedal,
+        text: 'Modalidades',
+
+    },
+    {
+        path: '/times',
         icon: faFlag,
-        text: 'Times'
-    },
-    {
-        path: '/placares',
-        icon: faTrophy,
-        text: 'Placares'
+        text: 'Times',
+
     },
 
 ]
 
 
-export default function DefaultLayout({isMobile}) {
+export default function AdminLayout({isMobile}) {
     const [isAsideVisible, setIsAsideVisible] = useState(!isMobile);
-    const { user, setUser, setSessionToken } = useStateContext()
+    const { user, setUser, setSessionToken, token } = useStateContext()
 
     const navigate = useNavigate()
 
@@ -54,14 +57,15 @@ export default function DefaultLayout({isMobile}) {
     };
     
     useEffect(() => {
-        if(sessionStorage.getItem('ACCESS_TOKEN')){
+        if(token){
             axiosInstance.get('/user')
             .then(({ data }) => {
                 setUser(data)
+                // if(data.tipo_usuario == 1) navigate('/dashboard', {replace: true})
             })
         }
         
-    }, [navigate, setUser])
+    }, [navigate, setUser, token])
     
     const onLogout = (e) => {
         e.preventDefault()
@@ -78,11 +82,11 @@ export default function DefaultLayout({isMobile}) {
             <Navbar foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>
             <div className="flex">
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
-                    <Aside links={userLinks} isAsideVisible={isAsideVisible} />
+                    <Aside links={adminLinks} isAsideVisible={isAsideVisible} />
                 </AsideContext.Provider>
                 <div className={`${isAsideVisible ? "flex-grow" : "flex-grow-0"}`}>
                     <main className="flex justify-center items-center md:w-full w-screen">
-                        <Outlet/>
+                       <Outlet/>
                     </main>
                 </div>
             </div>
