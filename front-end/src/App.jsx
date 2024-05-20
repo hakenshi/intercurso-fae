@@ -43,7 +43,7 @@ export const App = () => {
                         <Route path="cadastro" element={<Cadastro />} />
                     </Route>
 
-                    <Route element={<ProtectedRoute role={"1"} />}>
+                    <Route element={<ProtectedRoute role={1} />}>
                     <Route path='/admin' element={<AdminLayout isMobile={isMobile} />} >
                         <Route index path="dashboard" element={<Dashboard />} />
                         <Route path="usuarios" element={<Usuarios />} />
@@ -54,7 +54,7 @@ export const App = () => {
                     </Route>
 
                     </Route>
-                    <Route element={<ProtectedRoute role={"2"}/>}>
+                    <Route element={<ProtectedRoute role={2}/>}>
                     <Route path='/responsavel' element={<ResponsavelLayout isMobile={isMobile} />} >
                         <Route path="meus-times" element={<MeusTimes />} />
                         <Route path="jogos" element={<Jogos />} />
@@ -65,7 +65,7 @@ export const App = () => {
                     </Route>
                     </Route>
                     
-                    <Route element={<ProtectedRoute role={"3"} />}>
+                    <Route element={<ProtectedRoute role={3} />}>
                     <Route path='/usuario' element={<DefaultLayout isMobile={isMobile} />} >
                         <Route path="meu-time" element={<MeuTime />} />
                         <Route path="jogos" element={<Jogos />} />

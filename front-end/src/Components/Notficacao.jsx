@@ -1,4 +1,4 @@
-import { faBell } from '@fortawesome/free-solid-svg-icons'
+import { faBell, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { faBell as faBellRegular } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
@@ -30,7 +30,7 @@ export const Notficacao = ({ id }) => {
             if (notificacao.length === 0) {
               setMensagem("Você não tem notificações")
               setIsErrorAlertOpen(true)
-              isErrorAlertOpen ? "" : setMostrarNotificacao(false)
+              !isErrorAlertOpen ? setMostrarNotificacao(false) : ""
           }
           else{
               setIsConfirmAlertOpen(true)
@@ -40,7 +40,7 @@ export const Notficacao = ({ id }) => {
 
     return (
         <>
-            <AlertConfirm onConfirm={handleDeleteNotificacao} isOpen={isConfirmAlertOpen} text={"Tem certeza de que deseja apagar suas notificações?"} onClose={handleClose} />
+            <AlertConfirm onConfirm={handleDeleteNotificacao} isOpen={isConfirmAlertOpen} text={"Tem certeza de que deseja apagar suas notificações?"} onClose={() => setIsConfirmAlertOpen(false)} />
             <AlertErro isAlertOpen={isErrorAlertOpen} onClose={()=>setIsErrorAlertOpen(false)} mensagem={mensagem} />
             <div ref={notificaoRef}>
                 <div onClick={handleMostrarNotificacao} className="text-white cursor-pointer flex items-center">
@@ -53,8 +53,10 @@ export const Notficacao = ({ id }) => {
                             <p className="text-center">Notificações</p>
                             <div className="flex flex-col text-sm max-w-full w-44 overflow-y-scroll max-h-60 space-y-4">
                                 {notificacao.map(notificacao => (
-                                    <div key={notificacao.id} className='text-pretty hover:bg-unifae-gray50-2 p-2 rounded'>
-                                        {notificacao.notificacao}
+                                    <div key={notificacao.id} className='hover:bg-unifae-gray50-2 p-2 rounded flex items-center '>
+                                        <p>
+                                            <FontAwesomeIcon icon={faUserGroup} className='' />
+                                        </p><p>{notificacao.notificacao}</p>
                                     </div>
                                 ))}
                             </div>

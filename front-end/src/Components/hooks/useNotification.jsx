@@ -9,7 +9,7 @@ const useNotification = (id) => {
             axiosInstance.get(`/notificacao/${id}`)
                 .then(({ data }) => {
                     if (data && data.data.length > 0) {
-                        setNotificacao(data.data);
+                        setNotificacao(n => [...n, data.data]);
                     }
                 })
                 .catch(errors => {
@@ -23,8 +23,6 @@ const useNotification = (id) => {
     }, [id])
 
     const readNotification = (data) => {        
-
-        
 
         if(data){
                 axiosInstance.post(`/notificacao/limpar-notificacao`, data.map(({id}) => id.toString()))

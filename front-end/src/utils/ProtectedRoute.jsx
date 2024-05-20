@@ -28,21 +28,21 @@ export const ProtectedRoute = ({ role }) => {
         }
     }, [token, user, setUser]);
 
-    if (loading) {
-        console.log('Loading user data...');
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     console.log('Loading user data...');
+    //     return <div>Loading...</div>;
+    // }
 
     if (!token) {
         console.log('No token found, redirecting to login...');
-        return <Navigate to={"/auth/login"} replace />;
+        return <Navigate to={"/login"} replace />;
     }
 
-    if (user && user.tipo_usuario != role) {
-        console.log(`User role mismatch: expected ${role}, got ${user.tipo_usuario}. Redirecting to home...`);
-        return <Navigate to={"/"} replace />;
-    }
+    // if (user && user.tipo_usuario != role) {
+    //     console.log(`User role mismatch: expected ${role}, got ${user.tipo_usuario}. Redirecting to home...`);
+    //     return <Navigate to={"/"} replace />;
+    // }
 
-    console.log('User authorized, rendering route...');
+    // console.log('User authorized, rendering route...');
     return <Outlet />;
 };
