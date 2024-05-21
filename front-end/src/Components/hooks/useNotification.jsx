@@ -9,7 +9,7 @@ const useNotification = (id) => {
             axiosInstance.get(`/notificacao/${id}`)
                 .then(({ data }) => {
                     if (data && data.data.length > 0) {
-                        setNotificacao(n => [...n, data.data]);
+                        setNotificacao(data.data);
                     }
                 })
                 .catch(errors => {

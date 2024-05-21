@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\NotficacoesResource;
 use App\Models\Notificacao;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,4 +45,20 @@ class NotificacaoController extends Controller
 
         return NotficacoesResource::collection($deletedNotifications);
     }
+
+    public function marcarComoLida(string $id)
+    {
+        $notificao = Notificacao::findOrFail($id);
+
+        // $notificao->lida = 1;
+
+        // $notificao->update();
+
+        return response()->json([
+            'lida' => 1,
+            'lida_em' => Carbon::now()->tz('America/Sao_Paulo')
+        ]);
+
+    }
+
 }

@@ -34,7 +34,7 @@ class JogadoresController extends Controller
         $novosJogadores = [];
 
         foreach ($jogadores as $jogador) {
-            
+
             $idUsuario = $jogador['id_usuario'];
             $idTime = $jogador['id_time'];
             $status = $jogador['status'];
@@ -56,8 +56,8 @@ class JogadoresController extends Controller
             ];
 
             $novoJogador =  Jogador::create($data);
-            
-           
+
+            Notificacao::criarNotificacao($idUsuario, "Você foi adicionado a um time!", 1);
 
             $novosJogadores[] = $novoJogador->id;
         }
@@ -100,7 +100,7 @@ class JogadoresController extends Controller
     {
         $jogador = Jogador::findOrFail($id);
         $jogador->delete();
-     
+
         return new JogadoresResource($jogador);
     }
 

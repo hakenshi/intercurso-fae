@@ -46,6 +46,7 @@ Route::prefix('/notificacao')->group(function(){
     Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
     Route::post('create', [NotificacaoController::class, 'create']);
     Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
+    Route::patch('ler-notificacao/{id}', [NotificacaoController::class, "marcarComoLida"]);
 });
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);

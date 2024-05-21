@@ -22,6 +22,7 @@ class NotficacoesResource extends JsonResource
             'notificacao' => $this->mensagem,
             'criada_em' => Carbon::make($this->created_at)->format('h:i'),
             'lida_em' => Carbon::make($this->updated_at)->format('h:i'),
+            'tipo_notificacao' => $this->tipo_notificacao,
             'expira_em' => $this->expires_at,
         ];
     }

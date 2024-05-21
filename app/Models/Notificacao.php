@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,7 @@ class Notificacao extends Model
         'id_usuario',
         'mensagem',
         'lida',
+        "tipo_notificacao",
         'expires_at'
     ];
 
@@ -30,6 +32,8 @@ class Notificacao extends Model
         $notificacao->id_usuario = $id;
         $notificacao->mensagem = $mensagem;
         $notificacao->lida = "0";
+        $notificacao->tipo_notificacao = $tipo;
+        $notificacao->expires_at = Carbon::tomorrow();
         $notificacao->save();
 
         return $notificacao;

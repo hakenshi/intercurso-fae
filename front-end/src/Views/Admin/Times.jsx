@@ -77,13 +77,11 @@ export const Times = (props) => {
     const handleSelectJogador = (jogador) => {
         setNovoJogador(jogador)
     }
+
     const handleAddJogador = () => {
     const aluno = jogadores.find(jogador => jogador.id === novoJogador);
 
-    if (!aluno) {
-        alert("Jogador não encontrado.");
-        return;
-    }
+    const responsavel = times.some(({usuario}) => usuario.id_responsavel === novoJogador)
 
     const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador);
 
@@ -96,6 +94,16 @@ export const Times = (props) => {
         time.modalidade.id_modalidade === modalidadeAtualId &&
         time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
     );
+
+    if (!aluno) {
+        alert("Jogador não encontrado.");
+        return;
+    }
+
+    if(responsavel){
+        alert("Você não pode se adicionar no time")
+        return
+    }
 
     if (jogadorExistente) {
         alert("Esse aluno já está no time.");
