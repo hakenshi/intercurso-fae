@@ -48,8 +48,7 @@ export default function Cadastro() {
         .catch(error => {
             const response = error.response
             if(response){
-                setError(response.data)
-                console.log(errors)
+                console.log(response)
             }
         })
     }

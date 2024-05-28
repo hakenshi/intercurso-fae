@@ -23,6 +23,8 @@ class NotificacaoController extends Controller
     public function create(Request $request)
     {
         
+        // dd($request->all());
+
         $data['expires_at'] = now()->addDay();
         
         $data = $request->all();

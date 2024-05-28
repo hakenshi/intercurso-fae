@@ -7,6 +7,7 @@ use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
 use App\Models\Time;
 use App\Models\User as ModelsUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -60,18 +61,24 @@ class UserController extends Controller
     {
 
         $data = $request->validated();
-                
+            
         $user = ModelsUser::findOrFail($id);
 
         if ($request->hasFile('foto_perfil')) {
-
-            if ($user->foto_perfil !== null) {
+            
+            if ($user->foto_perfil != null) {
                 Storage::disk('public')->delete($user->foto_perfil);
             }
-
+        
             $image = $request->file('foto_perfil')->store('profile', 'public');
             $data['foto_perfil'] = $image;
         }
+
+        else{
+            $data['foto_perfil'] = $user->foto_perfil;
+        }
+
+        $data['data_de_nascimento'] = Carbon::createFromFormat("dmY", $request->input('data_de_nascimento'))->format('Y-m-d');
 
         if (!empty($data['senha'])) $data['senha'] = bcrypt($request->password);
 

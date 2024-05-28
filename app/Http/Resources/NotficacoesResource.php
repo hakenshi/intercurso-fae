@@ -18,7 +18,6 @@ class NotficacoesResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'nome_usuario' => $this->usuario->nome,
             'notificacao' => $this->mensagem,
             'criada_em' => Carbon::make($this->created_at)->format('h:i'),
             'lida_em' => Carbon::make($this->updated_at)->format('h:i'),

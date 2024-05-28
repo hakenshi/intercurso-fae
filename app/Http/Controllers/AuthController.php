@@ -28,6 +28,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request){
         $data = $request->validated();
+    
         $user = User::where('email', $data['email'])->first();
 
         if(!$user) return response(['msg' => 'Usuário não encontrado'], 401);

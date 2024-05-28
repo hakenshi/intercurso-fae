@@ -73,7 +73,9 @@ class SearchController extends Controller
   public function jogadores(Request $request)
   {
     $data = $request->input('value');
-    $jogadores = User::where('ra', 'LIKE', "%" . $data . "%")->get();
+    $jogadores = User::where('ra', 'LIKE', "%" . $data . "%")
+    ->where('tipo_usuario', "3")
+    ->get();
 
     return $this->search($data, $jogadores);
   }

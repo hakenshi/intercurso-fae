@@ -1,4 +1,4 @@
-import { faBell, faCalendar, faClock, faFaceFrown, faFaceSadTear, faFlag, faSoccerBall, faUserGroup, faVolleyball } from '@fortawesome/free-solid-svg-icons'
+import { faBell, faClock, faFaceFrown, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { faBell as faBellRegular } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
@@ -8,6 +8,7 @@ import { useClickOutSide } from './hooks/useClickOutside'
 import {AlertConfirm} from "./Alerts/AlertConfirm.jsx";
 import {AlertErro} from "./Alerts/AlertErro.jsx";
 import axiosInstance from '../helper/axios-instance.js'
+import { createPortal } from 'react-dom'
 
 const notifications = [
     {
@@ -25,7 +26,7 @@ const notifications = [
 export const Notficacao = ({ id }) => {
 
     const { notificacao, readNotification } = useNotification(id)
-    const {handleClose, isErrorAlertOpen, setIsConfirmAlertOpen, mensagem, setMensagem, setIsErrorAlertOpen, isConfirmAlertOpen} = useAlert()
+    const { isErrorAlertOpen, setIsConfirmAlertOpen, mensagem, setMensagem, setIsErrorAlertOpen, isConfirmAlertOpen} = useAlert()
     const [mostrarNotficacao, setMostrarNotificacao] = useState(false)
     const notificaoRef = useClickOutSide(() => setMostrarNotificacao(false))
 
@@ -69,7 +70,7 @@ export const Notficacao = ({ id }) => {
                     {notificacao.length > 0 ? <div className='relative bottom-2 -right-5 bg-red-600 text-center w-4 h-4 text-xs rounded-full'>{notificacao.length}</div> : ""}
                     <FontAwesomeIcon className='text-base' icon={notificacao.length > 0 ? faBell : faBellRegular} />
                 </div>
-                {id && <div className={`absolute top-12 right-0 overflow-hidden transition-all duration-[400ms] ${mostrarNotficacao ? "max-h-96 ease-in" : "max-h-0 ease-out"}`}>
+                {id && createPortal(<div className={`absolute top-12 right-0 overflow-hidden transition-all duration-[400ms] ${mostrarNotficacao ? "max-h-96 ease-in" : "max-h-0 ease-out"}`}>
                     <div className="flex justify-center p-4">
                         <div className="w-64 bg-zinc-700 text-white p-2 rounded-[7px]">
                             <p className="text-center">Notificações</p>
@@ -93,7 +94,7 @@ export const Notficacao = ({ id }) => {
                             <button onClick={() => handleOpenAlert()} className="btn btn-green p-2 w-full">Apagar notificações</button>
                         </div>
                     </div>
-                </div>}
+                </div>, document.body)}
             </div>
         </>
     )

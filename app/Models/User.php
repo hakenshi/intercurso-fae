@@ -67,7 +67,6 @@ class User extends Authenticatable
         ];
     }
 
-    
     public function times(){
         return $this->hasMany(Time::class, 'id_responsavel');
     }

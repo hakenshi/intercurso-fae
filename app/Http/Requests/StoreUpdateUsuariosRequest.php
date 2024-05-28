@@ -50,7 +50,7 @@ class StoreUpdateUsuariosRequest extends FormRequest
         ],
         'foto_perfil' => [
             'nullable',
-            'image',
+            'image'
         ],
         'bio' => 'nullable|max:120',
         'data_nascimento' => 'nullable',

@@ -49,8 +49,8 @@ export const App = () => {
                         <Route path="usuarios" element={<Usuarios />} />
                         <Route path="modalidades" element={<Modalidades />} />
                         <Route path="times" element={<Times />} />
-                        <Route path="usuario/meu-perfil" element={<Perfil />} />
-                        <Route path="usuario/configuracoes" element={<Configuracoes />} />
+                        <Route path="meu-perfil" element={<Perfil />} />
+                        <Route path="configuracoes" element={<Configuracoes />} />
                     </Route>
 
                     </Route>
@@ -75,7 +75,6 @@ export const App = () => {
                         <Route path="configuracoes" element={<Configuracoes />} />
                     </Route>
                     </Route>
-
                     <Route path="*" element={<NotFound />} />
                 </Routes>
 

@@ -1,6 +1,7 @@
 import { faClose, faExclamation } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useState } from "react"
+import { createPortal } from "react-dom"
 
 export const AlertErro = ({mensagem, onClose, isAlertOpen}) =>{
 
@@ -9,7 +10,7 @@ export const AlertErro = ({mensagem, onClose, isAlertOpen}) =>{
     }
     if(isAlertOpen)
     return (
-        <div className="flex items-center justify-center min-w-full min-h-full bg-unifae-gray50-1 z-[3] absolute left-0 top-0">
+        createPortal(<div className="flex items-center justify-center min-w-full min-h-full bg-unifae-gray50-1 z-[3] absolute left-0 top-0">
 
         <div className="h-[600px] flex justify-center items-center">
             <div className="bg-[#EAEAEA] min-w-[400px] p-5 shadow-md rounded-xl">
@@ -23,6 +24,6 @@ export const AlertErro = ({mensagem, onClose, isAlertOpen}) =>{
                 <span className="flex justify-center"><button className="btn-sm btn-green" onClick={handleClose}>Confirmar</button></span>
             </div>
         </div>
-        </div>
+        </div>, document.body)
     )
 }

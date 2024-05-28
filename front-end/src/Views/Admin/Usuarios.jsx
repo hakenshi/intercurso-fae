@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useStateContext } from "../../Contexts/ContextProvider"
 import { useNavigate } from "react-router-dom"
-import { Modal } from "../../Components/Modal"
 import { useAlert } from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
@@ -15,6 +14,7 @@ import { AlertErro } from "../../Components/Alerts/AlertErro"
 import { AlertSucesso } from "../../Components/Alerts/AlertSucesso"
 import { AlertConfirm } from "../../Components/Alerts/AlertConfirm"
 import { faL } from "@fortawesome/free-solid-svg-icons"
+import { Modal } from "../../Components/Modal"
 export const Usuarios = () => {
 
 
@@ -39,7 +39,7 @@ export const Usuarios = () => {
     const [editUsuario, setEditUsuario] = useState(null)
     const [erros, setErrors] = useState(null);
     const [id, setId] = useState("")
-    
+
     const handleEditModal = (usuario) => {
         setIsEditModalOpen(true)
         setEditUsuario(usuario)
@@ -154,7 +154,7 @@ export const Usuarios = () => {
                 .then(({ data }) => {
 
                     setMensagem("Esse usuário agora é responsável.")
-                    setIsAlertOpen (true)
+                    setIsAlertOpen(true)
                     setData(u => u.map((usuario) => usuario.usuario.id === data.data.usuario.id ? {
                         ...usuario,
                         usuario: {
@@ -173,7 +173,7 @@ export const Usuarios = () => {
         }
     }
 
-    
+
     const handleConfirm = (id, mensagem) => {
         setId(id)
         setMensagem(mensagem)
@@ -186,8 +186,9 @@ export const Usuarios = () => {
             <AlertErro mensagem={mensagem} isAlertOpen={isErrorAlertOpen} onClose={() => setIsErrorAlertOpen(false)} />
             <AlertConfirm text={mensagem} isOpen={isConfirmAlertOpen} onConfirm={() => handleDelete(id)} onClose={() => setIsConfirmAlertOpen(false)} />
             <AlertSucesso mensagem={mensagem} isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
 
+            <Modal.Root isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Responsável">
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
                     <input ref={nomeRef} type="text" className="input-modal" name="nome" />
@@ -224,10 +225,11 @@ export const Usuarios = () => {
                         {cursos.map((curso, index) => <option ref={cursoRef} key={index} value={curso.value}>{curso.curso}</option>)}
                     </select>
                 </div>
+                </Modal.Form>
+            </Modal.Root>
 
-            </Modal>
-
-            <Modal isOpen={isEditModal} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto="Cadastrar Responsável" button={true} isForm={true}>
+            <Modal.Root isOpen={isEditModal} onClose={handleCloseEditModal}>
+            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Responsável" >
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -269,8 +271,8 @@ export const Usuarios = () => {
                         <option value="1">Admin</option>
                     </select>
                 </div>
-
-            </Modal>
+            </Modal.Form>
+            </Modal.Root>
 
             <div className="w-full h-[88vh] flex items-center flex-col">
                 <h1 className="text-center p-5 text-3xl font-medium">Usuários</h1>
@@ -287,7 +289,7 @@ export const Usuarios = () => {
                         (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
-                                    <th className="p-5"><button onClick={()=> setIsConfirmAlertOpen(true)}>abrir modal</button></th>
+                                    <th className="p-5"><button onClick={() => setIsConfirmAlertOpen(true)}>abrir modal</button></th>
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Email</th>
                                     <th className="p-5">Curso</th>

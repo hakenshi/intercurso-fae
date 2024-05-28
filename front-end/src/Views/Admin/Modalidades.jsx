@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useStateContext } from "../../Contexts/ContextProvider"
 import { useNavigate } from "react-router-dom"
-import { Modal } from "../../Components/Modal"
 import { useAlert } from "../../Components/hooks/useAlert"
-import useAxios from "../../Components/hooks/useAxios"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
 import { useSearch } from "../../Components/hooks/useSearch"
 import usePagiante from "../../Components/hooks/usePaginate"
 import { Paginate } from "../../Components/Paginate"
+import { Modal } from "../../Components/Modal"
 
 export const Modalidades = () => {
 
@@ -122,8 +121,8 @@ export const Modalidades = () => {
     }
     return (
         <>
-            <Modal isOpen={isAlertOpen} onClose={handleClose} onSubmit={handleSubmit} texto="Cadastrar Modalidade" button={true} isForm={true}>
-
+            <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
+                <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Modalidade">
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
                     <input ref={nomeRef} type="text" className="input-modal" name="nome" />
@@ -140,9 +139,11 @@ export const Modalidades = () => {
                         <option value="1">Feminino</option>
                     </select>
                 </div>
-            </Modal>
+                </Modal.Form>
+            </Modal.Root>
 
-            <Modal isOpen={isEditAlertOpen} onClose={handleCloseEditModal} onSubmit={handleSubmit} texto={"Editar Modalidade"} button={true} isForm={true}>
+            <Modal.Root isOpen={isEditAlertOpen} onClose={handleCloseEditModal}>
+                <Modal.Form onSubmit={handleSubmit} texto={"Editar Modalidade"}>
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
                     <input ref={nomeRef} type="text" className="input-modal" name="nome" defaultValue={editModalidade ? editModalidade.nome : ""} />
@@ -159,7 +160,8 @@ export const Modalidades = () => {
                         <option selected={editModalidade ? editModalidade.genero : ""} value="1">Feminino</option>
                     </select>
                 </div>
-            </Modal>
+                </Modal.Form>
+            </Modal.Root>
 
             <div className="w-full h-[88vh] flex items-center flex-col">
                 <h1 className="text-center p-5 text-3xl font-medium">Modalidades</h1>
