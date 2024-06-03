@@ -11,11 +11,13 @@ import { faL } from "@fortawesome/free-solid-svg-icons"
 import { images } from "../../assets"
 import { ProfileImage } from "../../Components/ProfileImage"
 import { Modal } from "../../Components/Modal"
-export const Times = (props) => {
+import { Table } from "../../Components/Table"
+import { TableHead } from "../../Components/Table/TableHead"
+import { setStatus } from "../../utils/setStatus"
 
-
+export const Times = ({idResponsavel, url = "/times"}) => {
+    
     const { user } = useStateContext()
-    const navigate = useNavigate()
     const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [isJogadoresAlertOpen, setisJogadoresAlertOpen] = useState(false);
@@ -35,7 +37,7 @@ export const Times = (props) => {
 
     useEffect(() => {
         if (!times) {
-            axiosInstance.get("/times")
+            axiosInstance.get(url)
                 .then(({ data }) => {
                     setTimes(data.times)
                     setModalidades(data.modalidades)
@@ -47,7 +49,8 @@ export const Times = (props) => {
                     setLoading(false)
                 })
         }
-    }, [times])
+    }, [times, url])
+
 
     const handleEditModal = (time) => {
         setEditTimes(time)
@@ -78,60 +81,100 @@ export const Times = (props) => {
     }
 
     const handleAddJogador = () => {
+        if (!novoJogador) {
+            alert("Por favor, escolha um aluno");
+            return;
+        }
+
         const aluno = jogadores.find(jogador => jogador.id === novoJogador);
-
-        const responsavel = times.some(({ usuario }) => usuario.id_responsavel === novoJogador)
-
+    
+        if (!aluno) {
+            alert("Jogador não encontrado.");
+            return;
+        }
+    
+        const responsavel = times.some(({ usuario }) => usuario.id_responsavel === novoJogador);
+    
+        if (responsavel) {
+            alert("Você não pode se adicionar no time");
+            return;
+        }
+    
         const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador);
-
+    
+        if (jogadorExistente) {
+            alert("Esse aluno já está no time.");
+            return;
+        }
+    
         const { id_modalidade: modalidadeAtualId, quantidade_participantes: quantidade } = times.find(time => time.time.id === timeId).modalidade;
-
-        const { nome } = modalidades.find(modalidade => modalidade.id === modalidadeAtualId)
-
+    
+        const { nome } = modalidades.find(modalidade => modalidade.id === modalidadeAtualId);
+    
         const jogadorComModalidadeDuplicada = times.some(time =>
             time.time.id !== timeId &&
             time.modalidade.id_modalidade === modalidadeAtualId &&
             time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
         );
-
-        if (!aluno) {
-            alert("Jogador não encontrado.");
-            return;
-        }
-
-        if (responsavel) {
-            alert("Você não pode se adicionar no time")
-            return
-        }
-
-        if (jogadorExistente) {
-            alert("Esse aluno já está no time.");
-            return;
-        }
-
+    
         if (jogadorComModalidadeDuplicada) {
             const timeDuplicado = times.find(time =>
                 time.time.id !== timeId &&
                 time.modalidade.id_modalidade === modalidadeAtualId &&
                 time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
             );
-
-            alert(`${aluno.nome} já pertence a um time com a modalidade ${timeDuplicado.modalidade.nome_modalidade}.\nO nome do time é ${timeDuplicado.time.nome}\nseu responsável é: ${timeDuplicado.usuario.nome_responsavel}`);
+    
+            alert(`${aluno.nome} já pertence a um time com a modalidade ${timeDuplicado.modalidade.nome_modalidade}`);
             return;
         }
-
+    
         if (editJogadores.length >= quantidade) {
             alert(`Quantidade máxima de jogadores na modalidade ${nome} é de ${quantidade}. O time está cheio.`);
             return;
         }
-
-        if (!novoJogador) {
-            alert("Por favor, escolha um aluno");
+    
+        const updatedJogadores = [...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '0' }];
+    
+        if (updatedJogadores.length === 0) {
+            alert("O time deve ter ao menos 1 jogador");
             return;
         }
-
-        setEditJogadores([...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '1' }]);
+    
+        const payload = updatedJogadores.map(jogador => ({
+            id_usuario: jogador.id_usuario,
+            id_time: jogador.id_time,
+            status: jogador.status
+        }));
+    
+        axiosInstance.post('/jogadores', payload)
+            .then(({ data }) => {    
+                setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
+                    ...time,
+                    informacoes: {
+                        jogadores: [
+                            ...time.informacoes.jogadores,
+                            ...data.data.map(jogador => ({
+                                id: jogador.id,
+                                id_usuario: jogador.usuario.id_usuario,
+                                id_time: jogador.time.id_time,
+                                nome: jogador.usuario.nome_usuario,
+                                email: jogador.usuario.email_usuario,
+                                ra: jogador.usuario.ra_usuario,
+                                status: jogador.status,
+                            }))
+                        ],
+                        quantidade: time.informacoes.quantidade + data.data.length,
+                    }
+                } : time));
+            })
+            .catch(error => {
+                const response = error.message;
+                if (response) alert(response);
+            });
+    
+        setEditJogadores(updatedJogadores);
     };
+    
 
     const getResponasavelId = () => {
         return localStorage.getItem("responsavelId")
@@ -143,7 +186,7 @@ export const Times = (props) => {
         const payload = {
             nome: nomeRef.current.value,
             id_modalidade: modalidadeRef.current.value,
-            id_responsavel: user.tipo_usuario == 2 ? props.id : getResponasavelId(),
+            id_responsavel: user.tipo_usuario == 2 ? idResponsavel.id : getResponasavelId(),
             status: "1",
         }
 
@@ -232,8 +275,8 @@ export const Times = (props) => {
     }
     const handleInativarTime = (times) => {
 
-
         const status = times.time.status === "1" ? "0" : "1"
+
         const confirm = window.confirm(`Tem certeza de que deseja ${times.time.status === '1' ? "inativar" : "ativar"} esse time?`)
 
         if (confirm) {
@@ -257,88 +300,44 @@ export const Times = (props) => {
         return
     }
 
-    const handleInativarJogador = (jogador) => {
+    // const handleInativarJogador = (jogador) => {
 
-        const status = jogador.status === "1" ? "0" : "1"
+    //     const status = jogador.status === "1" ? "0" : "1"
 
-        const confirm = window.confirm(`Tem certeza de que deseja ${jogador.status === '1' ? "inativar" : "ativar"} esse jogador?`)
+    //     const confirm = window.confirm(`Tem certeza de que deseja ${jogador.status === '1' ? "inativar" : "ativar"} esse jogador?`)
 
-        if (confirm) {
-            axiosInstance.put(`/jogadores/${jogador.id}`, {
-                status: status
-            })
-                .then(() => {
-                    alert(`Jogador ${jogador.status === '1' ? "inativado" : "ativado"} com sucesso`)
-                    setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
+    //     if (confirm) {
+    //         axiosInstance.put(`/jogadores/${jogador.id}`, {
+    //             status: status
+    //         })
+    //             .then(() => {
+    //                 alert(`Jogador ${jogador.status === '1' ? "inativado" : "ativado"} com sucesso`)
+    //                 setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
 
-                    setTimes(t => Array.isArray(t) ? t.map(time => ({
-                        ...time,
-                        informacoes: {
-                            ...time.informacoes,
-                            jogadores: time.informacoes.jogadores.map(j =>
-                                j.id === jogador.id ? { ...j, status: status } : j
-                            ),
-                        }
-                    })) : t);
+    //                 setTimes(t => Array.isArray(t) ? t.map(time => ({
+    //                     ...time,
+    //                     informacoes: {
+    //                         ...time.informacoes,
+    //                         jogadores: time.informacoes.jogadores.map(j =>
+    //                             j.id === jogador.id ? { ...j, status: status } : j
+    //                         ),
+    //                     }
+    //                 })) : t);
 
-                })
-                .catch(error => {
-                    const response = error.response
-                    if (response) {
-                        alert(response.data.msg)
-                    }
-                })
-        }
+    //             })
+    //             .catch(error => {
+    //                 const response = error.response
+    //                 if (response) {
+    //                     alert(response.data.msg)
+    //                 }
+    //             })
+    //     }
 
-        return
-    }
+    //     return
+    // }
 
-    const handleJogadoresSubmit = () => {
-
-        if (!editJogadores || editJogadores.length === 0) {
-            alert("O time deve ter ao menos 1 jogador")
-            return
-        }
-
-        const payload = editJogadores.map(jogador => ({
-            id_usuario: jogador.id_usuario,
-            id_time: jogador.id_time,
-            status: jogador.status
-        }))
-
-        axiosInstance.post('/jogadores', payload)
-            .then(({ data }) => {
-                alert(`${data.data.length === 1 ? 'Jogador inserido com sucesso no time' : "Jogadores inseridos com sucesso no time"}`)
-
-                setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
-                    ...time,
-                    informacoes: {
-                        jogadores: [
-                            ...time.informacoes.jogadores,
-                            ...data.data.map(jogador => ({
-                                id: jogador.id,
-                                id_usuario: jogador.usuario.id_usuario,
-                                id_time: jogador.time.id_time,
-                                nome: jogador.usuario.nome_usuario,
-                                email: jogador.usuario.email_usuario,
-                                ra: jogador.usuario.ra_usuario,
-                                status: jogador.status,
-                            }))
-                        ],
-                        quantidade: time.informacoes.quantidade + data.data.length,
-                    }
-                } : time));
-
-                // setTimes(t => t.map(time => time.time.id === editTimes.time.id ? { ...time, ...data.data } : time))
-
-
-                setisJogadoresAlertOpen(false)
-                setIsEditing(false)
-            })
-            .catch(error => {
-                const response = error.message
-                if (response) alert(response)
-            })
+    if(loading){
+       return(<div className="w-full h-screen flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>)
     }
 
     return (
@@ -393,7 +392,7 @@ export const Times = (props) => {
                 </Modal.Form>
             </Modal.Root>
             {/* Modal de jogadores */}
-            <Modal.Root isOpen={isJogadoresAlertOpen} onClose={handleCloseJogadores} onSubmit={handleJogadoresSubmit}>
+            <Modal.Root isOpen={isJogadoresAlertOpen} onClose={handleCloseJogadores}>
                 <Modal.Default texto={'Jogadores'}>
 
                     <div className="py-5">
@@ -445,13 +444,13 @@ export const Times = (props) => {
                                                 {jogador.ra}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                {jogador.status === "1" ? "Ativo" : "Inativo"}
+                                                {setStatus(jogador.status)}
                                             </td>
                                             {isEditing && (
                                                 <td className="px-6 py-4 whitespace-nowrap flex gap-6">
-                                                    <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
-                                                        {jogador.status === "1" ? "Inativar" : "Ativar"}
-                                                    </button>
+                                                    {/* <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
+                                                        {setStatus(jogador.status)}
+                                                    </button> */}
                                                     <button type="button" onClick={() => handleDeleteJogador(jogador.id)} className={`btn-sm btn-delete`}>
                                                         Retirar
                                                     </button>
@@ -467,7 +466,7 @@ export const Times = (props) => {
                             </div>
                         )}
                         {isEditing && (
-                            <Modal.Button type="button" onClick={() => handleJogadoresSubmit()} />
+                            <Modal.Button type="button" texto="Salvar" onClick={() => setIsEditing(false)} />
                         )}
                     </div>
                 </Modal.Default>
@@ -483,25 +482,13 @@ export const Times = (props) => {
                 </div>
 
                 {times && times.length <= 0 ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
-                    <p className="h-72 flex items-center"> {props.id ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
+                    <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
                 </div> : <div className="flex flex-col justify-center items-center p-5">
-                    {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className="bg-card-white-1 w-[80vw] flex-grow rounded-xl p-5 ">
-                            <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
-                                <tr className="text-center">
-                                    {/* <th className="p-5">ID</th> */}
-                                    <th className="p-5">Nome</th>
-                                    <th className="p-5">Responsável</th>
-                                    <th className="p-5">Modalidade</th>
-                                    <th className="p-5">Quantidade de jogadores</th>
-                                    <th className="p-5">Status</th>
-                                    <th className="p-5"></th>
-                                    <th className="p-5"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-unifae-gray50-2">
+                    
+                        <Table.Root>
+                            <Table.Head titles={['Nome', 'Responsável', 'Quantidade de Jogadores', 'Status', ' ', '', '']}/>
+                            <Table.Body className="divide-y divide-unifae-gray50-2">
                                 {times && times
-                                    .filter(response => props.id ? response.usuario.id_responsavel == props.id : true)
                                     .map(response => (
                                         <tr key={response.time.id} className="text-center">
                                             <td className="p-5">{response.time.nome}</td>
@@ -521,8 +508,8 @@ export const Times = (props) => {
                                     ))
                                 }
 
-                            </tbody>
-                        </table>)}
+                            </Table.Body>
+                        </Table.Root>
                 </div>}
             </div>
 

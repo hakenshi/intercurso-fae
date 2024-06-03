@@ -17,9 +17,6 @@ import { faL } from "@fortawesome/free-solid-svg-icons"
 import { Modal } from "../../Components/Modal"
 export const Usuarios = () => {
 
-
-    const { user } = useStateContext()
-    const navigate = useNavigate()
     const { isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
         isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen } = useAlert()
     const { handleSearch, input, results } = useSearch("", "/search-usuarios")
@@ -182,13 +179,12 @@ export const Usuarios = () => {
 
     return (
         <>
-
             <AlertErro mensagem={mensagem} isAlertOpen={isErrorAlertOpen} onClose={() => setIsErrorAlertOpen(false)} />
             <AlertConfirm text={mensagem} isOpen={isConfirmAlertOpen} onConfirm={() => handleDelete(id)} onClose={() => setIsConfirmAlertOpen(false)} />
             <AlertSucesso mensagem={mensagem} isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
 
             <Modal.Root isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Responsável">
+            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Usuário">
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
                     <input ref={nomeRef} type="text" className="input-modal" name="nome" />
@@ -229,7 +225,7 @@ export const Usuarios = () => {
             </Modal.Root>
 
             <Modal.Root isOpen={isEditModal} onClose={handleCloseEditModal}>
-            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Responsável" >
+            <Modal.Form onSubmit={handleSubmit} texto="Editar Usuário" >
 
                 <div className="flex flex-col justify-center p-2">
                     <label htmlFor="nome">Nome</label>
@@ -289,7 +285,7 @@ export const Usuarios = () => {
                         (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
-                                    <th className="p-5"><button onClick={() => setIsConfirmAlertOpen(true)}>abrir modal</button></th>
+                                    <th className="p-5"></th>
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Email</th>
                                     <th className="p-5">Curso</th>

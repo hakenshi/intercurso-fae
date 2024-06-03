@@ -19,6 +19,9 @@ Route::apiResources([
     '/jogadores' => JogadoresController::class,
 ]);
 
+Route::prefix("/times")->group(function(){
+    Route::get("/usuario/{id}", [TimeController::class, 'showTimesUsuario']);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     
@@ -33,20 +36,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
     // Rota de notificação
-    
+    Route::prefix('/notificacao')->group(function(){
+        Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
+        Route::post('create', [NotificacaoController::class, 'create']);
+        Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
+        Route::patch('ler-notificacao/{id}', [NotificacaoController::class, "marcarComoLida"]);
+    });
     //Rotas de busca
     Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
     Route::get("/search-modalidades", [SearchController::class, 'modalidades']);
     Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
-});
-
-Route::get('/search-usuarios', [SearchController::class, 'usuarios']);
-
-Route::prefix('/notificacao')->group(function(){
-    Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
-    Route::post('create', [NotificacaoController::class, 'create']);
-    Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
-    Route::patch('ler-notificacao/{id}', [NotificacaoController::class, "marcarComoLida"]);
+    Route::get('/search-usuarios', [SearchController::class, 'usuarios']);
 });
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('senha');
             $table->string('telefone');
             $table->string('ra')->unique();
-            // $table->longText('foto_perfil');
             $table->timestamps();
         });
         

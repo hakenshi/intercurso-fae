@@ -8,7 +8,6 @@ import { useClickOutSide } from './hooks/useClickOutside'
 import {AlertConfirm} from "./Alerts/AlertConfirm.jsx";
 import {AlertErro} from "./Alerts/AlertErro.jsx";
 import axiosInstance from '../helper/axios-instance.js'
-import { createPortal } from 'react-dom'
 
 const notifications = [
     {
@@ -70,13 +69,13 @@ export const Notficacao = ({ id }) => {
                     {notificacao.length > 0 ? <div className='relative bottom-2 -right-5 bg-red-600 text-center w-4 h-4 text-xs rounded-full'>{notificacao.length}</div> : ""}
                     <FontAwesomeIcon className='text-base' icon={notificacao.length > 0 ? faBell : faBellRegular} />
                 </div>
-                {id && createPortal(<div className={`absolute top-12 right-0 overflow-hidden transition-all duration-[400ms] ${mostrarNotficacao ? "max-h-96 ease-in" : "max-h-0 ease-out"}`}>
+                {id && <div className={`absolute top-12 right-0 overflow-hidden transition-all duration-[400ms] ${mostrarNotficacao ? "max-h-full ease-in" : "max-h-0 ease-out"}`}>
                     <div className="flex justify-center p-4">
                         <div className="w-64 bg-zinc-700 text-white p-2 rounded-[7px]">
                             <p className="text-center">Notificações</p>
-                            <div className="flex flex-col text-sm max-w-full overflow-y-scroll">
+                            <div className="flex flex-col text-sm max-w-full max-h-96 overflow-y-scroll">
                                 {notificacao.length > 0 ? notificacao.map(notificacao => {
-                                    const tipoNotificacao = notifications.find(notification => notification.tipo == notificacao.tipo_notificacao)
+                                    const tipoNotificacao = notifications.find(notification => notification.tipo === notificacao.tipo_notificacao)
                                     return (
                                         <div onClick={() => handleMarcarComoLida(notificacao.id)} key={notificacao.id} className='hover:bg-unifae-gray50-2 p-2 rounded flex justify-center items-center gap-2 my-2'>
                                         <p>
@@ -94,7 +93,7 @@ export const Notficacao = ({ id }) => {
                             <button onClick={() => handleOpenAlert()} className="btn btn-green p-2 w-full">Apagar notificações</button>
                         </div>
                     </div>
-                </div>, document.body)}
+                </div>}
             </div>
         </>
     )

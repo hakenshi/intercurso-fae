@@ -4,13 +4,11 @@ import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
 import { Times } from "../Admin/Times"
 
-export const MeusTimes = () => {
-    
-    const {user} = useStateContext();
+export const MeusTimes = ({id}) => {
     
     return (
         <>
-            <Times id={user.id}/>
+            <Times id={id} url={`/times/${id}`} />
         </>
     )
 }

@@ -61,24 +61,22 @@ class UserController extends Controller
     {
 
         $data = $request->validated();
-            
+
         $user = ModelsUser::findOrFail($id);
 
         if ($request->hasFile('foto_perfil')) {
-            
+
             if ($user->foto_perfil != null) {
                 Storage::disk('public')->delete($user->foto_perfil);
             }
-        
+
             $image = $request->file('foto_perfil')->store('profile', 'public');
             $data['foto_perfil'] = $image;
-        }
-
-        else{
+        } else {
             $data['foto_perfil'] = $user->foto_perfil;
         }
 
-        $data['data_de_nascimento'] = Carbon::createFromFormat("dmY", $request->input('data_de_nascimento'))->format('Y-m-d');
+        if (!empty($data['data_de_nascimento'])) $data['data_de_nascimento'] = Carbon::createFromFormat("dmY", $request->input('data_de_nascimento'))->format('Y-m-d');
 
         if (!empty($data['senha'])) $data['senha'] = bcrypt($request->password);
 
@@ -96,18 +94,18 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = ModelsUser::findOrFail($id);        
+        $user = ModelsUser::findOrFail($id);
         $jogador = Jogador::where('id_usuario', $user->id)->first();
         $timeResponsavel = Time::where('id_responsavel', $user->id)->get();
-        
-        if($timeResponsavel){
-           foreach ($timeResponsavel as $responsavel) {
-            $responsavel->id_responsavel = null;
-            $responsavel->update();
-        }
+
+        if ($timeResponsavel) {
+            foreach ($timeResponsavel as $responsavel) {
+                $responsavel->id_responsavel = null;
+                $responsavel->update();
+            }
         }
 
-        if($jogador){
+        if ($jogador) {
             $jogador->delete();
         }
 

@@ -7,7 +7,7 @@ import { SearchResultList } from "./SearchResultList"
 
 export const Search = ({ placeholder, url, handleSelectUser, data }) => {
 
-    const [input, setInput] = useState(data)
+    const [input, setInput] = useState(data ? data : "")
     const [results, setResults] = useState([])
 
     const fetchData = (value) => {
@@ -44,8 +44,6 @@ export const Search = ({ placeholder, url, handleSelectUser, data }) => {
                     <input className="input-modal space-y-2" type="text" placeholder={placeholder} value={input} onChange={(e) => handleChange(e.target.value)} />
                     <SearchResultList results={results} onClick={handleResultClick}/>
             </div>
-
-            
         </>
     )
 }

@@ -31,16 +31,12 @@ class JogadoresController extends Controller
     public function store(Request $request)
     {
         $jogadores = $request->all();
-        $novosJogadores = [];
-
+        $novosJogadores = [];        
         foreach ($jogadores as $jogador) {
 
             $idUsuario = $jogador['id_usuario'];
             $idTime = $jogador['id_time'];
             $status = $jogador['status'];
-            $usuario = User::findOrFail($idUsuario);
-            $time = Time::findOrFail($idTime);
-
             $exists = Jogador::where('id_time', $idTime)
                 ->where('id_usuario', $idUsuario)
                 ->exists();
@@ -64,14 +60,9 @@ class JogadoresController extends Controller
 
         $jogadores = Jogador::whereIn('id', $novosJogadores)->get();
 
-        // dd(JogadoresResource::collection($novosJogadores));
-
         return JogadoresResource::collection($jogadores);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $jogadores = Jogador::findOrFail($id);

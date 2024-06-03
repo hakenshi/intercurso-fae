@@ -1,6 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import router from './router.jsx'
-import { ContextProvider } from './Contexts/ContextProvider.jsx'
+import { Route, Routes } from 'react-router-dom'
 import DefaultLayout from './layouts/DefaultLayout.jsx'
 import Jogos from "./Views/Default/Jogos";
 import Placares from "./Views/Default/Placares";
@@ -14,22 +12,22 @@ import { Times } from "./Views/Admin/Times";
 import { Usuarios } from "./Views/Admin/Usuarios";
 import { MeusTimes } from "./Views/Responsavel/MeusTimes";
 import { Perfil } from "./Views/Default/Perfil";
-import { EditarPerfil } from "./Views/Default/EditarPerfil";
 import { Configuracoes } from "./Views/Default/Configuracoes";
 import { useMediaQuery } from '@react-hook/media-query';
 import AdminLayout from './layouts/AdminLayout.jsx';
 import ResponsavelLayout from './layouts/ResponsavelLayout.jsx';
 import { MeuTime } from './Views/Default/MeuTime.jsx';
-import { PublicRoutes } from './utils/PublicRoutes.jsx';
 import LoginLayout from './layouts/LoginLayout.jsx';
 import GuestLayout from './layouts/GuestLayout.jsx';
 import { ProtectedRoute } from './utils/ProtectedRoute.jsx';
+import { useStateContext } from './Contexts/ContextProvider.jsx';
 
 
 export const App = () => {
 
     const isMobile = useMediaQuery("(max-width: 768px)");
-
+    const {user} = useStateContext();
+    
     return (
                 <Routes >
                     <Route path='/' element={<GuestLayout />}>
@@ -56,7 +54,7 @@ export const App = () => {
                     </Route>
                     <Route element={<ProtectedRoute role={2}/>}>
                     <Route path='/responsavel' element={<ResponsavelLayout isMobile={isMobile} />} >
-                        <Route path="meus-times" element={<MeusTimes />} />
+                        <Route path="meus-times" element={<MeusTimes id={user.id} />} />
                         <Route path="jogos" element={<Jogos />} />
                         <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />
@@ -67,7 +65,7 @@ export const App = () => {
                     
                     <Route element={<ProtectedRoute role={3} />}>
                     <Route path='/usuario' element={<DefaultLayout isMobile={isMobile} />} >
-                        <Route path="meu-time" element={<MeuTime />} />
+                        <Route path="meu-time" element={<MeuTime id={user.id} />} />
                         <Route path="jogos" element={<Jogos />} />
                         <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />

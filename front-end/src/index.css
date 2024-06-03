@@ -71,6 +71,6 @@
     @apply bg-red-600 text-unifae-white-1 rounded-md hover:bg-red-700/80
 }
 .btn-confirm{
-    @apply bg-green-400 text-unifae-white-1 rounded-md
+    @apply bg-green-400 text-unifae-white-1 rounded-md hover:bg-green-500
 }
 

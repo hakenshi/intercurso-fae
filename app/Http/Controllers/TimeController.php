@@ -10,6 +10,7 @@ use App\Models\Modalidade;
 use App\Models\Time;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Psy\Command\WhereamiCommand;
 
 class TimeController extends Controller
 {
@@ -19,7 +20,7 @@ class TimeController extends Controller
     public function index()
     {
         $times = Time::all();
-        
+
         $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
         $jogadores = User::all('id', 'nome', 'email', 'ra');
 
@@ -34,7 +35,7 @@ class TimeController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(UpdateStoreTimesResource $request)
-    {   
+    {
         $data = $request->validated();
         $time = Time::create($data);
 
@@ -45,19 +46,32 @@ class TimeController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {   
-        $time = Time::findOrFail($id)
-        ;
-        return new TimesResource($time);
+    {
+        $times = Time::where("id_responsavel", $id)->get();
+        $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
+        $jogadores = User::all('id', 'nome', 'email', 'ra');
+
+
+        return [
+            'times' => TimesResource::collection($times),
+            'modalidades' => $modalidades,
+            'jogadores' => $jogadores
+        ];
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    public function showTimesUsuario(string $id)
+    {
+        $times = Time::whereHas('jogadores', function ($query) use ($id) {
+            $query->where('id_usuario', $id);
+        })->with('jogadores')->get();        
+        
+        return TimesResource::collection($times);
+    }
+
     public function update(Request $request, string $id)
     {
         $data = $request->all();
-        
+
         $time = Time::findOrFail($id);
 
         $time->update($data);
@@ -68,7 +82,7 @@ class TimeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id )
+    public function destroy(string $id)
     {
         $time = Time::findOrFail($id);
 
@@ -76,6 +90,4 @@ class TimeController extends Controller
 
         return new TimesResource($time);
     }
-
-
 }
