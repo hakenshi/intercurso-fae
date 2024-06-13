@@ -25,9 +25,9 @@ const userLinks = [
         text: 'Jogos'
     },
     {
-        path: `/usuario/meu-time`,
+        path: `/usuario/meus-times`,
         icon: faUserGroup,
-        text: "Meu Time"
+        text: "Meus Times"
     },
     {
         path: '/usuario/times-intercurso',

@@ -29,4 +29,14 @@ class Time extends Model
     public function jogadores(){
         return $this->hasMany(Jogador::class, "id_time");
     }
+
+    public function jogos()
+    {
+        return $this->belongsToMany(Jogo::class);
+    }
+
+    public function placar()
+    {   
+        return $this->hasOne(Placar::class, "id_time_vencedor", "id");
+    }
 }

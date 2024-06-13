@@ -6,6 +6,7 @@ use App\Http\Resources\ModalidadesResource;
 use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
 use App\Models\Modalidade;
+use App\Models\Time;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -31,8 +32,6 @@ class SearchController extends Controller
     }
     return $Resource::collection($results);
   }
-
-
   public function usuarios(Request $request)
   {
     $data = $request->input('value');
@@ -79,4 +78,13 @@ class SearchController extends Controller
 
     return $this->search($data, $jogadores);
   }
+
+  public function times(Request $request)
+  {
+    $data = $request->input('value');
+    $times = Time::where("nome", 'LIKE', "%". $data. "%")->get();
+
+    return $this->search($data, $times);
+  }
+
 }

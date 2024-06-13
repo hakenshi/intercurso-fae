@@ -33,7 +33,7 @@ class Notificacao extends Model
         $notificacao->mensagem = $mensagem;
         $notificacao->lida = "0";
         $notificacao->tipo_notificacao = $tipo;
-        $notificacao->expires_at = Carbon::tomorrow();
+        $notificacao->expires_at = now("America/Sao_Paulo")->addWeek();
         $notificacao->save();
 
         return $notificacao;

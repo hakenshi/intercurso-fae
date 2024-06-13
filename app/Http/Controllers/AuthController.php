@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     public function cadastro(CadastroRequest $request){
         $data = $request->validated();
-
+        
         $data['senha'] = bcrypt($request->senha);
 
         $user = User::create($data);

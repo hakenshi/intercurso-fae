@@ -21,6 +21,8 @@ import LoginLayout from './layouts/LoginLayout.jsx';
 import GuestLayout from './layouts/GuestLayout.jsx';
 import { ProtectedRoute } from './utils/ProtectedRoute.jsx';
 import { useStateContext } from './Contexts/ContextProvider.jsx';
+import NotAuthorized from './Views/html error codes/NotAuthorized.jsx';
+import { AdminJogos } from './Views/Admin/AdminJogos.jsx';
 
 
 export const App = () => {
@@ -34,6 +36,7 @@ export const App = () => {
                         <Route path="jogos" element={<Jogos />} />
                         <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />
+                        {/* <Route path='nao-autorizado' element={<NotAuthorized />} /> */}
                     </Route>
 
                     <Route path="/" element={<LoginLayout />}>
@@ -47,6 +50,7 @@ export const App = () => {
                         <Route path="usuarios" element={<Usuarios />} />
                         <Route path="modalidades" element={<Modalidades />} />
                         <Route path="times" element={<Times />} />
+                        <Route path="jogos" element={<AdminJogos />} />
                         <Route path="meu-perfil" element={<Perfil />} />
                         <Route path="configuracoes" element={<Configuracoes />} />
                     </Route>
@@ -65,7 +69,7 @@ export const App = () => {
                     
                     <Route element={<ProtectedRoute role={3} />}>
                     <Route path='/usuario' element={<DefaultLayout isMobile={isMobile} />} >
-                        <Route path="meu-time" element={<MeuTime id={user.id} />} />
+                        <Route path="meus-times" element={<MeuTime id={user.id} />} />
                         <Route path="jogos" element={<Jogos />} />
                         <Route path="placares" element={<Placares />} />
                         <Route path="times-intercurso" element={<VerTimes />} />

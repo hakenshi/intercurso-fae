@@ -42,6 +42,14 @@
    @apply border-unifae-green-1 outline outline-1 outline-unifae-green-1
 }
 
+.input-placar{
+   @apply border border-collapse border-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded p-2
+   w-12 h-12 text-xl text-center
+}
+
+.input-placar:focus{
+   @apply border border-collapse border-unifae-green-1 outline outline-1 outline-unifae-green-1
+}
 .active{
     @apply bg-unifae-gray50-2 rounded-md
 }

@@ -83,8 +83,6 @@ export const Perfil = () => {
     setProfileImage(null)
   }
 
-  console.log(user.data_de_nascimento);
-
   return (
     <>
       <Modal.Root isOpen={editModal} hasButton={false}>

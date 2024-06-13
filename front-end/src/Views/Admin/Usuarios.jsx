@@ -15,6 +15,8 @@ import { AlertSucesso } from "../../Components/Alerts/AlertSucesso"
 import { AlertConfirm } from "../../Components/Alerts/AlertConfirm"
 import { faL } from "@fortawesome/free-solid-svg-icons"
 import { Modal } from "../../Components/Modal"
+import { Table } from "../../Components/Table"
+import { Display } from "../../Components/Display"
 export const Usuarios = () => {
 
     const { isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
@@ -270,32 +272,16 @@ export const Usuarios = () => {
             </Modal.Form>
             </Modal.Root>
 
-            <div className="w-full h-[88vh] flex items-center flex-col">
-                <h1 className="text-center p-5 text-3xl font-medium">Usuários</h1>
-                <div className="flex flex-col">
-                    <span className="flex justify-around p-5">
-                        <button onClick={() => setIsModalOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Usuário</button>
-                        {/* <button onClick={() => setIsAlertOpen(true)} className="btn-sm btn-green text-sm ">Filtrar</button> */}
-                    </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" onChange={handleSearch} />
-                </div>
-
-                <div className="flex flex-col justify-center items-center p-5 h-11/12">
+            <Display.Root title={"Usuários"}>
+                <Display.ActionsRoot>
+                    <Display.ActionsModal setIsModalOpen={()=>setIsModalOpen(true)} text={"Cadastrar Usuários"} />
+                   <Display.ActionsSearch handleSearch={handleSearch} />
+                </Display.ActionsRoot>
+                <Display.Main>
                     {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className=" bg-card-white-1 round flex-grow rounded-xl p-5 ">
-                            <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
-                                <tr className="text-center">
-                                    <th className="p-5"></th>
-                                    <th className="p-5">Nome</th>
-                                    <th className="p-5">Email</th>
-                                    <th className="p-5">Curso</th>
-                                    <th className="p-5">Telefone</th>
-                                    <th className="p-5">RA</th>
-                                    <th className="p-5">Tipo de usuário</th>
-                                    <th className="p-5" colSpan={2}></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-unifae-gray50-2  overflow-auto h-1/2">
+                        (<Table.Root>
+                            <Table.Head className="bg-unifae-green-4 rounded-xl text-white w-full" titles={['Nome', 'Email', 'Curso', 'Telefone', 'Ra', 'Tipo de de usuário', '','','',]}/>
+                            <Table.Body>
                                 {(input.trim() !== "" ? results : usuarios).map((response) => (
                                     <tr key={response.usuario.id} className="text-center">
                                         <td className="p-5 text-pretty">
@@ -320,11 +306,11 @@ export const Usuarios = () => {
                                         </td>
                                     </tr>
                                 ))}
-                            </tbody>
-                        </table>)}
-                </div>
+                            </Table.Body>
+                        </Table.Root>)}
+                </Display.Main>
                 <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
-            </div>
+            </Display.Root>
 
         </>
 

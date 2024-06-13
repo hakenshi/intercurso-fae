@@ -31,8 +31,8 @@ export const EditarPerfil = () => {
           </div>
         </div>
         <div className="flex">
-          a
         </div>
+      
     </Container>
   )
 }

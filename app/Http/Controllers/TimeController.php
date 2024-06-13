@@ -20,7 +20,6 @@ class TimeController extends Controller
     public function index()
     {
         $times = Time::all();
-
         $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
         $jogadores = User::all('id', 'nome', 'email', 'ra');
 
@@ -47,6 +46,7 @@ class TimeController extends Controller
      */
     public function show(string $id)
     {
+        dd($id);
         $times = Time::where("id_responsavel", $id)->get();
         $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
         $jogadores = User::all('id', 'nome', 'email', 'ra');

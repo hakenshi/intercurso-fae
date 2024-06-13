@@ -13,7 +13,7 @@ class NotificacaoController extends Controller
     public function verNotificacao(string $id)
     {
         $notificao = Notificacao::where('id_usuario', $id)
-            ->where('lida', "0")
+            ->where('lida', 0)  
             ->orderByDesc('created_at')
             ->get();;
 
@@ -22,13 +22,9 @@ class NotificacaoController extends Controller
 
     public function create(Request $request)
     {
-        
-        // dd($request->all());
-
-        $data['expires_at'] = now()->addDay();
-        
         $data = $request->all();
-        $notificao = Notificacao::create($data);
+
+        $notificao = Notificacao::criarNotificacao($data['id_usuario'], $data['mensagem'], $data['tipo_notificacao']);
 
         return new NotficacoesResource($notificao);
     }
@@ -36,10 +32,10 @@ class NotificacaoController extends Controller
     public function limparNotificacoes(Request $request)
     {
         $data = $request->all();
-        
+
         $deletedNotifications = [];
 
-        foreach($data as $id){
+        foreach ($data as $id) {
             $notificao = Notificacao::findOrFail($id);
             $notificao->delete();
             $deletedNotifications[] = $notificao;
@@ -52,15 +48,10 @@ class NotificacaoController extends Controller
     {
         $notificao = Notificacao::findOrFail($id);
 
-        // $notificao->lida = 1;
+        $notificao->lida = 1;
 
-        // $notificao->update();
+        $notificao->update();
 
-        return response()->json([
-            'lida' => 1,
-            'lida_em' => Carbon::now()->tz('America/Sao_Paulo')
-        ]);
-
+        return new NotficacoesResource($notificao);
     }
-
 }

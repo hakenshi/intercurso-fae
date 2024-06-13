@@ -20,4 +20,8 @@ class Modalidade extends Model
     public function time(){
         return $this->hasOne(Time::class, "id_modalidade");
     }
+    public function jogo()
+    {
+        return $this->hasOne(Jogo::class, 'id_modalidade');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CadastroRequest extends FormRequest
@@ -32,6 +33,7 @@ class CadastroRequest extends FormRequest
             'email' =>[
                 'required',
                 'email',
+                new EmailRule(),
                 'max:255',
                 'unique:usuarios,email'
             ],

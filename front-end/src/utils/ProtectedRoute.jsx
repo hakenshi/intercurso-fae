@@ -5,6 +5,19 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
+function roleMatch(role){
+
+    console.log(role)
+
+    const roles = {
+        1: "admin",
+        2: "responsavel",
+        3: "usuario",
+    }
+
+    return roles[role]
+}
+
 export const ProtectedRoute = ({ role }) => {
     const { setUser, token, user } = useStateContext();
     const [loading, setLoading] = useState(true);
@@ -16,12 +29,10 @@ export const ProtectedRoute = ({ role }) => {
                 .then(({ data }) => {
                     setUser(data);
                     setLoading(false);
-                    console.log('User data fetched:', data);
                 })
                 .catch(() => {
                     setUser(null);
                     setLoading(false);
-                    console.log('Failed to fetch user data');
                 });
         } else {
             setLoading(false);
@@ -34,13 +45,11 @@ export const ProtectedRoute = ({ role }) => {
     // }
 
     if (!token) {
-        console.log('No token found, redirecting to login...');
         return <Navigate to={"/login"} replace />;
     }
 
     // if (user && user.tipo_usuario != role) {
-    //     console.log(`User role mismatch: expected ${role}, got ${user.tipo_usuario}. Redirecting to home...`);
-    //     return <Navigate to={"/"} replace />;
+    //     return <Navigate to={`/nao-autorizado`} replace />;
     // }
 
     // console.log('User authorized, rendering route...');

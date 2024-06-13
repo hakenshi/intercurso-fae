@@ -1,11 +1,11 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useState } from "react"
+import { forwardRef, useState } from "react"
 import axiosInstance from "../../helper/axios-instance"
 import p from "prop-types"
 import { SearchResultList } from "./SearchResultList"
 
-export const Search = ({ placeholder, url, handleSelectUser, data }) => {
+export const Search = forwardRef(({ placeholder, url, handleSelectUser, data }, ref) => {
 
     const [input, setInput] = useState(data ? data : "")
     const [results, setResults] = useState([])
@@ -46,7 +46,9 @@ export const Search = ({ placeholder, url, handleSelectUser, data }) => {
             </div>
         </>
     )
-}
+})
+
+Search.displayName = "Search"
 
 Search.propTypes = {
     placeholder: p.string,

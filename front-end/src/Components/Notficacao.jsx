@@ -24,13 +24,13 @@ const notifications = [
 
 export const Notficacao = ({ id }) => {
 
-    const { notificacao, readNotification } = useNotification(id)
+    const { notificacao, clearNotifications, readNotification } = useNotification(id)
     const { isErrorAlertOpen, setIsConfirmAlertOpen, mensagem, setMensagem, setIsErrorAlertOpen, isConfirmAlertOpen} = useAlert()
     const [mostrarNotficacao, setMostrarNotificacao] = useState(false)
     const notificaoRef = useClickOutSide(() => setMostrarNotificacao(false))
 
     const handleDeleteNotificacao = () => {
-            readNotification(notificacao)
+            clearNotifications(notificacao)
             setIsConfirmAlertOpen(false)
             setMostrarNotificacao(false)
     }
@@ -52,14 +52,7 @@ export const Notficacao = ({ id }) => {
       }
     }
 
-    const handleMarcarComoLida = (id) => {
-        if(id){
-            axiosInstance.patch(`/notificacao/ler-notificacao/${id}`)
-            .then(({data}) => console.log(data))
-            .catch((errors) => console.log(errors))
-        }
-    }
-
+    
     return (
         <>
             <AlertConfirm onConfirm={handleDeleteNotificacao} isOpen={isConfirmAlertOpen} text={"Tem certeza de que deseja apagar suas notificações?"} onClose={() => setIsConfirmAlertOpen(false)} />
@@ -77,7 +70,7 @@ export const Notficacao = ({ id }) => {
                                 {notificacao.length > 0 ? notificacao.map(notificacao => {
                                     const tipoNotificacao = notifications.find(notification => notification.tipo === notificacao.tipo_notificacao)
                                     return (
-                                        <div onClick={() => handleMarcarComoLida(notificacao.id)} key={notificacao.id} className='hover:bg-unifae-gray50-2 p-2 rounded flex justify-center items-center gap-2 my-2'>
+                                        <div onClick={() => readNotification(notificacao.id)} key={notificacao.id} className='hover:bg-unifae-gray50-2 p-2 rounded flex justify-center items-center gap-2 my-2'>
                                         <p>
                                             <FontAwesomeIcon icon={tipoNotificacao.icon} className={tipoNotificacao.style} />
                                         </p>

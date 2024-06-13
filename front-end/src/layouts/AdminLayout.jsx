@@ -13,6 +13,7 @@ import { ProfileImage } from "../Components/ProfileImage";
 import { Notficacao } from "../Components/Notficacao";
 import { useClickOutSide } from "../Components/hooks/useClickOutside";
 import { Navbar } from "../Components/Navbar/Navbar";
+import { faSoccerBall } from "@fortawesome/free-regular-svg-icons";
 
 // Criando o contexto
 const AsideContext = createContext();
@@ -41,6 +42,11 @@ const adminLinks = [
         icon: faFlag,
         text: 'Times',
 
+    },
+    {
+        path: '/admin/jogos',
+        icon: faSoccerBall,
+        text: 'Jogos',
     },
 
 ]

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import axiosInstance from "../../helper/axios-instance"
+import { Navigate } from "react-router-dom"
 
 const useNotification = (id) => {
     const [notificacao, setNotificacao] = useState([])
@@ -22,13 +23,13 @@ const useNotification = (id) => {
         }
     }, [id])
 
-    const readNotification = (data) => {        
-
+    const clearNotifications = (data) => {        
         if(data){
                 axiosInstance.post(`/notificacao/limpar-notificacao`, data.map(({id}) => id.toString()))
                 .then(({data}) =>{
                     data.data.forEach(({id}) =>{
                         setNotificacao(n => n.filter(item => id !== item.id))
+                        // return <Navigate to={`${link}`} />
                     })
                 })
                 .catch(errors => {
@@ -40,8 +41,14 @@ const useNotification = (id) => {
                 })
         }
     }
-
-    return { notificacao, readNotification }
+    const readNotification = (id) => {
+        if(id){
+            axiosInstance.patch(`/notificacao/ler-notificacao/${id}`)
+            .then(() => setNotificacao(n => n.filter(item => id !== item.id)))
+            .catch((errors) => console.log(errors))
+        }
+    }
+    return { notificacao, clearNotifications, readNotification }
 }
 
 

@@ -5,10 +5,9 @@ import { Oval } from "react-loader-spinner"
 import { Times } from "../Admin/Times"
 
 export const MeusTimes = ({id}) => {
-    
     return (
         <>
-            <Times id={id} url={`/times/${id}`} />
+            <Times idResponsavel={id} url={`/times/${id}`} />
         </>
     )
 }

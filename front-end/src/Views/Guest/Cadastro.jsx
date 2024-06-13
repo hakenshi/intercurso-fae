@@ -2,11 +2,12 @@ import { Link, Navigate } from "react-router-dom";
 import cursos from "../../../public/cursos.json"
 import logoPadrao from "../../assets/logo-unifae-2021.png";
 import { useRef, useState } from "react";
-import axios from "axios";
 import axiosInstance from "../../helper/axios-instance";
 import { useStateContext } from "../../Contexts/ContextProvider";
 import { useAlert } from "../../Components/hooks/useAlert";
 import { AlertErro } from "../../Components/Alerts/AlertErro";
+import ReactInputMask from "react-input-mask";
+import { images } from "../../assets";
 export default function Cadastro() {
 
     const nomeRef = useRef(null);
@@ -48,7 +49,7 @@ export default function Cadastro() {
         .catch(error => {
             const response = error.response
             if(response){
-                console.log(response)
+               setError(response.data)
             }
         })
     }
@@ -71,7 +72,7 @@ export default function Cadastro() {
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="email">E-mail</label>
-                            <input ref={emailRef} className={`${errors && errors.errors && errors.errors.email ? "input-error-cadastro" : "input-cadastro"}`}  type="text" name="email" id="email" placeholder="email@email.com" />
+                            <input ref={emailRef} className={`${errors && errors.errors && errors.errors.email ? "input-error-cadastro" : "input-cadastro"}`}  type="text" name="email" id="email" placeholder="Insira seu email institucional" />
                             {errors && errors.errors ? errors.errors.email && <p className="p-1 text-xs text-black/80">{errors.errors.email[0]}</p> : ""}
                         </div>
                         <div className="flex flex-col m-auto">
@@ -83,12 +84,12 @@ export default function Cadastro() {
                     <div className="flex flex-col w-full md:w-1/2 gap-1 p-2">
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="ra">RA</label>
-                            <input ref={raRef} className={`${errors && errors.errors && errors.errors.ra ? "input-error-cadastro" : "input-cadastro"}`} type="text" name="ra" id="ra" placeholder="00000-0" />
+                            <ReactInputMask mask={"99999-9"} ref={raRef} className={`${errors && errors.errors && errors.errors.ra ? "input-error-cadastro" : "input-cadastro"}`} type="text" name="ra" id="ra" placeholder="00000-0" />
                             {errors && errors.errors ? errors.errors.senha && <p className="p-1 text-xs text-black/80">{errors.errors.ra[0]}</p> : ""}
                         </div>
                         <div className="flex flex-col m-auto">
                             <label className="text-start text-lg" htmlFor="email">Curso</label>
-                            <select ref={cursoRef} className={`${errors && errors.errors && errors.errors.id_curso ? "input-error-cadastro" : "input-cadastro"} bg-white w-80" name="curso" id="curso`}>
+                            <select ref={cursoRef} className={`${errors && errors.errors && errors.errors.id_curso ? "input-error-cadastro" : "input-cadastro"} bg-white w-80`} name="curso" id="curso" >
                                 {cursos.map((curso, key) => <option key={key} value={curso.value}>{curso.curso}</option>)}
                             </select>
                             {errors && errors.errors ? errors.errors.senha && <p className="p-1 text-xs text-black/80">{errors.errors.id_curso[0]}</p> : ""}
@@ -103,7 +104,7 @@ export default function Cadastro() {
 
                 <div className="flex gap-2 justify-center items-center w-full pt-5">
                     <input id="default-checkbox" type="checkbox" value="" className="peer check-box" />
-                    <label htmlFor="confirm">Estou ciente dos termos e <span className="text-unifae-green-1 font-semibold">condições do intercuso da UNIFAE</span></label>
+                    <label htmlFor="confirm">Estou ciente dos termos e <a href={images.mussum} target="_blank" className="text-unifae-green-1 font-semibold">condições do intercuso da UNIFAE</a></label>
                 </div>
                 <div className="flex flex-col w-full items-center p-3">
                     <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>

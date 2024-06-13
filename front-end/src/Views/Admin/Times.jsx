@@ -1,22 +1,23 @@
-import { useEffect, useId, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useStateContext } from "../../Contexts/ContextProvider"
-import { Navigate, useNavigate } from "react-router-dom"
 import { useAlert } from "../../Components/hooks/useAlert"
-import useAxios from "../../Components/hooks/useAxios"
 import axiosInstance from "../../helper/axios-instance"
 import { Oval } from "react-loader-spinner"
 import { Search } from "../../Components/Search bar/Search"
 import p from "prop-types"
-import { faL } from "@fortawesome/free-solid-svg-icons"
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 import { images } from "../../assets"
 import { ProfileImage } from "../../Components/ProfileImage"
 import { Modal } from "../../Components/Modal"
 import { Table } from "../../Components/Table"
 import { TableHead } from "../../Components/Table/TableHead"
 import { setStatus } from "../../utils/setStatus"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Loading } from "../../Components/Loading"
 
-export const Times = ({idResponsavel, url = "/times"}) => {
-    
+export const Times = ({ idResponsavel, url = "/times" }) => {
+
+
     const { user } = useStateContext()
     const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
@@ -34,10 +35,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
     const [erros, setErrors] = useState(null);
     const [novoJogador, setNovoJogador] = useState([])
     const [isEditing, setIsEditing] = useState(false)
-
+    
     useEffect(() => {
         if (!times) {
-            axiosInstance.get(url)
+            axiosInstance.get("/times")
                 .then(({ data }) => {
                     setTimes(data.times)
                     setModalidades(data.modalidades)
@@ -50,8 +51,6 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 })
         }
     }, [times, url])
-
-
     const handleEditModal = (time) => {
         setEditTimes(time)
         setIsEditAlertOpen(true)
@@ -87,67 +86,67 @@ export const Times = ({idResponsavel, url = "/times"}) => {
         }
 
         const aluno = jogadores.find(jogador => jogador.id === novoJogador);
-    
+
         if (!aluno) {
             alert("Jogador não encontrado.");
             return;
         }
-    
+
         const responsavel = times.some(({ usuario }) => usuario.id_responsavel === novoJogador);
-    
+
         if (responsavel) {
             alert("Você não pode se adicionar no time");
             return;
         }
-    
+
         const jogadorExistente = editJogadores.some(jogador => jogador.id_usuario === novoJogador);
-    
+
         if (jogadorExistente) {
             alert("Esse aluno já está no time.");
             return;
         }
-    
+
         const { id_modalidade: modalidadeAtualId, quantidade_participantes: quantidade } = times.find(time => time.time.id === timeId).modalidade;
-    
+
         const { nome } = modalidades.find(modalidade => modalidade.id === modalidadeAtualId);
-    
+
         const jogadorComModalidadeDuplicada = times.some(time =>
             time.time.id !== timeId &&
             time.modalidade.id_modalidade === modalidadeAtualId &&
             time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
         );
-    
+
         if (jogadorComModalidadeDuplicada) {
             const timeDuplicado = times.find(time =>
                 time.time.id !== timeId &&
                 time.modalidade.id_modalidade === modalidadeAtualId &&
                 time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
             );
-    
+
             alert(`${aluno.nome} já pertence a um time com a modalidade ${timeDuplicado.modalidade.nome_modalidade}`);
             return;
         }
-    
+
         if (editJogadores.length >= quantidade) {
             alert(`Quantidade máxima de jogadores na modalidade ${nome} é de ${quantidade}. O time está cheio.`);
             return;
         }
-    
+
         const updatedJogadores = [...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '0' }];
-    
+
         if (updatedJogadores.length === 0) {
             alert("O time deve ter ao menos 1 jogador");
             return;
         }
-    
+
         const payload = updatedJogadores.map(jogador => ({
             id_usuario: jogador.id_usuario,
             id_time: jogador.id_time,
             status: jogador.status
         }));
-    
+
         axiosInstance.post('/jogadores', payload)
-            .then(({ data }) => {    
+            .then(({ data }) => {
                 setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
                     ...time,
                     informacoes: {
@@ -171,10 +170,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 const response = error.message;
                 if (response) alert(response);
             });
-    
+
         setEditJogadores(updatedJogadores);
     };
-    
+
 
     const getResponasavelId = () => {
         return localStorage.getItem("responsavelId")
@@ -186,7 +185,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
         const payload = {
             nome: nomeRef.current.value,
             id_modalidade: modalidadeRef.current.value,
-            id_responsavel: user.tipo_usuario == 2 ? idResponsavel.id : getResponasavelId(),
+            id_responsavel: user.tipo_usuario == 2 ? idResponsavel : getResponasavelId(),
             status: "1",
         }
 
@@ -266,7 +265,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 .catch(error => {
                     const response = error.response
                     if (response) {
-                        alert(response.data.msg)
+                        console.log(response.data)
                     }
                 })
         }
@@ -300,49 +299,38 @@ export const Times = ({idResponsavel, url = "/times"}) => {
         return
     }
 
-    // const handleInativarJogador = (jogador) => {
+    const handleEnviarConvite = (jogador) => {
 
-    //     const status = jogador.status === "1" ? "0" : "1"
+        const status = "0"
 
-    //     const confirm = window.confirm(`Tem certeza de que deseja ${jogador.status === '1' ? "inativar" : "ativar"} esse jogador?`)
+        axiosInstance.put(`/jogadores/${jogador.id}`, {
+            status: status
+        })
+            .then(() => {
+                setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
 
-    //     if (confirm) {
-    //         axiosInstance.put(`/jogadores/${jogador.id}`, {
-    //             status: status
-    //         })
-    //             .then(() => {
-    //                 alert(`Jogador ${jogador.status === '1' ? "inativado" : "ativado"} com sucesso`)
-    //                 setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
+                setTimes(t => Array.isArray(t) ? t.map(time => ({
+                    ...time,
+                    informacoes: {
+                        ...time.informacoes,
+                        jogadores: time.informacoes.jogadores.map(j =>
+                            j.id === jogador.id ? { ...j, status: status } : j
+                        ),
+                    }
+                })) : t);
 
-    //                 setTimes(t => Array.isArray(t) ? t.map(time => ({
-    //                     ...time,
-    //                     informacoes: {
-    //                         ...time.informacoes,
-    //                         jogadores: time.informacoes.jogadores.map(j =>
-    //                             j.id === jogador.id ? { ...j, status: status } : j
-    //                         ),
-    //                     }
-    //                 })) : t);
+            })
+            .catch(error => {
+                const response = error.response
+                if (response) {
+                    alert(response.data.message)
+                }
+            })
 
-    //             })
-    //             .catch(error => {
-    //                 const response = error.response
-    //                 if (response) {
-    //                     alert(response.data.msg)
-    //                 }
-    //             })
-    //     }
-
-    //     return
-    // }
-
-    if(loading){
-       return(<div className="w-full h-screen flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>)
+        return
     }
-
     return (
         <>
-            {/* Modal de cadastro */}
             <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
                 <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Time">
                     <div className="flex flex-col justify-center p-2">
@@ -451,6 +439,9 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                                                     {/* <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
                                                         {setStatus(jogador.status)}
                                                     </button> */}
+
+                                                    {jogador.status === "2" && <button onClick={() => handleEnviarConvite(jogador)} className="btn-green w-10 h-10 text-xl text-center"><FontAwesomeIcon aria-label="enviar novo convite" icon={faArrowsRotate} /></button>}
+
                                                     <button type="button" onClick={() => handleDeleteJogador(jogador.id)} className={`btn-sm btn-delete`}>
                                                         Retirar
                                                     </button>
@@ -473,43 +464,43 @@ export const Times = ({idResponsavel, url = "/times"}) => {
             </Modal.Root>
 
             <div className="w-full flex items-center flex-col">
-                <h1 className="text-center p-5 text-3xl font-medium">Times</h1>
+                <h1 className="text-center p-5 text-3xl font-medium">Times do Intercurso</h1>
                 <div className="flex flex-col">
                     <span className="flex justify-around p-5">
                         <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Time</button>
                     </span>
                     <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
                 </div>
-
-                {times && times.length <= 0 ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
+                {loading ? (<Loading />) : times && times.length <= 0 ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
                     <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
                 </div> : <div className="flex flex-col justify-center items-center p-5">
-                    
-                        <Table.Root>
-                            <Table.Head titles={['Nome', 'Responsável', 'Quantidade de Jogadores', 'Status', ' ', '', '']}/>
-                            <Table.Body className="divide-y divide-unifae-gray50-2">
-                                {times && times
-                                    .map(response => (
-                                        <tr key={response.time.id} className="text-center">
-                                            <td className="p-5">{response.time.nome}</td>
-                                            <td className="p-5">{response.usuario.nome_responsavel ? response.usuario.nome_responsavel : "Sem responsável"}</td>
-                                            <td className="p-5">{response.modalidade.nome_modalidade}</td>
-                                            <td className="p-5">{response.informacoes.quantidade}</td>
-                                            <td className="p-5">{response.time.status === "0" ? "Inativo" : "Ativo"}</td>
-                                            <td className="p-5">
-                                                <button onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id, response.modalidade.id_modalidade)} className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver jogadores</button>
-                                            </td>
-                                            <td className="p-5 flex justify-center gap-5">
-                                                <button onClick={() => handleEditModal(response)} className="p-2 btn-edit">Editar</button>
-                                                <button onClick={() => handleDeleteTime(response.time.id)} className={`p-2 btn-delete`}>Excluir</button>
-                                                <button onClick={() => handleInativarTime(response)} className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
 
-                            </Table.Body>
-                        </Table.Root>
+                    <Table.Root>
+                        <Table.Head titles={['Foto','Nome', 'Responsável', "Modalidades", 'Quantidade de Jogadores', 'Status', '', '', '']} />
+                        <Table.Body className="divide-y divide-unifae-gray50-2">
+                            {times && times
+                                .map(response => (
+                                    <tr key={response.time.id} className="text-center">
+                                        <td className="p-5">{response.time.foto_time == null ? <img className={"w-10 h-10 rounded-full object-cover"} src={images.timeFoto} /> : <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.time_foto} alt={response.time.nome} />}</td>
+                                        <td className="p-5">{response.time.nome}</td>
+                                        <td className="p-5">{response.usuario.nome_responsavel ? response.usuario.nome_responsavel : "Sem responsável"}</td>
+                                        <td className="p-5">{response.modalidade.nome_modalidade}</td>
+                                        <td className="p-5">{response.informacoes.quantidade}</td>
+                                        <td className="p-5">{response.time.status === "0" ? "Inativo" : "Ativo"}</td>
+                                        <td className="p-5">
+                                            <button onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id)} className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver jogadores</button>
+                                        </td>
+                                        <td className="p-5 flex justify-center gap-5">
+                                            <button onClick={() => handleEditModal(response)} className="p-2 btn-edit">Editar</button>
+                                            <button onClick={() => handleDeleteTime(response.time.id)} className={`p-2 btn-delete`}>Excluir</button>
+                                            <button onClick={() => handleInativarTime(response)} className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+
+                        </Table.Body>
+                    </Table.Root>
                 </div>}
             </div>
 
