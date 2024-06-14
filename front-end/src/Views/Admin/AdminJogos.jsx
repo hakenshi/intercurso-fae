@@ -16,12 +16,11 @@ import { AlertConfirm } from '../../Components/Alerts/AlertConfirm'
 import { handleError } from '../../utils/handleError'
 import { AlertSucesso } from '../../Components/Alerts/AlertSucesso'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import defineStatus from '../../utils/setStatus'
 
 export const AdminJogos = () => {
 
-  // const [jogos, setJogos] = useState([])
-
-  const { data: jogos, setData, currentPage, lastPage, handlePageChange, loading } = usePagiante("/jogos")
+  const { data: jogos, setData, currentPage, lastPage, handlePageChange, loading } = usePagiante("/paginate/jogos")
   const { setMensagem, mensagem } = useAlert()
 
   const [modalidades, setModalidades] = useState([])
@@ -39,6 +38,9 @@ export const AdminJogos = () => {
   const horaRef = useRef(null)
   const modalidadeRef = useRef(null)
   const timeVencedorRef = useRef(null)
+  const placarTime1Ref = useRef(null)
+  const placarTime2Ref = useRef(null)
+
 
   const [time1, setTime1] = useState(null)
   const [time2, setTime2] = useState(null)
@@ -67,8 +69,8 @@ export const AdminJogos = () => {
   const handleEditPlacar = (placar, times) => {
     setIsOpen(() => 'placar')
     setEditPlacar(() => ({
-      placar: placar, 
-      times: times 
+      placar: placar,
+      times: times
     }))
   }
 
@@ -90,11 +92,19 @@ export const AdminJogos = () => {
     }
 
 
+
     handleRequest(url, method, payload)
       .then(({ data }) => {
-        setData(j => [
-          ...j, { ...data.data }
-        ])
+        setData(j => {
+          if(method === 'post'){
+            return [
+              ...j, { ...data.data }
+            ]
+          }
+          else if(method === 'patch'){
+            return j.map(({jogo}) => jogo.id === id ? {...jogo, ...data.data} : jogo)
+          }
+        })
       })
       .catch(e => console.log(e))
       .finally(() => setIsOpen(null))
@@ -144,13 +154,13 @@ export const AdminJogos = () => {
         setMensagem('Jogo excluído com sucesso')
       })
   }
-
+  
   const increasePlcar = (e, time) => {
 
     e.preventDefault()
     setEditPlacar(p => ({
       ...p,
-      placar:{
+      placar: {
         ...p.placar,
         [time]: p.placar[time] + 1
       }
@@ -160,10 +170,10 @@ export const AdminJogos = () => {
   const decreasePlacar = (e, time) => {
     e.preventDefault()
 
-    if(editPlacar.placar[time] > 0){
+    if (editPlacar.placar[time] > 0) {
       setEditPlacar(p => ({
         ...p,
-        placar:{
+        placar: {
           ...p.placar,
           [time]: p.placar[time] - 1
         }
@@ -171,28 +181,36 @@ export const AdminJogos = () => {
     }
   }
 
-  function handleUpdatePlacar (e, data){
-  e.preventDefault()
-  
-  console.log(data)
-    
-  const payload = {
-        placar_time_1: data.placar.placar_time_1,
-        placar_time_2: data.placar.placar_time_2,
-        time_vencedor: data.placar.time_vencedor.id,
+  function handleUpdatePlacar(e, id) {
+    e.preventDefault()
+    const payload = {
+      placar_time_1: parseInt(placarTime1Ref.current.value),
+      placar_time_2: parseInt(placarTime2Ref.current.value),
+      id_time_vencedor: parseInt(timeVencedorRef.current.value),
     }
 
-    console.log(payload)
 
-    return
 
-    // axiosInstance.patch(`/placar/${id}`, payload)
-    // .then((data) => {
-    //   if(data){
-    //     alert('MEU DEUS DEU CERTO')
-    //   }
-    // })
-    // .catch(e => console.error('NÃOOOOOO DEU XABU'))
+    axiosInstance.patch(`/placar/${id}`, payload)
+      .then(({data}) => {
+          setData(j => j.map(jogo => jogo.placar.id_placar === id ? ({
+            ...jogo,
+            jogo: {
+              ...jogo.jogo,
+              status: 0,
+            },
+            placar: {
+              ...jogo.placar,
+              placar_time_1: data.data.placar_time_1,
+              placar_time_2: data.data.placar_time_2,
+              time_vencedor: data.data.time_vencedor
+            }
+        }): jogo))
+      })
+      .catch(e => handleError(e))
+      .finally(() => {
+        setIsOpen(null)
+      })
   }
 
   return (
@@ -211,26 +229,26 @@ export const AdminJogos = () => {
             times: null
           }))
         }}>
-          <Modal.Form texto={"Placar"} hasButton={false} onSubmit={e => handleUpdatePlacar(e, editPlacar)}>
+          <Modal.Form texto={"Placar"} hasButton={false} onSubmit={e => handleUpdatePlacar(e, editPlacar.placar.id_placar)}>
             <div className='flex flex-col items-center'>
               <div className='flex justify-around w-full mb-4'>
                 <div className='text-center'>
                   <h3 className='text-lg mb-1'>{editPlacar.times.time1.nome}</h3>
                   <button onClick={e => increasePlcar(e, 'placar_time_1')} className='bg-sky-500 rounded-lg m-2 text-white p-2 w-10 h-10'><FontAwesomeIcon icon={faPlus} /></button>
-                  <input className='input-placar' type='number' value={editPlacar.placar.placar_time_1} readOnly />
+                  <input ref={placarTime1Ref} className='input-placar' type='number' value={editPlacar.placar.placar_time_1} readOnly />
                   <button onClick={e => decreasePlacar(e, 'placar_time_1')} className='bg-red-500 rounded-lg m-2 text-white p-2 w-10 h-10'><FontAwesomeIcon icon={faMinus} /></button>
                 </div>
                 <div className='flex items-center justify-center text-2xl text-unifae-gray-2/50'><p>VS</p></div>
                 <div className='text-center'>
                   <h3 className='text-lg mb-1'>{editPlacar.times.time2.nome}</h3>
                   <button onClick={e => increasePlcar(e, 'placar_time_2')} className='bg-sky-500 rounded-lg m-2 text-white p-2 w-10 h-10'><FontAwesomeIcon icon={faPlus} /></button>
-                  <input className='input-placar' type='number' value={editPlacar.placar.placar_time_2} readOnly />
+                  <input ref={placarTime2Ref} className='input-placar' type='number' value={editPlacar.placar.placar_time_2} readOnly />
                   <button onClick={e => decreasePlacar(e, 'placar_time_2')} className='bg-red-500 rounded-lg m-2 text-white p-2 w-10 h-10'><FontAwesomeIcon icon={faMinus} /></button>
                 </div>
               </div>
               <div className='text-center w-full mb-4'>
                 <label className='block text-lg mb-1'>Vencedor:</label>
-                <select defaultValue={editPlacar.times.time_vencedor?.id ?? ""} className='input-cadastro bg-white' name="vencedor" id="vencedor">
+                <select ref={timeVencedorRef} defaultValue={editPlacar.placar.time_vencedor?.id} className='input-cadastro bg-white' name="vencedor" id="vencedor">
                   <option value="">Escolha um time vencedor</option>
                   {Object.values(editPlacar.times).map((time, index) => (
                     <option key={index} value={time.id}>{time.nome}</option>
@@ -307,7 +325,7 @@ export const AdminJogos = () => {
         <Display.Main>
           {loading ? (<Loading />) : jogos.length > 0 ? (<>
             <Table.Root>
-              <Table.Head titles={['Partida', 'Local', 'Data do jogo', 'Hora do jogo', 'Modalidade', '']} />
+              <Table.Head titles={['Partida', 'Local', 'Data do jogo', 'Hora do jogo', 'Modalidade', 'Status', '']} />
               <Table.Body >
                 {jogos && jogos.map((response, i) =>
                   <tr key={i} className='text-center'>
@@ -316,6 +334,7 @@ export const AdminJogos = () => {
                     <td className='p-5'>{response.jogo.data_jogo}</td>
                     <td className='p-5'>{response.jogo.hora_jogo}</td>
                     <td className='p-5'>{response.modalidade.nome}</td>
+                    <td className='p-5'>{defineStatus(response.jogo.status)}</td>
                     <td className='p-5 flex gap-5'>
                       <button onClick={() => handleEditPlacar(response.placar, response.times)} className='btn-green p-2'>Placar</button>
                       <button onClick={() => handleEditJogos(response)} className='btn-edit p-2'>Editar</button>

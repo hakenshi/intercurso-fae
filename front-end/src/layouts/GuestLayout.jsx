@@ -53,7 +53,7 @@ export default function GuestLayout({isMobile}) {
             axiosInstance.get('/user')
             .then(({ data }) => {
                 setUser(data)
-                if(data.tipo_usuario == 1) navigate('/dashboard', {replace: true})
+                
             })
         }
         

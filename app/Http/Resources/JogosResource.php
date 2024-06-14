@@ -20,11 +20,13 @@ class JogosResource extends JsonResource
             'times' => [
                 'time1' => [
                     'id' => $this->time1->id,
-                    "nome" => $this->time1->nome
+                    "nome" => $this->time1->nome,
+                    'image' => $this->time1->foto_time,
                 ],
                 'time2' => [
                     'id' => $this->time2->id,
                     "nome" => $this->time2->nome,
+                    'image' => $this->time2->foto_time,
                 ]
             ],
             'placar' => new PlacarResource($this->placar),
@@ -33,11 +35,11 @@ class JogosResource extends JsonResource
                 'nome' => $this->modalidade->nome,
             ],
             'jogo' => [
+                'id' => $this->id,
                 'data_jogo' => Carbon::make($this->data_jogo)->format('d/m/Y'),
                 'hora_jogo' => Carbon::make($this->data_jogo)->format('H:i'),
                 'status' => $this->status,
                 'local' => $this->local,
-                'id' => $this->id,
             ]
         ];
     }

@@ -19,8 +19,7 @@ class JogosContoller extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function indexPaginate(){
         return JogosResource::collection(Jogo::paginate(6));
     }
 
@@ -28,9 +27,15 @@ class JogosContoller extends Controller
      * Store a newly created resource in storage.
      */
 
-    private function carbonFormat($date) {
-        return Carbon::createFromFormat("d/m/Y H:i",$date)->format("Y/m/d H:i:s");
+    public function index()
+    {
+        return JogosResource::collection(Jogo::All());
+    }
 
+
+    private function carbonFormat($date)
+    {
+        return Carbon::createFromFormat("d/m/Y H:i", $date)->format("Y/m/d H:i:s");
     }
 
     public function store(Request $request)
@@ -47,7 +52,7 @@ class JogosContoller extends Controller
                 'status' => 'required'
             ]);
 
-            if($data['id_time_1'] == $data['id_time_2']){
+            if ($data['id_time_1'] == $data['id_time_2']) {
                 return response()->json([
                     'message' => 'Um time não pode enfrentar a si mesmo'
                 ]);
@@ -68,11 +73,11 @@ class JogosContoller extends Controller
             $jogos->save();
 
             DB::commit();
-            
+
             return new JogosResource($jogos);
         } catch (\Exception $e) {
             DB::rollBack();
-                return response()->json([
+            return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -92,15 +97,15 @@ class JogosContoller extends Controller
     public function update(Request $request, Jogo $jogo)
     {
         $data = $request->all();
-        
-        if($data['id_time_1'] == $data['id_time_2']){
+
+        if ($data['id_time_1'] == $data['id_time_2']) {
             return response()->json([
                 'message' => 'Um time não pode enfrentar a si mesmo'
             ]);
         }
 
         $data['data_jogo'] = $this->carbonFormat($request->data_jogo);
-    
+
         $jogo->update($data);
 
         return new JogosResource($jogo);
@@ -111,9 +116,9 @@ class JogosContoller extends Controller
      */
     public function destroy(Jogo $jogo)
     {
-       if($jogo->placar){
-        $jogo->placar->delete();
-       }
+        if ($jogo->placar) {
+            $jogo->placar->delete();
+        }
         $jogo->delete();
         return new JogosResource($jogo);
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\JogosContoller;
 use App\Http\Controllers\ModalidadesController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\PlacarController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\UserController;
@@ -49,7 +50,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
         Route::patch('ler-notificacao/{id}', [NotificacaoController::class, "marcarComoLida"]);
     });
+    //Rotas para o placar
 
+    Route::prefix('/placar')->group(function(){
+        Route::patch('/{placar}', [PlacarController::class, 'update']);
+    });
+    Route::prefix('/paginate')->group(function(){
+        Route::get('jogos', [JogosContoller::class, 'indexPaginate']);
+    });
+    
 });
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
