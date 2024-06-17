@@ -30,10 +30,7 @@ class JogosResource extends JsonResource
                 ]
             ],
             'placar' => new PlacarResource($this->placar),
-            'modalidade' => [
-                'id' => $this->modalidade->id,
-                'nome' => $this->modalidade->nome,
-            ],
+            'modalidade' => new ModalidadesResource($this->modalidade),
             'jogo' => [
                 'id' => $this->id,
                 'data_jogo' => Carbon::make($this->data_jogo)->format('d/m/Y'),

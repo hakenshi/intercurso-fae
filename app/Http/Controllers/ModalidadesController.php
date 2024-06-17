@@ -16,9 +16,7 @@ class ModalidadesController extends Controller
      */
     public function index()
     {
-        $modadidade = Modalidade::paginate(6);
-
-        return ModalidadesResource::collection($modadidade);
+       return ModalidadesResource::collection(Modalidade::paginate(6));
     }
 
     /**

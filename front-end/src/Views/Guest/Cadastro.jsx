@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import cursos from "../../../public/cursos.json"
 import logoPadrao from "../../assets/logo-unifae-2021.png";
 import { useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { useStateContext } from "../../Contexts/ContextProvider";
 import { useAlert } from "../../Components/hooks/useAlert";
 import { AlertErro } from "../../Components/Alerts/AlertErro";
 import ReactInputMask from "react-input-mask";
-import { images } from "../../assets";
+
 export default function Cadastro() {
 
     const nomeRef = useRef(null);
@@ -20,16 +20,21 @@ export default function Cadastro() {
     const { setUser, setSessionToken } = useStateContext()
 
     const [errors, setError] = useState("")
-    const { isAlertOpen, setIsAlertOpen } = useAlert()
+    const { isAlertOpen, setIsAlertOpen,  } = useAlert()
+    const [isOpen, setIsOpen] = useState(null)
 
-    const HandleSubmit = async e => {
+    const handleSubmit = e => {
         e.preventDefault()
 
         if (senhaRef.current.value !== confirmSenhaRef.current.value) {
             setError("As senhas não coincidem!")
             setIsAlertOpen(true)
+            senhaRef.current.value = null
+            confirmSenhaRef.current.value = null
             return
         }
+
+        
 
         const payload = {
             id_curso: cursoRef.current.value,
@@ -52,11 +57,17 @@ export default function Cadastro() {
                setError(response.data)
             }
         })
+        .finally(() => {
+
+        })
     }
 
     return (
         <>
     {isAlertOpen && (<AlertErro mensagem={errors} onClose={()=> setIsAlertOpen(false)} isAlertOpen={isAlertOpen}/>)}
+
+
+
         <section className="bg-[#262626] min-h-screen flex justify-center items-center">
             <div className="size-full p-3 max-w-screen-lg  bg-white rounded-md">
                 <div className="flex items-center flex-col h-1/5 justify-center">
@@ -104,11 +115,11 @@ export default function Cadastro() {
 
                 <div className="flex gap-2 justify-center items-center w-full pt-5">
                     <input id="default-checkbox" type="checkbox" value="" className="peer check-box" />
-                    <label htmlFor="confirm">Estou ciente dos termos e <a href={images.mussum} target="_blank" className="text-unifae-green-1 font-semibold">condições do intercuso da UNIFAE</a></label>
+                    <label htmlFor="confirm">Estou ciente dos termos e <button onClick={() => console.log('A')} className="text-unifae-green-1 font-semibold">condições do intercuso da UNIFAE</button></label>
                 </div>
                 <div className="flex flex-col w-full items-center p-3">
                     <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>
-                    <button type="submit" onClick={HandleSubmit} className="btn-lg btn-green">Entrar</button>
+                    <button type="submit" onClick={handleSubmit} className="btn-lg btn-green">Entrar</button>
                 </div>
             </div>
         </section>

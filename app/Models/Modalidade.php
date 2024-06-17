@@ -13,6 +13,7 @@ class Modalidade extends Model
     
     protected $fillable = [
         'nome',
+        'id_categoria',
         'quantidade_participantes',
         'genero',
     ];
@@ -23,5 +24,9 @@ class Modalidade extends Model
     public function jogo()
     {
         return $this->hasOne(Jogo::class, 'id_modalidade');
+    }
+    public function categoria()
+    {
+        return $this->hasOne(Categoria::class, 'id', 'id_categoria');
     }
 }

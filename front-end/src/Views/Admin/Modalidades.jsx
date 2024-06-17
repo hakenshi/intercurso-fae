@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useStateContext } from "../../Contexts/ContextProvider"
 import { useNavigate } from "react-router-dom"
 import { useAlert } from "../../Components/hooks/useAlert"
@@ -8,6 +8,8 @@ import { useSearch } from "../../Components/hooks/useSearch"
 import usePagiante from "../../Components/hooks/usePaginate"
 import { Paginate } from "../../Components/Paginate"
 import { Modal } from "../../Components/Modal"
+import { handleError } from "../../utils/handleError"
+import { capitalize } from "../../utils/capitalize"
 
 export const Modalidades = () => {
 
@@ -15,31 +17,24 @@ export const Modalidades = () => {
     const { user } = useStateContext()
     const navigate = useNavigate()
     const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
-    const {handleSearch, input, results,} = useSearch("", "/search-modalidades")
+    const { handleSearch, input, results, } = useSearch("", "/search-modalidades")
     const { data: modalidades, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/modalidades")
 
     const nomeRef = useRef(null)
     const quantidadeRef = useRef(null)
     const generoRef = useRef(null)
+    const categoriaRef = useRef(null)
 
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [editModalidade, setEditModalidade] = useState(null)
-    // const [modalidades, setModalidades] = useState(null);
+    const [categoria, setCategoria] = useState([]);
     // const [loading, setLoading] = useState(true);
     // const [erros, setErrors] = useState(null);
-    // useEffect(() => {
-    //     if (!modalidades) {
-    //         axiosInstance.get("/modalidades")
-    //             .then(response => {
-    //                 setModalidades(response.data.data)
-    //                 setLoading(false)
-    //             })
-    //             .catch(error => {
-    //                 setErrors(error.message)
-    //                 setLoading(false)
-    //             })
-    //     }
-    // }, [modalidades])
+    useEffect(() => {
+        axiosInstance.get('/categoria')
+            .then(({ data }) => setCategoria(data))
+            .catch(e => handleError(e))
+    }, [])
 
 
     const handleEditModal = (modalidade) => {
@@ -55,13 +50,12 @@ export const Modalidades = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
-
-        console.log("teste")
-
+        
         const payload = {
             nome: nomeRef.current.value,
             quantidade_participantes: quantidadeRef.current.value,
             genero: generoRef.current.value,
+            id_categoria: categoriaRef.current.value
         }
 
         if (isEditAlertOpen) {
@@ -69,7 +63,7 @@ export const Modalidades = () => {
                 .then(({ data }) => {
                     if (data) {
                         alert("Modalidade Editada com sucesso!")
-                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade ))
+                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? { ...modalidade, ...data.data } : modalidade))
                     }
 
                 })
@@ -79,7 +73,7 @@ export const Modalidades = () => {
                         alert(response.data.msg)
                     }
                 })
-                .finally(()=> setIsEditAlertOpen(false))
+                .finally(() => setIsEditAlertOpen(false))
         }
 
         else {
@@ -96,7 +90,7 @@ export const Modalidades = () => {
                         alert(response.data.msg)
                     }
                 })
-                .finally(()=> setIsAlertOpen(false))
+                .finally(() => setIsAlertOpen(false))
         }
     }
 
@@ -119,47 +113,63 @@ export const Modalidades = () => {
 
         return
     }
+
     return (
         <>
             <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
                 <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Modalidade">
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Nome</label>
-                    <input ref={nomeRef} type="text" className="input-modal" name="nome" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
-                    <input ref={quantidadeRef} type="text" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Gênero da modalidade</label>
-                    <select ref={generoRef} className="input-modal bg-white" name="genero" id="genero">
-                        <option value="">Selecione um gênero</option>
-                        <option value="0">Masculino</option>
-                        <option value="1">Feminino</option>
-                    </select>
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Nome</label>
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome" />
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
+                        <input ref={quantidadeRef} type="text" className="input-modal" name="quantidade-pariticpantes" />
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Gênero da modalidade</label>
+                        <select ref={generoRef} className="input-modal bg-white" name="genero" id="genero">
+                            <option value="">Selecione um gênero</option>
+                            <option value="0">Masculino</option>
+                            <option value="1">Feminino</option>
+                        </select>
+
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Categoria da modalidade</label>
+                        <select ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                            <option value="">Selecione uma categoria</option>
+                            {categoria.map(categoria => <option value={categoria.id} key={categoria.id}>{capitalize(categoria.nome)}</option>)}
+                        </select>
+                    </div>
                 </Modal.Form>
             </Modal.Root>
 
             <Modal.Root isOpen={isEditAlertOpen} onClose={handleCloseEditModal}>
                 <Modal.Form onSubmit={handleSubmit} texto={"Editar Modalidade"}>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Nome</label>
-                    <input ref={nomeRef} type="text" className="input-modal" name="nome" defaultValue={editModalidade ? editModalidade.nome : ""} />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
-                    <input ref={quantidadeRef} defaultValue={editModalidade ? editModalidade.quantidade_participantes : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Gênero da modalidade</label>
-                    <select ref={generoRef} className="input-modal bg-white" name="genero" id="genero">
-                        <option selected={editModalidade ? editModalidade.genero : ""} value="">Selecione um gênero</option>
-                        <option selected={editModalidade ? editModalidade.genero : ""} value="0">Masculino</option>
-                        <option selected={editModalidade ? editModalidade.genero : ""} value="1">Feminino</option>
-                    </select>
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Nome</label>
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome" defaultValue={editModalidade ? editModalidade.nome : ""} />
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
+                        <input ref={quantidadeRef} defaultValue={editModalidade ? editModalidade.quantidade_participantes : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Gênero da modalidade</label>
+                        <select defaultValue={editModalidade ? editModalidade.genero : "" } ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                            <option value="">Selecione um gênero</option>
+                            <option value="0">Masculino</option>
+                            <option value="1">Feminino</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Categoria da modalidade</label>
+                        <select defaultValue={editModalidade ? editModalidade.categoria.id : ""} ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                            <option value="">Selecione uma categoria</option>
+                            {categoria.map(categoria => <option value={categoria.id} key={categoria.id}>{capitalize(categoria.nome)}</option>)}
+                        </select>
+                    </div>
                 </Modal.Form>
             </Modal.Root>
 
@@ -179,6 +189,7 @@ export const Modalidades = () => {
                                 <tr className="text-center">
                                     {/* <th className="p-5">ID</th> */}
                                     <th className="p-5">Nome</th>
+                                    <th className="p-5">Categoria</th>
                                     <th className="p-5">Participantes</th>
                                     <th className="p-5">Gênero</th>
                                     <th className="p-5">Data de adição</th>
@@ -190,8 +201,9 @@ export const Modalidades = () => {
                                     <tr key={response.id} className="text-center">
                                         {/* <td className="p-5">{response.id}</td> */}
                                         <td className="p-5">{response.nome}</td>
+                                        <td className="p-5">{capitalize(response.categoria.nome)}</td>
                                         <td className="p-5">{response.quantidade_participantes}</td>
-                                        <td className="p-5">{response.genero}</td>
+                                        <td className="p-5">{response.genero == 0 ? "Maculino" : "Feminino"}</td>
                                         <td className="p-5">{response.data_adicao}</td>
                                         <td className="p-5 flex gap-5"><button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button> <button onClick={() => handleDelete(response.id)} className="btn-sm btn-delete">Excluir</button></td>
                                     </tr>

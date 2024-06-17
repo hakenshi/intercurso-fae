@@ -27,6 +27,7 @@ class StoreUpdateModalidadesRequest extends FormRequest
             'nome' =>'required|min:3|max:255',
             'quantidade_participantes' => "integer",
             'genero' => 'boolean|required',
+            'id_categoria' => 'required',
             Rule::unique('modalidades')->where(function($query){
                 $query->where('nome', request()->nome)
                 ->where('quantidade_participantes', request()->quantidade_participantes)

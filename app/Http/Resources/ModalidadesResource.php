@@ -16,10 +16,14 @@ class ModalidadesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'categoria' => [
+                'id' => $this->categoria->id,
+                'nome' => $this->categoria->nome,
+            ],
             'id' => $this->id,
             'nome' => $this->nome,
             'quantidade_participantes' => $this->quantidade_participantes,
-            'genero' => $this->genero == 0 ? "Masculino" : "Feminino",
+            'genero' => $this->genero,
             'data_adicao' => Carbon::make($this->created_at)->format("d/m/Y, H:i")
         ];
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\JogosContoller;
 use App\Http\Controllers\ModalidadesController;
@@ -18,6 +19,7 @@ Route::apiResources([
     '/times' => TimeController::class,
     '/jogadores' => JogadoresController::class,
     '/jogos' => JogosContoller::class,
+    '/categoria' => CategoriaController::class,
 ]);
 
 Route::prefix("/times")->group(function(){

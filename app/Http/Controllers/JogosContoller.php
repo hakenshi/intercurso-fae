@@ -20,6 +20,7 @@ class JogosContoller extends Controller
      * Display a listing of the resource.
      */
     public function indexPaginate(){
+
         return JogosResource::collection(Jogo::paginate(6));
     }
 
@@ -29,7 +30,10 @@ class JogosContoller extends Controller
 
     public function index()
     {
-        return JogosResource::collection(Jogo::All());
+
+        $jogos = Jogo::orderBy('status', 'desc')->get();
+
+        return JogosResource::collection($jogos);
     }
 
 
