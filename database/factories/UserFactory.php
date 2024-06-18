@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Cursos;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,11 +25,18 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'foto_perfil' => null,
+            'id_curso' => Cursos::factory(), // Assuming course IDs range from 1 to 100
+            'nome' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'senha' => static::$password ??= Hash::make('password'), // Encrypting a default password
+            'telefone' => fake()->phoneNumber(),
+            'ra' => fake()->unique()->numerify('########'), // Assuming RA is an 8-digit number
+            'data_de_nascimento' => fake()->date(),
+            'bio' => fake()->text(120),
+            'tipo_usuario' => fake()->numberBetween(2,3), // Assuming three types of users
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 

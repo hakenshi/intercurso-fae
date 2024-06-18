@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Cursos;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CursosSeeder extends Seeder
@@ -39,10 +38,9 @@ class CursosSeeder extends Seeder
             ['nome_curso' => 'Comunicação e Mídias digitais', 'descricao' => 'Curso de Comunicação e Mídias digitais'],
             ['nome_curso' => 'Economia', 'descricao' => 'Curso de Economia']
         ];
-    
+
         foreach ($cursos as $curso) {
             Cursos::create($curso);
         }
-
     }
 }

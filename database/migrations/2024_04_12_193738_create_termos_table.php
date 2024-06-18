@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('termos', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('id_usuario');
+            $table->uuid('assinatura');
             $table->foreign('id_usuario')->references('id')->on('usuarios');
-            $table->date("data_aceite_termos");
-            $table->longText("pdf_termos");
+            $table->timestamp("created_ad")->default(now());
 
         });
     }
