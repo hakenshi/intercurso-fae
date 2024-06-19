@@ -72,7 +72,6 @@ export default function DefaultLayout({isMobile}) {
                 navigate("/login", {replace: true})
             })
         }
-                
     return (
         <div className="flex flex-col">
             <Navbar tipo={"/usuario"} foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>

@@ -22,7 +22,7 @@ class CadastroRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
             'id_curso' => 'required',
             'nome' => [
                 'required',
@@ -49,13 +49,12 @@ class CadastroRequest extends FormRequest
             ],
             'tipo_usuario' => [
                 'required'
-            ]
+            ],
+            'questionario' => 'required'
             ];
-
-        return $rules;
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'id_curso.required' => "Por favor, escolha seu curso",

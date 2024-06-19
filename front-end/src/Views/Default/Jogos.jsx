@@ -28,8 +28,6 @@ export default function Jogos() {
         return statusFilter && categoriaFilter && generoFilter
     })
 
-    console.log(filteredJogos)
-
     useEffect(() => {
        const fetchJogos = () => {
         axiosInstance.get("/jogos")

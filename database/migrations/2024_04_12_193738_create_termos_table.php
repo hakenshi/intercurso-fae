@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_usuario');
             $table->uuid('assinatura');
             $table->foreign('id_usuario')->references('id')->on('usuarios');
-            $table->timestamp("created_ad")->default(now());
+            $table->timestamp("created_at")->default(now());
 
         });
     }

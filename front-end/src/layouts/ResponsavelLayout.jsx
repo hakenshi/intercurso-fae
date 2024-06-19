@@ -72,7 +72,7 @@ export default function ResponsavelLayout({isMobile}) {
                 navigate("/login", {replace: true})
             })
         }
-                
+        
     return (
         <div className="flex flex-col">
             <Navbar tipo={"/responsavel"} foto={user.foto_perfil} id={user.id} isMobile={isMobile} nome={user.nome} onLogout={onLogout} toggleAsideVisibility={toggleAsideVisibility}/>

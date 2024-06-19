@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateUsuariosRequest;
+use App\Http\Resources\TermosResource;
 use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
+use App\Models\Termo;
 use App\Models\Time;
 use App\Models\User as ModelsUser;
 use Carbon\Carbon;
@@ -123,5 +125,10 @@ class UserController extends Controller
         $user->update();
 
         return new UsuariosResource($user);
+    }
+
+    public function termos($id){        
+        $termo = Termo::where("id_usuario", $id)->get();
+        return response()->json($termo);
     }
 }

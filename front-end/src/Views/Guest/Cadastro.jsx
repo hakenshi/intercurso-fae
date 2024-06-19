@@ -25,14 +25,14 @@ export default function Cadastro() {
         question5: '',
         question6: '',
         question7: '',
-        acceptResponsibility: false,
+        accept_responsibility: false,
     });
 
     const { setUser, setSessionToken } = useStateContext()
 
     const [errors, setError] = useState("")
     const { isAlertOpen, setIsAlertOpen,  } = useAlert()
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
     const [isTermosOpen, setIsTermosOpen] = useState(false)
     const handleSubmit = e => {
         e.preventDefault()
@@ -45,14 +45,18 @@ export default function Cadastro() {
             return
         }
 
-        if (Object.values(responses).includes('')) {
-            setError('Por favor, responda todas as perguntas e preencha todas as informações.');
+        if (Object.values(responses).includes('') && isOpen) {
+            setError('Por favor, responda todas as perguntas');
+            setIsAlertOpen(true)
             return;
         }
-        if (!responses.acceptResponsibility){
-            setError("Por favor, ")
+        if (isTermosOpen && !responses.acceptResponsibility){
+            setError("Por favor, aceite os termos de responsabilidade.")
+            setIsAlertOpen(true)
             return;
         }
+
+        
 
         const payload = {
             id_curso: cursoRef.current.value,
@@ -66,19 +70,23 @@ export default function Cadastro() {
                 ...responses
             }
         }
+
+        // console.log(payload)
+        //
+        // return;
+
         axiosInstance.post('/cadastro', payload)
         .then(({ data })=>{
             setUser(data.user)
             setSessionToken(data.token)
+            
         })
         .catch(error => {
-            const response = error.response
-            if(response){
-               setError(response.data)
-            }
+            console.log(error)
         })
         .finally(() => {
-
+            setIsOpen(false)
+            setIsTermosOpen(false)
         })
     }
 
@@ -89,7 +97,6 @@ export default function Cadastro() {
             [name]: type === 'checkbox' ? checked : value,
         });
         if (value === "Sim" && !responses.acceptResponsibility){
-            setIsOpen(false)
             setIsTermosOpen(true)
         }
     };
@@ -97,21 +104,19 @@ export default function Cadastro() {
     const handleForm = e => {
 
         e.preventDefault()
-
         if (
-            cursoRef.current.value === null ||
-            nomeRef.current.value === null ||
-            emailRef.current.value === null ||
-            senhaRef.current.value === null ||
-            confirmSenhaRef.current.value === null ||
-            raRef.current.value === null
+            !cursoRef.current.value ||
+            !nomeRef.current.value ||
+            !emailRef.current.value  ||
+            !senhaRef.current.value ||
+            !confirmSenhaRef.current.value ||
+            !raRef.current.value
         ){
             handleSubmit(e)
         }
         else{
-            setError('Por favor, aceite os termos de responsabilidade.')
+            setIsOpen(true)
         }
-
     }
 
     return (
@@ -121,7 +126,7 @@ export default function Cadastro() {
             {isOpen &&
                 <Modal.Root isOpen={isOpen} onClose={() => setIsOpen(false)} >
                     <Modal.Form onSubmit={handleSubmit}>
-                        <div className={"md:max-w-screen-md text-justify px-2"}>
+                        <div className={"md:max-w-screen-md max-w-screen-sm max-h-min overflow-scroll text-justify px-2"}>
                             <h2 className="text-2xl font-bold text-center">Questionário de Prontidão para Atividade
                                 Física (PAR-Q)</h2>
                             <p className={"p-2"}>
@@ -135,9 +140,9 @@ export default function Cadastro() {
                             </p>
                         </div>
 
-                        <div className={"flex justify-center"}>
+                        <div className={"flex items-center flex-col gap-2"}>
                             <div
-                                className={"md:max-w-screen-md w-11/12 max-h-[500px] md:max-h-[650px] overflow-y-scroll text-justify space-y-1 flex flex-col gap-2 border-unifae-green-1 border border-collapse p-5 rounded-xl"}>
+                                className={"md:max-w-screen-md w-11/12 max-h-[250px] md:max-h-[325px] overflow-y-scroll text-justify space-y-1 flex flex-col gap-2 border-unifae-green-1 border border-collapse p-5 rounded-xl"}>
                                 {['1. Algum médico já disse que você possui algum problema de coração e que só deveria realizar atividade física supervisionado por profissionais de saúde?',
                                     '2. Você sente dores no peito quando pratica atividade física?',
                                     '3. No último mês, você sentiu dores no peito quando praticou atividade física?',
@@ -176,23 +181,14 @@ export default function Cadastro() {
                                             </div>
                                         </div>
                                     ))}
-                               </div>
-
-                        </div>
-
-                    </Modal.Form>
-                </Modal.Root>
-            }
-
-            {
-                isTermosOpen &&
-                <Modal.Root isOpen={isTermosOpen} hasButton={false}>
-                    <Modal.Default >
-                            <div className={"max-w-lg flex flex-col gap-5"}>
-                                <h3 className="text-center font-semibold text-2xl">Termo de Responsabilidade
+                            </div>
+                            {isTermosOpen && (<>
+                                <div className={"md:max-w-screen-md text-justify px-2"}>
+                                <h3 className="text-2xl font-bold text-center">
+                                    Termo de Responsabilidade
                                     para
                                     Prática de Atividade Física</h3>
-                                <p>
+                                <p className="p-2">
                                     Estou ciente de que é recomendável conversar com um médico antes de aumentar
                                     meu
                                     nível atual de atividade física, por ter respondido “SIM” a uma ou mais
@@ -202,7 +198,8 @@ export default function Cadastro() {
                                     qualquer
                                     atividade física praticada sem o atendimento a essa recomendação.
                                 </p>
-                                <div className={"flex h-fu items-center gap-3"}>
+                            </div>
+                            <div className={"md:max-w-screen-md w-11/12 max-h-[250px] md:max-h-[325px] overflow-y-scroll text-justify space-y-1 flex  items-center gap-2 border-unifae-green-1 border border-collapse p-5 rounded-xl"}>
                                     <input
                                         type="checkbox"
                                         className={"check-box"}
@@ -214,21 +211,12 @@ export default function Cadastro() {
                                         Eu aceito a responsabilidade.
                                     </label>
                                 </div>
-                                <Modal.Button onClick={() => {
-                                    if(!responses.acceptResponsibility){
-                                        setError("Por favor aceite os termos de uso")
-                                        setIsAlertOpen(true)
-                                    }
-                                   else {
-                                        setIsTermosOpen(false)
-                                        setIsOpen(true)
-                                    }
-                                }} type={"button"} texto={"Confirmar"} />
-                            </div>
-                    </Modal.Default>
+                            </>)}
+                        </div>
+
+                    </Modal.Form>
                 </Modal.Root>
             }
-
             <section className="bg-[#262626] min-h-screen flex justify-center items-center">
                 <div className="size-full p-3 max-w-screen-lg  bg-white rounded-md">
                     <div className="flex items-center flex-col h-1/5 justify-center">
@@ -295,16 +283,9 @@ export default function Cadastro() {
                             </div>
                         </div>
                     </form>
-
-                    <div className="flex gap-2 justify-center items-center w-full pt-5">
-                        <input id="default-checkbox" type="checkbox" className="peer check-box"/>
-                        <label htmlFor="confirm">Estou ciente dos termos e <button onClick={() => console.log('A')}
-                                                                                   className="text-unifae-green-1 font-semibold">condições
-                            do intercuso da UNIFAE</button></label>
-                    </div>
                     <div className="flex flex-col w-full items-center p-3">
                     <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>
-                    <button type="submit" onSubmit={() => handleForm} className="btn-lg btn-green">Entrar</button>
+                    <button type="submit" onClick={handleForm} className="btn-lg btn-green">Entrar</button>
                 </div>
             </div>
         </section>

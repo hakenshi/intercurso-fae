@@ -1,7 +1,7 @@
 import { faCamera, faCog, faL, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logoBranca from "../../assets/logo-unifae-2021-branca.png";
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useStateContext } from '../../Contexts/ContextProvider';
 import { Container } from '../../Components/Container';
 import { Modal } from '../../Components/Modal';
@@ -14,6 +14,7 @@ import { AlertErro } from '../../Components/Alerts/AlertErro';
 import { ProfileImage } from '../../Components/ProfileImage';
 import { PreviewImage } from '../../Components/Image/PreviewImage';
 import { ButtonClose } from '../../Components/Buttons/ButtonClose';
+import { handleError } from '../../utils/handleError';
 
 export const Perfil = () => {
 
@@ -23,7 +24,6 @@ export const Perfil = () => {
   const [editModal, setEditModal] = useState(false)
   const [profileImage, setProfileImage] = useState(null)
   const [errors, setErros] = useState("")
-
 
   const fileRef = useRef(null)
   const nomeRef = useRef(null)
@@ -82,6 +82,8 @@ export const Perfil = () => {
     setEditModal(e => e = false)
     setProfileImage(null)
   }
+
+  console.log(termos)
 
   return (
     <>
@@ -145,39 +147,7 @@ export const Perfil = () => {
           
         </div>
         <div className='flex justify-between flex-col md:flex-row p-10 items-center'>
-          {/* <dl className="grid grid-cols-1 gap-4">
-          <h3 className='pl-2'>Meus dados</h3>
-            <dd className="p-2">
-              <p className="bg-unifae-green-1 text-white rounded pl-2 flex justify-between items-center gap-5">
-                Email
-                <span className="bg-white rounded-r p-2 text-unifae-black-1 w-48 inline-block">{user.email}</span>
-              </p>
-            </dd>
-            <dd className="p-2">
-              <p className="bg-unifae-green-1 text-white rounded pl-2 flex justify-between items-center gap-5">
-                RA
-                <span className="bg-white rounded-r p-2 text-unifae-black-1 w-48 inline-block">{user.ra}</span>
-              </p>
-            </dd>
-            <dd className="p-2">
-              <p className="bg-unifae-green-1 text-white rounded pl-2 flex justify-between items-center gap-5">
-                Curso
-                <span className="bg-white rounded-r p-2 text-unifae-black-1 w-48 inline-block">{curso}</span>
-              </p>
-            </dd>
-            <dd className="p-2">
-              <p className="bg-unifae-green-1 text-white rounded pl-2 flex justify-between items-center gap-5">
-                Telefone
-                <span className="bg-white rounded-r p-2 text-unifae-black-1 w-48 inline-block">{user.telefone ? user.telefone : "Sem telefone"}</span>
-              </p>
-            </dd>
-          </dl> */}
-
-
-
-
-          {/* <div className="md:w-1/2">Informações do intercurso</div> */}
-
+          <h2>Termos</h2>
         </div>
       </Container>
     </>

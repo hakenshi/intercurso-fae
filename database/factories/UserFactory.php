@@ -26,7 +26,7 @@ class UserFactory extends Factory
     {
         return [
             'foto_perfil' => null,
-            'id_curso' => Cursos::factory(), // Assuming course IDs range from 1 to 100
+            'id_curso' => fake()->numberBetween(1,24), // Assuming course IDs range from 1 to 100
             'nome' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'senha' => static::$password ??= Hash::make('password'), // Encrypting a default password
