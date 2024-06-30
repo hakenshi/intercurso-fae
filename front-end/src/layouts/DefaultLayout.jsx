@@ -79,11 +79,11 @@ export default function DefaultLayout({isMobile}) {
                 <AsideContext.Provider value={{ isAsideVisible, toggleAsideVisibility }}>
                     <Aside links={userLinks} isAsideVisible={isAsideVisible} />
                 </AsideContext.Provider>
-                <div className={`${isAsideVisible ? "flex-grow" : "flex-grow-0"}`}>
-                    <main className="flex justify-center items-center md:w-full w-screen">
+                {/* <div className={`${isAsideVisible ? "flex-grow" : "flex-grow-0"}`}> */}
+                    <main className="flex justify-center w-full">
                         <Outlet/>
                     </main>
-                </div>
+                {/* </div> */}
             </div>
         </div>
     );

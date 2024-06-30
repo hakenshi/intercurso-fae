@@ -10,6 +10,7 @@ import { Paginate } from "../../Components/Paginate"
 import { Modal } from "../../Components/Modal"
 import { handleError } from "../../utils/handleError"
 import { capitalize } from "../../utils/capitalize"
+import { Loading } from "../../Components/Loading"
 
 export const Modalidades = () => {
 
@@ -50,7 +51,7 @@ export const Modalidades = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        
+
         const payload = {
             nome: nomeRef.current.value,
             quantidade_participantes: quantidadeRef.current.value,
@@ -114,6 +115,8 @@ export const Modalidades = () => {
         return
     }
 
+
+
     return (
         <>
             <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
@@ -157,7 +160,7 @@ export const Modalidades = () => {
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Gênero da modalidade</label>
-                        <select defaultValue={editModalidade ? editModalidade.genero : "" } ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                        <select defaultValue={editModalidade ? editModalidade.genero : ""} ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
                             <option value="">Selecione um gênero</option>
                             <option value="0">Masculino</option>
                             <option value="1">Feminino</option>
@@ -172,7 +175,6 @@ export const Modalidades = () => {
                     </div>
                 </Modal.Form>
             </Modal.Root>
-
             <div className="w-full h-[88vh] flex items-center flex-col">
                 <h1 className="text-center p-5 text-3xl font-medium">Modalidades</h1>
                 <div className="flex flex-col">
@@ -183,11 +185,10 @@ export const Modalidades = () => {
                 </div>
 
                 <div className="flex flex-col justify-center items-center p-5">
-                    {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
-                        (<table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
+                    {loading ? (<Loading />) :
+                        (modalidades.length > 0 ? <table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
                             <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
-                                    {/* <th className="p-5">ID</th> */}
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Categoria</th>
                                     <th className="p-5">Participantes</th>
@@ -199,7 +200,6 @@ export const Modalidades = () => {
                             <tbody className="divide-y divide-unifae-gray50-2">
                                 {(input.trim() !== "" ? results : modalidades).map(response => (
                                     <tr key={response.id} className="text-center">
-                                        {/* <td className="p-5">{response.id}</td> */}
                                         <td className="p-5">{response.nome}</td>
                                         <td className="p-5">{capitalize(response.categoria.nome)}</td>
                                         <td className="p-5">{response.quantidade_participantes}</td>
@@ -209,9 +209,9 @@ export const Modalidades = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>)}
+                        </table> : <p>Ainda não há nenhuma modalidade cadastrada no sistema</p>)}
                 </div>
-                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
+                {modalidades > length > 0 ?? <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />}
             </div>
 
         </>

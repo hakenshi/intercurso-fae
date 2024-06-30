@@ -7,6 +7,7 @@ export function setStatus (num){
     return statusMap[num.toString()] || "Status inválido"
 }
 
+
 export default function defineStatus(num){
     const statusMap = {
         '0': 'Finalizado',

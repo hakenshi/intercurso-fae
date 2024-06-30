@@ -2,22 +2,17 @@ import { useEffect, useRef, useState } from "react"
 import { useStateContext } from "../../Contexts/ContextProvider"
 import { useAlert } from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
-import { Oval } from "react-loader-spinner"
 import { Search } from "../../Components/Search bar/Search"
-import p from "prop-types"
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 import { images } from "../../assets"
 import { ProfileImage } from "../../Components/ProfileImage"
 import { Modal } from "../../Components/Modal"
 import { Table } from "../../Components/Table"
-import { TableHead } from "../../Components/Table/TableHead"
 import { setStatus } from "../../utils/setStatus"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Loading } from "../../Components/Loading"
 
 export const Times = ({ idResponsavel, url = "/times" }) => {
-
-
     const { user } = useStateContext()
     const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
@@ -175,9 +170,8 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
     };
 
 
-    const getResponasavelId = () => {
-        return localStorage.getItem("responsavelId")
-    }
+    const getResponasavelId = () => localStorage.getItem("responsavelId")
+
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -506,8 +500,4 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
 
         </>
     )
-}
-
-Times.propTypes = {
-    id: p.number
 }

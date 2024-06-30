@@ -91,9 +91,6 @@ class UserController extends Controller
         return new UsuariosResource($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $user = ModelsUser::findOrFail($id);

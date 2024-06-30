@@ -8,6 +8,7 @@ import { faCheck, faX } from '@fortawesome/free-solid-svg-icons';
 import { useAlert } from '../../Components/hooks/useAlert';
 import { JogadoresModal } from '../../Components/Modal/ListJogadores/JogadoresModal';
 import { ButtonVerJogadores } from '../../Components/Buttons/ButtonVerJogadores';
+import { handleError } from '../../utils/handleError';
 
 export const MeuTime = () => {
 
@@ -21,11 +22,12 @@ export const MeuTime = () => {
     if(times.length === 0){
       axiosInstance.get(`/times/usuario/${user.id}`)
       .then(({data}) => {
+        if(data.data.length > 0)
         setTimes(data.data)
         setLoading(false)
       })
       .catch(errors => {
-        console.log(errors)
+        handleError(errors)
         setLoading(false)
       })
     }

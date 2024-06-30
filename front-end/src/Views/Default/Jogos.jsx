@@ -31,12 +31,19 @@ export default function Jogos() {
     useEffect(() => {
        const fetchJogos = () => {
         axiosInstance.get("/jogos")
-        .then(({ data }) =>setJogos(data.data))
+        .then(({ data }) =>{
+            if(data.length > 0)
+            setJogos(data.data)
+        })
         .catch(e => handleError(e))
        }
        const fetchModalidades = () => {
         axiosInstance.get("/jogos")
-        .then(({ data }) =>setModalidades(data.data))
+        .then(({ data }) =>{
+            if(data.length > 0){
+                setModalidades(data.data)
+            }
+        })
         .catch(e => handleError(e))
        }
 
@@ -48,7 +55,7 @@ export default function Jogos() {
         fetchModalidades()
         setLoading(false)
        }
-       
+
 
     }, [jogos, modalidades])
 
@@ -98,7 +105,7 @@ export default function Jogos() {
                     <option value="1">Feminino</option>
                 </select>
             </div>
-            <h2 className="text-center p-2 text-3xl uppercase font font-bold">{title ? title : "Jogos do Intercurso"}</h2>
+            {jogos.length > 0 ? <><h2 className="text-center p-2 text-3xl uppercase font font-bold">{title ? title : "Jogos do Intercurso"}</h2>
             <div className="flex flex-col max-h-[65vh] overflow-y-scroll">
                 <div className="p-5 flex gap-5 flex-wrap md:max-w-screen-xl">
                     {filteredJogos.map(({jogo, modalidade, placar, times})=>(
@@ -126,7 +133,7 @@ export default function Jogos() {
                     )
                     )}
                 </div>
-            </div>
+            </div></>: <div className="p-5"><h2>Nenhum jogo foi marcado ainda</h2></div>}
         </div>
         </>
     )

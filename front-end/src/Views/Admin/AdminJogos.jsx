@@ -50,7 +50,9 @@ export const AdminJogos = () => {
     const fetchModalidades = async () => {
       try {
         const { data } = await axiosInstance.get("/modalidades");
-        setModalidades(data.data);
+
+        data.length > 0 ? setModalidades(data.data) : ""
+
       } catch (error) {
         console.log(error);
       }
@@ -90,8 +92,6 @@ export const AdminJogos = () => {
       id_modalidade: modalidadeRef.current.value,
       status: "1"
     }
-
-
 
     handleRequest(url, method, payload)
       .then(({ data }) => {
@@ -188,8 +188,6 @@ export const AdminJogos = () => {
       placar_time_2: parseInt(placarTime2Ref.current.value),
       id_time_vencedor: parseInt(timeVencedorRef.current.value),
     }
-
-
 
     axiosInstance.patch(`/placar/${id}`, payload)
       .then(({data}) => {

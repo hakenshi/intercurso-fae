@@ -1,5 +1,3 @@
-import { faSearch } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { forwardRef, useState } from "react"
 import axiosInstance from "../../helper/axios-instance"
 import p from "prop-types"

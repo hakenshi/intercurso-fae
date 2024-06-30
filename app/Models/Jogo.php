@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jogo extends Model
 {
@@ -14,6 +16,7 @@ class Jogo extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_jogo_em_espera',
         'id_placar',
         'id_time_1',
         'id_time_2',
@@ -41,4 +44,5 @@ class Jogo extends Model
     {
         return $this->hasOne(Time::class, 'id', 'id_time_2');    
     }
+
 }

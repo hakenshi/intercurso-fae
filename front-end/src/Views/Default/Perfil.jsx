@@ -83,7 +83,6 @@ export const Perfil = () => {
     setProfileImage(null)
   }
 
-  console.log(termos)
 
   return (
     <>
