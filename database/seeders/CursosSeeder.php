@@ -12,7 +12,7 @@ class CursosSeeder extends Seeder
      */
     public function run(): void
     {
-        $cursos = [
+        Cursos::factory()->createMany([
             ['nome_curso' => 'Administração', 'descricao' => 'Curso de Administração'],
             ['nome_curso' => 'Ciências Contábeis', 'descricao' => 'Curso de Ciências Contábeis'],
             ['nome_curso' => 'Direito', 'descricao' => 'Curso de Direito'],
@@ -37,10 +37,6 @@ class CursosSeeder extends Seeder
             ['nome_curso' => 'Educação Fisica (Licenciatura)', 'descricao' => 'Curso de Educação Fisica (Licenciatura)'],
             ['nome_curso' => 'Comunicação e Mídias digitais', 'descricao' => 'Curso de Comunicação e Mídias digitais'],
             ['nome_curso' => 'Economia', 'descricao' => 'Curso de Economia']
-        ];
-
-        foreach ($cursos as $curso) {
-            Cursos::create($curso);
-        }
+        ]);
     }
 }

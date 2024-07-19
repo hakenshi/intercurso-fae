@@ -13,22 +13,13 @@ class CategoriaSeeder extends Seeder
      */
     public function run(): void
     {
-        Categoria::factory()->create([
-           'nome' => 'e-sports',
-        ]);
-        Categoria::factory()->create([
-           'nome' => 'futebol',
-        ]);
-        Categoria::factory()->create([
-           'nome' => 'volei',
-        ]);Categoria::factory()->create([
-           'nome' => 'handebol',
-        ]);
-        Categoria::factory()->create([
-           'nome' => 'basquete',
-        ]);
-        Categoria::factory()->create([
-           'nome' => 'jogos de mesa',
+        Categoria::factory()->createMany([
+            ['nome' => 'e-sports'],
+            ['nome' => 'futebol'],
+            ['nome' => 'volei'],
+            ['nome' => 'handebol'],
+            ['nome' => 'basquete'],
+            ['nome' => 'jogos de mesa'],
         ]);
     }
 }

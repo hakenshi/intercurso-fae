@@ -26,7 +26,7 @@ class Placar extends Model
     }
 
     public function time()
-    {  
+    {
         return $this->belongsTo(Time::class, "id_time_vencedor", "id");
     }
 }

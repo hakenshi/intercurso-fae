@@ -18,11 +18,11 @@ class TimesResource extends JsonResource
             'time' => [
                 'id' => $this->id,
                 'nome' => $this->nome,
-                'status' =>$this->status,
+                'status' => $this->status,
             ],
             'modalidade' => [
-               'id_modalidade' => $this->modalidade->id,
-               'nome_modalidade' => $this->modalidade->nome,
+                'id_modalidade' => $this->modalidade->id,
+                'nome_modalidade' => $this->modalidade->nome,
             ],
             'usuario' => [
                 'id_responsavel' => $this->id_responsavel ? $this->id_responsavel : "",
@@ -40,7 +40,7 @@ class TimesResource extends JsonResource
                     'status' => $jogador->status,
                 ]),
                 'quantidade' => $this->jogadores->count(),
-            ]            
+            ]
         ];
     }
 }

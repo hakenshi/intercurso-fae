@@ -1,25 +1,25 @@
-import { useEffect, useRef, useState } from "react"
-import { useStateContext } from "../../Contexts/ContextProvider"
-import { useNavigate } from "react-router-dom"
-import { useAlert } from "../../Components/hooks/useAlert"
+import {useEffect, useRef, useState} from "react"
+import {useStateContext} from "../../Contexts/ContextProvider"
+import {useNavigate} from "react-router-dom"
+import {useAlert} from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
-import { Oval } from "react-loader-spinner"
-import { useSearch } from "../../Components/hooks/useSearch"
+import {Oval} from "react-loader-spinner"
+import {useSearch} from "../../Components/hooks/useSearch"
 import usePagiante from "../../Components/hooks/usePaginate"
-import { Paginate } from "../../Components/Paginate"
-import { Modal } from "../../Components/Modal"
-import { handleError } from "../../utils/handleError"
-import { capitalize } from "../../utils/capitalize"
-import { Loading } from "../../Components/Loading"
+import {Paginate} from "../../Components/Paginate"
+import {Modal} from "../../Components/Modal"
+import {handleError} from "../../utils/handleError"
+import {capitalize} from "../../utils/capitalize"
+import {Loading} from "../../Components/Loading"
 
 export const Modalidades = () => {
 
 
-    const { user } = useStateContext()
+    const {user} = useStateContext()
     const navigate = useNavigate()
-    const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
-    const { handleSearch, input, results, } = useSearch("", "/search-modalidades")
-    const { data: modalidades, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/modalidades")
+    const {isAlertOpen, setIsAlertOpen, handleClose} = useAlert()
+    const {handleSearch, input, results,} = useSearch("", "/search-modalidades")
+    const {data: modalidades, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/modalidades")
 
     const nomeRef = useRef(null)
     const quantidadeRef = useRef(null)
@@ -33,7 +33,7 @@ export const Modalidades = () => {
     // const [erros, setErrors] = useState(null);
     useEffect(() => {
         axiosInstance.get('/categoria')
-            .then(({ data }) => setCategoria(data))
+            .then(({data}) => setCategoria(data))
             .catch(e => handleError(e))
     }, [])
 
@@ -61,10 +61,10 @@ export const Modalidades = () => {
 
         if (isEditAlertOpen) {
             axiosInstance.put(`/modalidades/${editModalidade.id}`, payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         alert("Modalidade Editada com sucesso!")
-                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? { ...modalidade, ...data.data } : modalidade))
+                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade))
                     }
 
                 })
@@ -75,11 +75,9 @@ export const Modalidades = () => {
                     }
                 })
                 .finally(() => setIsEditAlertOpen(false))
-        }
-
-        else {
+        } else {
             axiosInstance.post('/modalidades', payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         alert("Modalidade cadastrada com sucesso!")
                         setData(m => [...m, data.data])
@@ -116,18 +114,17 @@ export const Modalidades = () => {
     }
 
 
-
     return (
         <>
             <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
                 <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Modalidade">
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Nome</label>
-                        <input ref={nomeRef} type="text" className="input-modal" name="nome" />
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome"/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
-                        <input ref={quantidadeRef} type="text" className="input-modal" name="quantidade-pariticpantes" />
+                        <input ref={quantidadeRef} type="text" className="input-modal" name="quantidade-pariticpantes"/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Gênero da modalidade</label>
@@ -142,7 +139,8 @@ export const Modalidades = () => {
                         <label htmlFor="nome">Categoria da modalidade</label>
                         <select ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
                             <option value="">Selecione uma categoria</option>
-                            {categoria.map(categoria => <option value={categoria.id} key={categoria.id}>{capitalize(categoria.nome)}</option>)}
+                            {categoria.map(categoria => <option value={categoria.id}
+                                                                key={categoria.id}>{capitalize(categoria.nome)}</option>)}
                         </select>
                     </div>
                 </Modal.Form>
@@ -152,15 +150,19 @@ export const Modalidades = () => {
                 <Modal.Form onSubmit={handleSubmit} texto={"Editar Modalidade"}>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Nome</label>
-                        <input ref={nomeRef} type="text" className="input-modal" name="nome" defaultValue={editModalidade ? editModalidade.nome : ""} />
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome"
+                               defaultValue={editModalidade ? editModalidade.nome : ""}/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="quantidade-pariticpantes">Quantidade de participantes</label>
-                        <input ref={quantidadeRef} defaultValue={editModalidade ? editModalidade.quantidade_participantes : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
+                        <input ref={quantidadeRef}
+                               defaultValue={editModalidade ? editModalidade.quantidade_participantes : ""} type="text"
+                               className="input-modal" name="quantidade-pariticpantes"/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Gênero da modalidade</label>
-                        <select defaultValue={editModalidade ? editModalidade.genero : ""} ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                        <select defaultValue={editModalidade ? editModalidade.genero : ""} ref={categoriaRef}
+                                className="input-modal bg-white" name="genero" id="genero">
                             <option value="">Selecione um gênero</option>
                             <option value="0">Masculino</option>
                             <option value="1">Feminino</option>
@@ -168,9 +170,11 @@ export const Modalidades = () => {
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Categoria da modalidade</label>
-                        <select defaultValue={editModalidade ? editModalidade.categoria.id : ""} ref={categoriaRef} className="input-modal bg-white" name="genero" id="genero">
+                        <select defaultValue={editModalidade ? editModalidade.categoria.id : ""} ref={categoriaRef}
+                                className="input-modal bg-white" name="genero" id="genero">
                             <option value="">Selecione uma categoria</option>
-                            {categoria.map(categoria => <option value={categoria.id} key={categoria.id}>{capitalize(categoria.nome)}</option>)}
+                            {categoria.map(categoria => <option value={categoria.id}
+                                                                key={categoria.id}>{capitalize(categoria.nome)}</option>)}
                         </select>
                     </div>
                 </Modal.Form>
@@ -181,13 +185,15 @@ export const Modalidades = () => {
                     <span className="flex justify-around p-5">
                         <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Modalidade</button>
                     </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" onChange={handleSearch} />
+                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar"
+                           onChange={handleSearch}/>
                 </div>
 
                 <div className="flex flex-col justify-center items-center p-5">
-                    {loading ? (<Loading />) :
-                        (modalidades.length > 0 ? <table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
-                            <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
+                    {loading ? (<Loading/>) :
+                        (modalidades.length > 0 ?
+                            <table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
+                                <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
                                 <tr className="text-center">
                                     <th className="p-5">Nome</th>
                                     <th className="p-5">Categoria</th>
@@ -196,22 +202,30 @@ export const Modalidades = () => {
                                     <th className="p-5">Data de adição</th>
                                     <th className="p-5"></th>
                                 </tr>
-                            </thead>
-                            <tbody className="divide-y divide-unifae-gray50-2">
+                                </thead>
+                                <tbody className="divide-y divide-unifae-gray50-2">
                                 {(input.trim() !== "" ? results : modalidades).map(response => (
                                     <tr key={response.id} className="text-center">
                                         <td className="p-5">{response.nome}</td>
                                         <td className="p-5">{capitalize(response.categoria.nome)}</td>
                                         <td className="p-5">{response.quantidade_participantes}</td>
-                                        <td className="p-5">{response.genero == 0 ? "Maculino" : "Feminino"}</td>
+                                        <td className="p-5">{response.genero === "0" ? "Maculino" : "Feminino"}</td>
                                         <td className="p-5">{response.data_adicao}</td>
-                                        <td className="p-5 flex gap-5"><button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button> <button onClick={() => handleDelete(response.id)} className="btn-sm btn-delete">Excluir</button></td>
+                                        <td className="p-5 flex gap-5">
+                                            <button onClick={() => handleEditModal(response)}
+                                                    className="btn-sm btn-edit">Editar
+                                            </button>
+                                            <button onClick={() => handleDelete(response.id)}
+                                                    className="btn-sm btn-delete">Excluir
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
-                            </tbody>
-                        </table> : <p>Ainda não há nenhuma modalidade cadastrada no sistema</p>)}
+                                </tbody>
+                            </table> : <p>Ainda não há nenhuma modalidade cadastrada no sistema</p>)}
                 </div>
-                {modalidades > length > 0 ?? <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />}
+                {modalidades > length > 0 ?
+                    <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage}/> : ""}
             </div>
 
         </>

@@ -1,8 +1,8 @@
-import { Axios } from "axios"
-import { useCallback, useState } from "react"
+import {Axios} from "axios"
+import {useCallback, useState} from "react"
 import axiosInstance from "../../helper/axios-instance"
 
-export const useSearch = (data,url) => {
+export const useSearch = (data, url) => {
     const [input, setInput] = useState(data)
     const [results, setResults] = useState([])
 
@@ -16,7 +16,7 @@ export const useSearch = (data,url) => {
                     value: value
                 }
             })
-                .then(({ data }) => {
+                .then(({data}) => {
                     setResults(data.data)
                 })
                 .catch(error => console.log(error))
@@ -30,5 +30,5 @@ export const useSearch = (data,url) => {
     }
 
 
-    return { input, setInput, results, setResults, handleSearch }
+    return {input, setInput, results, setResults, handleSearch}
 }

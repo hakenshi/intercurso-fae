@@ -15,7 +15,7 @@ class Termo extends Model
     protected $table = "termos";
 
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_usuario',
         'problema_cardiacao',
@@ -30,10 +30,10 @@ class Termo extends Model
         'created_at',
     ];
 
-    public function usuario() {
+    public function usuario()
+    {
         return $this->belongsTo(User::class, 'id_usuario');
     }
-
 
 
 }

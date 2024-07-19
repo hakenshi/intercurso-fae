@@ -19,11 +19,13 @@ class PlacarController extends Controller
 
         return $placar->id;
     }
-    public static function update(Placar $placar, Request $request){
+
+    public static function update(Placar $placar, Request $request)
+    {
         $data = $request->all();
         $jogo = Jogo::where("id_placar", $placar->id)->first();
 
-        if($jogo->status == 1 && isset($data['id_time_vencedor'])){
+        if ($jogo->status == 1 && isset($data['id_time_vencedor'])) {
             $jogo->status = 0;
             $jogo->save();
         }

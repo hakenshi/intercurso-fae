@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react"
+import {useEffect, useRef, useState} from "react"
 
-export default function useAxios(configRequest){
+export default function useAxios(configRequest) {
     const {axiosInstance, method, url, configs = {}} = configRequest
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
     const [errors, setErrors] = useState('')
     const effectRun = useRef(false)
 
-    useEffect(()=>{
+    useEffect(() => {
 
         const controller = new AbortController()
 
-        const fetchData = async () =>{
+        const fetchData = async () => {
             try {
                 const response = await axiosInstance[method.toLowerCase()](url, {
                     ...configs,
@@ -21,21 +21,20 @@ export default function useAxios(configRequest){
                 setData(response)
             } catch (error) {
                 setErrors(error)
-            }
-            finally{
+            } finally {
                 setLoading(false)
             }
         }
         fetchData()
 
 
-       if(effectRun == true){
-        return () => {
-            controller.abort()
-            effectRun.current = true
+        if (effectRun == true) {
+            return () => {
+                controller.abort()
+                effectRun.current = true
+            }
         }
-       }
     }, [])
-    
-    return [data,loading,errors]
+
+    return [data, loading, errors]
 }   

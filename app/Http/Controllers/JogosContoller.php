@@ -19,7 +19,8 @@ class JogosContoller extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexPaginate(){
+    public function indexPaginate()
+    {
 
         return JogosResource::collection(Jogo::paginate(6));
     }
@@ -45,7 +46,6 @@ class JogosContoller extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
         try {
             $data = $request->validate([
                 'id_modalidade' => 'required',
@@ -64,8 +64,6 @@ class JogosContoller extends Controller
 
             $data['data_jogo'] = $this->carbonFormat($request->data_jogo);
 
-            // $data['data_jogo'] = Carbon::now();
-
             $jogos = Jogo::create($data);
 
             $placar = Placar::create([
@@ -80,6 +78,42 @@ class JogosContoller extends Controller
 
             return new JogosResource($jogos);
         } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    /*
+        TODO: 
+       1 - Entender como é que caralhos eu vou fazer pra organizar esses dados todos no banco.
+       2 - Gerar os jogos no banco
+       3 - Definir quais times ficarão setados como em aguardo: o critério disso é muito simples, os jogos em aguardo serão aqueles onde o id do time será nulo.
+    */
+
+    public function storeMany(Request $request)
+    {
+        try {
+            $data = $request->all();
+
+            DB::beginTransaction();
+
+            $faseChapeu = Jogo::gerarPartida($data['faseChapeu'], $data['id_modalidade'], 1);
+            $primeiraFase = Jogo::gerarPartida($data['primeiraFase'], $data['id_modalidade'], 2);
+            $segundaFase = Jogo::gerarPartida($data['segundaFase'], $data['id_modalidade'], 3);
+            $terceiraFase = Jogo::gerarPartida($data['terceiraFase'], $data['id_modalidade'], 4);
+
+            DB::commit();
+
+            return response()->json([
+                $faseChapeu,
+                $primeiraFase,
+                $segundaFase,
+                $terceiraFase,
+            ]);
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),

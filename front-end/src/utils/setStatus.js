@@ -1,4 +1,4 @@
-export function setStatus (num){
+export function setStatus(num) {
     const statusMap = {
         '0': "Pendente",
         '1': "Ativo",
@@ -8,7 +8,7 @@ export function setStatus (num){
 }
 
 
-export default function defineStatus(num){
+export default function defineStatus(num) {
     const statusMap = {
         '0': 'Finalizado',
         '1': 'Ativo',

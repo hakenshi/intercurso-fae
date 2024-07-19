@@ -24,7 +24,8 @@ export function handleError(e) {
 
     switch (error.type) {
         case 'response':
-            console.error(`Error Response:\nData: ${error.data.message}\nStatus: ${error.status}\nHeaders: ${JSON.stringify(error.headers)}`);            break;
+            console.error(`Error Response:\nData: ${error.data.message}\nStatus: ${error.status}\nHeaders: ${JSON.stringify(error.headers)}`);
+            break;
         case 'request':
             console.error(`Error Request:\nRequest: ${error.request}`);
             break;

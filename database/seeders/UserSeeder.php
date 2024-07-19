@@ -15,19 +15,26 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'nome' => 'admin',
-            'email' => 'admin@admin.com',
-            'senha' => 'admin',
-            'tipo_usuario' => 1
-        ]);
-        User::factory()->create([
-            'nome' => 'Felipe Kafka Dias',
-            'email' => 'felipe.dias@sou.fae.br',
-            'senha' => '123',
-            'tipo_usuario' => 2
+        User::factory()->createMany([
+            [
+                'nome' => 'admin',
+                'email' => 'admin@admin.com',
+                'senha' => 'admin',
+                'tipo_usuario' => 1
+            ],
+            [
+                'nome' => 'Felipe Kafka Dias',
+                'email' => 'felipe.dias@sou.fae.br',
+                'senha' => '123',
+                'tipo_usuario' => 2
+            ],
+            [
+                'nome' => 'Jorge Fagundes',
+                'email' => 'jorge.fagundes@sou.fae.br',
+                'senha' => '123',
+                'tipo_usuario' => 3
+            ],
         ]);
 
-        User::factory()->count(15)->create();
     }
 }

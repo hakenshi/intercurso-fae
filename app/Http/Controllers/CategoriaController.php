@@ -38,7 +38,7 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, Categoria $categorium)
     {
-       $categoria =  $categorium->update($request->all());
+        $categoria = $categorium->update($request->all());
 
         return response()->json($categoria);
     }
@@ -48,8 +48,8 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categorium)
     {
-       $categoria = $categorium->delete();
+        $categoria = $categorium->delete();
 
-       return response()->json($categoria);
+        return response()->json($categoria);
     }
 }

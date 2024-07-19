@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('nome');
             $table->integer('quantidade_participantes')->default(0);
-            $table->enum('genero', [0,1]);
+            $table->enum('genero', [0, 1]);
             $table->timestamps();
         });
     }

@@ -17,12 +17,14 @@ class Jogador extends Model
         'id_time',
         'status'
     ];
-    
-    public function time(){
+
+    public function time()
+    {
         return $this->belongsTo(Time::class, "id_time");
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(User::class, 'id_usuario');
     }
 

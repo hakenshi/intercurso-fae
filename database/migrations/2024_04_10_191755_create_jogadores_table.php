@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->string('nome');
             $table->string('ra');
             // $table->longtext('foto');
-            $table->enum('status', [0,1]);
+            $table->enum('status', [0, 1]);
             $table->date('data_nascimento');
             $table->timestamps();
         });

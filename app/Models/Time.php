@@ -18,15 +18,18 @@ class Time extends Model
         'status',
     ];
 
-    public function modalidade(){
-        return $this->belongsTo(Modalidade::class,"id_modalidade");
+    public function modalidade()
+    {
+        return $this->belongsTo(Modalidade::class, "id_modalidade");
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(User::class, 'id_responsavel');
-    } 
+    }
 
-    public function jogadores(){
+    public function jogadores()
+    {
         return $this->hasMany(Jogador::class, "id_time");
     }
 
@@ -36,7 +39,7 @@ class Time extends Model
     }
 
     public function placar()
-    {   
+    {
         return $this->hasOne(Placar::class, "id_time_vencedor", "id");
     }
 }

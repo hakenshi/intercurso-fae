@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useStateContext } from "../Contexts/ContextProvider"
+import {useEffect, useState} from "react";
+import {useStateContext} from "../Contexts/ContextProvider"
 import axiosInstance from "../helper/axios-instance";
-import { Navigate, Outlet } from "react-router-dom";
-import { Oval } from "react-loader-spinner";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import {Navigate, Outlet} from "react-router-dom";
+import {Oval} from "react-loader-spinner";
+import {faL} from "@fortawesome/free-solid-svg-icons";
 
-function roleMatch(role){
+function roleMatch(role) {
 
     console.log(role)
 
@@ -18,15 +18,15 @@ function roleMatch(role){
     return roles[role]
 }
 
-export const ProtectedRoute = ({ role }) => {
-    const { setUser, token, user } = useStateContext();
+export const ProtectedRoute = ({role}) => {
+    const {setUser, token, user} = useStateContext();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (token && !user) {
             console.log('Fetching user data...');
             axiosInstance.get('/user')
-                .then(({ data }) => {
+                .then(({data}) => {
                     setUser(data);
                     setLoading(false);
                 })
@@ -45,7 +45,7 @@ export const ProtectedRoute = ({ role }) => {
     // }
 
     if (!token) {
-        return <Navigate to={"/login"} replace />;
+        return <Navigate to={"/login"} replace/>;
     }
 
     // if (user && user.tipo_usuario != role) {
@@ -53,5 +53,5 @@ export const ProtectedRoute = ({ role }) => {
     // }
 
     // console.log('User authorized, rendering route...');
-    return <Outlet />;
+    return <Outlet/>;
 };

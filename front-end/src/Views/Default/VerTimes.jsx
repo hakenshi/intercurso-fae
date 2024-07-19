@@ -1,3 +1,3 @@
-export default function VerTimes(){
+export default function VerTimes() {
     return "Ver Times"
 }

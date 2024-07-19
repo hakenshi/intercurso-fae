@@ -5,7 +5,7 @@ php artisan serve &
 PHP_PID=$!
 
 # Wait for the Laravel server to start
-sleep 5
+sleep 2
 
 # Change to the front-end directory
 cd front-end/

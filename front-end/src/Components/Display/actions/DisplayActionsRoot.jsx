@@ -1,4 +1,4 @@
-export const DisplayActionsRoot = ({ children }) => {
+export const DisplayActionsRoot = ({children}) => {
     return (
         <div className='flex flex-col'>
             {children}

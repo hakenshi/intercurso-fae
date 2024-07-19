@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import cursos from "../../../public/cursos.json"
 import logoPadrao from "../../assets/logo-unifae-2021.png";
-import React, { useRef, useState } from "react";
+import React, {useRef, useState} from "react";
 import axiosInstance from "../../helper/axios-instance";
-import { useStateContext } from "../../Contexts/ContextProvider";
-import { useAlert } from "../../Components/hooks/useAlert";
-import { AlertErro } from "../../Components/Alerts/AlertErro";
+import {useStateContext} from "../../Contexts/ContextProvider";
+import {useAlert} from "../../Components/hooks/useAlert";
+import {AlertErro} from "../../Components/Alerts/AlertErro";
 import ReactInputMask from "react-input-mask";
 import {Modal} from "../../Components/Modal/index.jsx";
+
 export default function Cadastro() {
 
     const nomeRef = useRef(null);
@@ -28,10 +29,10 @@ export default function Cadastro() {
         accept_responsibility: false,
     });
 
-    const { setUser, setSessionToken } = useStateContext()
+    const {setUser, setSessionToken} = useStateContext()
 
     const [errors, setError] = useState("")
-    const { isAlertOpen, setIsAlertOpen,  } = useAlert()
+    const {isAlertOpen, setIsAlertOpen,} = useAlert()
     const [isOpen, setIsOpen] = useState(false)
     const [isTermosOpen, setIsTermosOpen] = useState(false)
     const handleSubmit = e => {
@@ -50,13 +51,12 @@ export default function Cadastro() {
             setIsAlertOpen(true)
             return;
         }
-        if (isTermosOpen && !responses.acceptResponsibility){
+        if (isTermosOpen && !responses.acceptResponsibility) {
             setError("Por favor, aceite os termos de responsabilidade.")
             setIsAlertOpen(true)
             return;
         }
 
-        
 
         const payload = {
             id_curso: cursoRef.current.value,
@@ -76,27 +76,27 @@ export default function Cadastro() {
         // return;
 
         axiosInstance.post('/cadastro', payload)
-        .then(({ data })=>{
-            setUser(data.user)
-            setSessionToken(data.token)
-            
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        .finally(() => {
-            setIsOpen(false)
-            setIsTermosOpen(false)
-        })
+            .then(({data}) => {
+                setUser(data.user)
+                setSessionToken(data.token)
+
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            .finally(() => {
+                setIsOpen(false)
+                setIsTermosOpen(false)
+            })
     }
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const {name, value, type, checked} = e.target;
         setResponses({
             ...responses,
             [name]: type === 'checkbox' ? checked : value,
         });
-        if (value === "Sim" && !responses.acceptResponsibility){
+        if (value === "Sim" && !responses.acceptResponsibility) {
             setIsTermosOpen(true)
         }
     };
@@ -107,26 +107,27 @@ export default function Cadastro() {
         if (
             !cursoRef.current.value ||
             !nomeRef.current.value ||
-            !emailRef.current.value  ||
+            !emailRef.current.value ||
             !senhaRef.current.value ||
             !confirmSenhaRef.current.value ||
             !raRef.current.value
-        ){
+        ) {
             handleSubmit(e)
-        }
-        else{
+        } else {
             setIsOpen(true)
         }
     }
 
     return (
         <>
-    {isAlertOpen && (<AlertErro mensagem={errors} onClose={()=> setIsAlertOpen(false)} isAlertOpen={isAlertOpen}/>)}
+            {isAlertOpen && (
+                <AlertErro mensagem={errors} onClose={() => setIsAlertOpen(false)} isAlertOpen={isAlertOpen}/>)}
 
             {isOpen &&
-                <Modal.Root isOpen={isOpen} onClose={() => setIsOpen(false)} >
+                <Modal.Root isOpen={isOpen} onClose={() => setIsOpen(false)}>
                     <Modal.Form onSubmit={handleSubmit}>
-                        <div className={"md:max-w-screen-md max-w-screen-sm max-h-min overflow-scroll text-justify px-2"}>
+                        <div
+                            className={"md:max-w-screen-md max-w-screen-sm max-h-min overflow-scroll text-justify px-2"}>
                             <h2 className="text-2xl font-bold text-center">Questionário de Prontidão para Atividade
                                 Física (PAR-Q)</h2>
                             <p className={"p-2"}>
@@ -184,22 +185,23 @@ export default function Cadastro() {
                             </div>
                             {isTermosOpen && (<>
                                 <div className={"md:max-w-screen-md text-justify px-2"}>
-                                <h3 className="text-2xl font-bold text-center">
-                                    Termo de Responsabilidade
-                                    para
-                                    Prática de Atividade Física</h3>
-                                <p className="p-2">
-                                    Estou ciente de que é recomendável conversar com um médico antes de aumentar
-                                    meu
-                                    nível atual de atividade física, por ter respondido “SIM” a uma ou mais
-                                    perguntas do “Questionário
-                                    de Prontidão para Atividade Física” (PAR-Q). Assumo plena responsabilidade
-                                    por
-                                    qualquer
-                                    atividade física praticada sem o atendimento a essa recomendação.
-                                </p>
-                            </div>
-                            <div className={"md:max-w-screen-md w-11/12 max-h-[250px] md:max-h-[325px] overflow-y-scroll text-justify space-y-1 flex  items-center gap-2 border-unifae-green-1 border border-collapse p-5 rounded-xl"}>
+                                    <h3 className="text-2xl font-bold text-center">
+                                        Termo de Responsabilidade
+                                        para
+                                        Prática de Atividade Física</h3>
+                                    <p className="p-2">
+                                        Estou ciente de que é recomendável conversar com um médico antes de aumentar
+                                        meu
+                                        nível atual de atividade física, por ter respondido “SIM” a uma ou mais
+                                        perguntas do “Questionário
+                                        de Prontidão para Atividade Física” (PAR-Q). Assumo plena responsabilidade
+                                        por
+                                        qualquer
+                                        atividade física praticada sem o atendimento a essa recomendação.
+                                    </p>
+                                </div>
+                                <div
+                                    className={"md:max-w-screen-md w-11/12 max-h-[250px] md:max-h-[325px] overflow-y-scroll text-justify space-y-1 flex  items-center gap-2 border-unifae-green-1 border border-collapse p-5 rounded-xl"}>
                                     <input
                                         type="checkbox"
                                         className={"check-box"}
@@ -284,11 +286,13 @@ export default function Cadastro() {
                         </div>
                     </form>
                     <div className="flex flex-col w-full items-center p-3">
-                    <p className="p-2">Já tem conta? <Link to={"/login"} className="text-unifae-green-1 font-semibold"> Clique aqui</Link></p>
-                    <button type="submit" onClick={handleForm} className="btn-lg btn-green">Entrar</button>
+                        <p className="p-2">Já tem conta? <Link to={"/login"}
+                                                               className="text-unifae-green-1 font-semibold"> Clique
+                            aqui</Link></p>
+                        <button type="submit" onClick={handleForm} className="btn-lg btn-green">Entrar</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </>
     )
 }

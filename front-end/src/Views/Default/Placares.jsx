@@ -1,3 +1,3 @@
-export default function Placares(){
+export default function Placares() {
     return "Placares"
 }

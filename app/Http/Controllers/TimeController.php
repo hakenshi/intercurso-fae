@@ -63,8 +63,8 @@ class TimeController extends Controller
     {
         $times = Time::whereHas('jogadores', function ($query) use ($id) {
             $query->where('id_usuario', $id);
-        })->with('jogadores')->get();        
-        
+        })->with('jogadores')->get();
+
         return TimesResource::collection($times);
     }
 

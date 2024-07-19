@@ -67,19 +67,23 @@ class User extends Authenticatable
         ];
     }
 
-    public function times(){
+    public function times()
+    {
         return $this->hasMany(Time::class, 'id_responsavel');
     }
 
-    public function termos(){
+    public function termos()
+    {
         return $this->hasOne(Termo::class, "id_usuario");
     }
 
-    public function jogador(){
+    public function jogador()
+    {
         return $this->hasOne(Jogador::class, 'id_usuario');
     }
 
-    public function curso(){
+    public function curso()
+    {
         return $this->belongsTo(Cursos::class, 'id_curso');
     }
 

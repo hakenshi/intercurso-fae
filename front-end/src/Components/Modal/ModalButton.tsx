@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface ModalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
+interface ModalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     type: React.ButtonHTMLAttributes<HTMLButtonElement>['type'],
     texto: string
 }

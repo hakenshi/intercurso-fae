@@ -11,18 +11,18 @@ axiosInstance.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(response => {
-    return response
-}, error => {
-    try {
-        const { response } = error
+        return response
+    }, error => {
+        try {
+            const {response} = error
 
-        console.log(response.status)
+            console.log(response.status)
 
-        if(response.status === 401) sessionStorage.removeItem('ACCESS_TOKEN')
-    } catch (error) {
-        console.log(error)
+            if (response.status === 401) sessionStorage.removeItem('ACCESS_TOKEN')
+        } catch (error) {
+            console.log(error)
+        }
     }
-}
 )
 
 export default axiosInstance

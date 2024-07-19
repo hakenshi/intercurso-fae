@@ -16,23 +16,24 @@ class ModalidadesController extends Controller
      */
     public function index()
     {
-       return ModalidadesResource::collection(Modalidade::paginate(6));
+        return ModalidadesResource::collection(Modalidade::paginate(6));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUpdateModalidadesRequest $request){
-       
-        
+    public function store(StoreUpdateModalidadesRequest $request)
+    {
+
+
         $data = $request->validated();
 
-        if(Modalidade::where('nome', $data['nome'])->where('genero', $data['genero'])->first()){
+        if (Modalidade::where('nome', $data['nome'])->where('genero', $data['genero'])->first()) {
             return response()->json(['msg' => 'Gênero de modalidade já cadastrado'], 400);
         }
 
         $modalidade = Modalidade::create($data);
-        
+
         return new ModalidadesResource($modalidade);
 
     }
@@ -45,7 +46,7 @@ class ModalidadesController extends Controller
         $modalidade = Modalidade::findOrFail($id);
 
         return new ModalidadesResource($modalidade);
-        
+
     }
 
     /**
@@ -68,14 +69,15 @@ class ModalidadesController extends Controller
     public function destroy(string $id)
     {
         $modalidade = Modalidade::findOrFail($id);
-        
+
         $modalidade->delete();
 
         return new ModalidadesResource($modalidade);
     }
 
-    public function searchModaliades($data){
-        return Modalidade::where('nome', "LIKE", "%".$data."%")->get();
+    public function searchModaliades($data)
+    {
+        return Modalidade::where('nome', "LIKE", "%" . $data . "%")->get();
     }
 
 }

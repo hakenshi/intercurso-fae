@@ -1,6 +1,6 @@
-import { TableBody } from "./TableBody";
-import { TableHead } from "./TableHead";
-import { TableRoot } from "./TableRoot";
+import {TableBody} from "./TableBody";
+import {TableHead} from "./TableHead";
+import {TableRoot} from "./TableRoot";
 
 export const Table = {
 

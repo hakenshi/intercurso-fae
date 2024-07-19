@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react"
-import { useStateContext } from "../../Contexts/ContextProvider"
-import { useNavigate } from "react-router-dom"
-import { DashboardCard } from "../../Components/DashboardCard"
+import {useEffect, useState} from "react"
+import {useStateContext} from "../../Contexts/ContextProvider"
+import {useNavigate} from "react-router-dom"
+import {DashboardCard} from "../../Components/DashboardCard"
 import axios from "axios"
 import axiosInstance from "../../helper/axios-instance"
 import useAxios from "../../Components/hooks/useAxios"
-import { Oval } from "react-loader-spinner"
-import { Search } from "../../Components/Search bar/Search"
+import {Oval} from "react-loader-spinner"
+import {Search} from "../../Components/Search bar/Search"
 
-export default function Dashboard(){    
+export default function Dashboard() {
 
-    const {user} = useStateContext()   
+    const {user} = useStateContext()
     const navigate = useNavigate()
-    
+
     const [usuarios, loading, errors] = useAxios({
         axiosInstance: axiosInstance,
         method: "get",

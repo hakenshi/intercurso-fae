@@ -18,7 +18,8 @@ class Cursos extends Model
         'descricao_curso',
     ];
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->hasOne(User::class, "id_curso");
     }
 

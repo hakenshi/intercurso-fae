@@ -10,11 +10,11 @@ class EmailRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if(!preg_match("/@(sou|prof)\.fae\.br$/", $value)){
+        if (!preg_match("/@(sou|prof)\.fae\.br$/", $value)) {
             $fail("o :attribute precisa ser um email institucional");
         }
     }

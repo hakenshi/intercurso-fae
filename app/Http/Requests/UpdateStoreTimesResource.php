@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UpdateStoreTimesResource extends FormRequest
@@ -12,7 +13,15 @@ class UpdateStoreTimesResource extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+
+        $user = Auth::user();
+
+        if($user->tipo_usuario == "1" || $user->tipo_usuario == "2"){
+            return true;
+        }
+
+
+        return false;
     }
 
     /**
@@ -25,7 +34,7 @@ class UpdateStoreTimesResource extends FormRequest
         $rules = [
             'id_modalidade' => 'required',
             'id_responsavel' => 'required',
-            'nome' =>[
+            'nome' => [
                 'required',
                 'min:3',
                 'max:255',
@@ -34,7 +43,7 @@ class UpdateStoreTimesResource extends FormRequest
             'stauts' => 'boolean',
         ];
 
-        if($this->method() === "PATCH"){
+        if ($this->method() === "PATCH") {
             $rules['id_modalidade'] = [
                 'required',
                 Rule::unique("time")->ignore($this->id)

@@ -30,7 +30,7 @@ class CadastroRequest extends FormRequest
                 'min: 3',
                 'max: 255',
             ],
-            'email' =>[
+            'email' => [
                 'required',
                 'email',
                 new EmailRule(),
@@ -42,7 +42,7 @@ class CadastroRequest extends FormRequest
                 'min:3',
                 'max:100'
             ],
-            'ra' =>[
+            'ra' => [
                 'required',
                 'unique:usuarios,ra',
                 'max:10'
@@ -51,7 +51,7 @@ class CadastroRequest extends FormRequest
                 'required'
             ],
             'questionario' => 'required'
-            ];
+        ];
     }
 
     public function messages(): array

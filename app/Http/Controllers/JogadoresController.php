@@ -31,7 +31,7 @@ class JogadoresController extends Controller
     public function store(Request $request)
     {
         $jogadores = $request->all();
-        $novosJogadores = [];        
+        $novosJogadores = [];
         foreach ($jogadores as $jogador) {
 
             $idUsuario = $jogador['id_usuario'];
@@ -51,7 +51,7 @@ class JogadoresController extends Controller
                 'status' => $status
             ];
 
-            $novoJogador =  Jogador::create($data);
+            $novoJogador = Jogador::create($data);
 
             Notificacao::criarNotificacao($idUsuario, "Você foi adicionado a um time!", 1);
 

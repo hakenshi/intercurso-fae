@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import {Navigate, createBrowserRouter} from "react-router-dom";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Jogos from "./Views/Default/Jogos";
 import Placares from "./Views/Default/Placares";
@@ -8,19 +8,19 @@ import Cadastro from "./Views/Guest/Cadastro";
 import NotFound from "./Views/html error codes/NotFound";
 import GuestLayout from "./layouts/LoginLayout";
 import Dashboard from "./Views/Admin/Dashboard";
-import { Modalidades } from "./Views/Admin/Modalidades";
-import { Times } from "./Views/Admin/Times";
-import { Usuarios } from "./Views/Admin/Usuarios";
-import { MeusTimes } from "./Views/Responsavel/MeusTimes";
-import { Perfil } from "./Views/Default/Perfil";
+import {Modalidades} from "./Views/Admin/Modalidades";
+import {Times} from "./Views/Admin/Times";
+import {Usuarios} from "./Views/Admin/Usuarios";
+import {MeusTimes} from "./Views/Responsavel/MeusTimes";
+import {Perfil} from "./Views/Default/Perfil";
 // import { EditarPerfil } from "./Views/Default/EditarPerfil";
-import { Configuracoes } from "./Views/Default/Configuracoes";
+import {Configuracoes} from "./Views/Default/Configuracoes";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <DefaultLayout/>,
-        children:[
+        children: [
             {
                 path: '/',
                 element: <Navigate to="/jogos"/>,
@@ -74,7 +74,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <Navigate to={"/login"} />
+                element: <Navigate to={"/login"}/>
             },
             {
                 path: '/login',

@@ -13,7 +13,7 @@ class NotificacaoController extends Controller
     public function verNotificacao(string $id)
     {
         $notificao = Notificacao::where('id_usuario', $id)
-            ->where('lida', 0)  
+            ->where('lida', 0)
             ->orderByDesc('created_at')
             ->get();;
 

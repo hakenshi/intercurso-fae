@@ -124,7 +124,8 @@ class UserController extends Controller
         return new UsuariosResource($user);
     }
 
-    public function termos($id){        
+    public function termos($id)
+    {
         $termo = Termo::where("id_usuario", $id)->get();
         return response()->json($termo);
     }

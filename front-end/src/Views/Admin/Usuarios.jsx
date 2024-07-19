@@ -1,28 +1,31 @@
-import { useEffect, useRef, useState } from "react"
-import { useStateContext } from "../../Contexts/ContextProvider"
-import { useNavigate } from "react-router-dom"
-import { useAlert } from "../../Components/hooks/useAlert"
+import {useEffect, useRef, useState} from "react"
+import {useStateContext} from "../../Contexts/ContextProvider"
+import {useNavigate} from "react-router-dom"
+import {useAlert} from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
-import { Oval } from "react-loader-spinner"
+import {Oval} from "react-loader-spinner"
 import cursos from "../../../public/cursos.json"
 import usePagiante from "../../Components/hooks/usePaginate"
-import { Paginate } from "../../Components/Paginate"
-import { ProfileImage } from "../../Components/ProfileImage"
-import { useSearch } from "../../Components/hooks/useSearch"
+import {Paginate} from "../../Components/Paginate"
+import {ProfileImage} from "../../Components/ProfileImage"
+import {useSearch} from "../../Components/hooks/useSearch"
 import Alerts from "../../Components/Alerts"
-import { AlertErro } from "../../Components/Alerts/AlertErro"
-import { AlertSucesso } from "../../Components/Alerts/AlertSucesso"
-import { AlertConfirm } from "../../Components/Alerts/AlertConfirm"
-import { faL } from "@fortawesome/free-solid-svg-icons"
-import { Modal } from "../../Components/Modal"
-import { Table } from "../../Components/Table"
-import { Display } from "../../Components/Display"
+import {AlertErro} from "../../Components/Alerts/AlertErro"
+import {AlertSucesso} from "../../Components/Alerts/AlertSucesso"
+import {AlertConfirm} from "../../Components/Alerts/AlertConfirm"
+import {faL} from "@fortawesome/free-solid-svg-icons"
+import {Modal} from "../../Components/Modal"
+import {Table} from "../../Components/Table"
+import {Display} from "../../Components/Display"
+
 export const Usuarios = () => {
 
-    const { isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
-        isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen } = useAlert()
-    const { handleSearch, input, results } = useSearch("", "/search-usuarios")
-    const { data: usuarios, setData, loading, handlePageChange, currentPage, lastPage } = usePagiante("/search-usuarios")
+    const {
+        isAlertOpen, setIsAlertOpen, mensagem, setMensagem,
+        isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen
+    } = useAlert()
+    const {handleSearch, input, results} = useSearch("", "/search-usuarios")
+    const {data: usuarios, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/search-usuarios")
 
     const nomeRef = useRef(null);
     const emailRef = useRef(null);
@@ -67,13 +70,14 @@ export const Usuarios = () => {
             ra: raRef.current.value,
             tipo_usuario: tipoUsuarioRef.current.value ? tipoUsuarioRef.current.value : 3,
         }
-
+        
         if (isEditModal) {
+            
             axiosInstance.patch(`/usuarios/${editUsuario.usuario.id}`, payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         setMensagem("Usuário Editado com sucesso!")
-                        setData(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? { ...usuario, ...data.data } : usuario))
+                        setData(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? {...usuario, ...data.data} : usuario))
                     }
 
                 })
@@ -87,11 +91,9 @@ export const Usuarios = () => {
                     setIsEditModalOpen(false)
                     setIsAlertOpen(true)
                 })
-        }
-
-        else {
+        } else {
             axiosInstance.post('/usuarios', payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         setMensagem("Usuário cadastrado com sucesso!")
                         setData(u => [...u, data.data])
@@ -116,7 +118,7 @@ export const Usuarios = () => {
                 setIsConfirmAlertOpen(false)
                 setMensagem("Usuário excluido com sucesso")
                 setIsAlertOpen(true)
-                setData((u) => u.filter(({ usuario }) => usuario.id !== id))
+                setData((u) => u.filter(({usuario}) => usuario.id !== id))
             })
             .catch(error => {
                 const response = error.response
@@ -127,17 +129,13 @@ export const Usuarios = () => {
     }
 
 
-
-
-    const handleTornarResponsavel = ({ usuario }) => {
+    const handleTornarResponsavel = ({usuario}) => {
 
         if (usuario.tipo_usuario === "2") {
             setMensagem('Esse usuário já é um responsável.')
             setIsErrorAlertOpen(true)
             return
-        }
-
-        else if (usuario.tipo_usuario === "1") {
+        } else if (usuario.tipo_usuario === "1") {
             setMensagem("Esse usuário é um admin")
             setIsErrorAlertOpen(true)
             return
@@ -150,17 +148,17 @@ export const Usuarios = () => {
 
         if (confirm) {
             axiosInstance.patch(`/tornar-responsavel/${usuario.id}`, payload)
-                .then(({ data }) => {
+                .then(({data}) => {
 
                     setMensagem("Esse usuário agora é responsável.")
                     setIsAlertOpen(true)
                     setData(u => u.map((usuario) => usuario.usuario.id === data.data.usuario.id ? {
-                        ...usuario,
-                        usuario: {
-                            ...usuario.usuario,
-                            tipo_usuario: "2"
-                        }
-                    } : usuario
+                            ...usuario,
+                            usuario: {
+                                ...usuario.usuario,
+                                tipo_usuario: "2"
+                            }
+                        } : usuario
                     ))
                 })
                 .catch(error => {
@@ -181,111 +179,127 @@ export const Usuarios = () => {
 
     return (
         <>
-            <AlertErro mensagem={mensagem} isAlertOpen={isErrorAlertOpen} onClose={() => setIsErrorAlertOpen(false)} />
-            <AlertConfirm text={mensagem} isOpen={isConfirmAlertOpen} onConfirm={() => handleDelete(id)} onClose={() => setIsConfirmAlertOpen(false)} />
-            <AlertSucesso mensagem={mensagem} isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
+            <AlertErro mensagem={mensagem} isAlertOpen={isErrorAlertOpen} onClose={() => setIsErrorAlertOpen(false)}/>
+            <AlertConfirm text={mensagem} isOpen={isConfirmAlertOpen} onConfirm={() => handleDelete(id)}
+                          onClose={() => setIsConfirmAlertOpen(false)}/>
+            <AlertSucesso mensagem={mensagem} isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)}/>
 
             <Modal.Root isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Usuário">
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Nome</label>
-                    <input ref={nomeRef} type="text" className="input-modal" name="nome" />
-                </div>
+                <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Usuário">
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Nome</label>
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="email">Email</label>
-                    <input ref={emailRef} type="text" className="input-modal" name="email" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="email">Email</label>
+                        <input ref={emailRef} type="text" className="input-modal" name="email"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="senha">Senha</label>
-                    <input ref={senhaRef} type="password" className="input-modal" name="senha" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="senha">Senha</label>
+                        <input ref={senhaRef} type="password" className="input-modal" name="senha"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="confirmar-senha">Confirmar Senha</label>
-                    <input ref={confirmSenhaRef} type="password" className="input-modal" name="confirmar-senha" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="confirmar-senha">Confirmar Senha</label>
+                        <input ref={confirmSenhaRef} type="password" className="input-modal" name="confirmar-senha"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="telefone">Telefone</label>
-                    <input ref={telefoneRef} type="text" className="input-modal" name="telefone" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="telefone">Telefone</label>
+                        <input ref={telefoneRef} type="text" className="input-modal" name="telefone"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="ra">RA</label>
-                    <input ref={raRef} type="text" className="input-modal" name="ra" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="ra">RA</label>
+                        <input ref={raRef} type="text" className="input-modal" name="ra"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="curso">Curso</label>
-                    <select className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
-                        {cursos.map((curso, index) => <option ref={cursoRef} key={index} value={curso.value}>{curso.curso}</option>)}
-                    </select>
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="curso">Curso</label>
+                        <select className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
+                            {cursos.map((curso, index) => <option ref={cursoRef} key={index}
+                                                                  value={curso.value}>{curso.curso}</option>)}
+                        </select>
+                    </div>
                 </Modal.Form>
             </Modal.Root>
 
             <Modal.Root isOpen={isEditModal} onClose={handleCloseEditModal}>
-            <Modal.Form onSubmit={handleSubmit} texto="Editar Usuário" >
+                <Modal.Form onSubmit={handleSubmit} texto="Editar Usuário">
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="nome">Nome</label>
-                    <input ref={nomeRef} defaultValue={editUsuario ? editUsuario.usuario.nome : ""} type="text" className="input-modal" name="nome" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Email</label>
-                    <input ref={emailRef} defaultValue={editUsuario ? editUsuario.usuario.email : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Senha</label>
-                    <input ref={senhaRef} type="password" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Confirmar Senha</label>
-                    <input ref={confirmSenhaRef} type="password" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Telefone</label>
-                    <input ref={telefoneRef} defaultValue={editUsuario ? editUsuario.usuario.telefone : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">RA</label>
-                    <input ref={raRef} defaultValue={editUsuario ? editUsuario.usuario.ra : ""} type="text" className="input-modal" name="quantidade-pariticpantes" />
-                </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="nome">Nome</label>
+                        <input ref={nomeRef} defaultValue={editUsuario ? editUsuario.usuario.nome : ""} type="text"
+                               className="input-modal" name="nome"/>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Email</label>
+                        <input ref={emailRef} defaultValue={editUsuario ? editUsuario.usuario.email : ""} type="text"
+                               className="input-modal" name="quantidade-pariticpantes"/>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Senha</label>
+                        <input ref={senhaRef} type="password" className="input-modal" name="quantidade-pariticpantes"/>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Confirmar Senha</label>
+                        <input ref={confirmSenhaRef} type="password" className="input-modal"
+                               name="quantidade-pariticpantes"/>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Telefone</label>
+                        <input ref={telefoneRef} defaultValue={editUsuario ? editUsuario.usuario.telefone : ""}
+                               type="text" className="input-modal" name="quantidade-pariticpantes"/>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">RA</label>
+                        <input ref={raRef} defaultValue={editUsuario ? editUsuario.usuario.ra : ""} type="text"
+                               className="input-modal" name="quantidade-pariticpantes"/>
+                    </div>
 
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Curso</label>
-                    <select ref={cursoRef} className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
-                        {cursos.map((curso, index) => <option selected={editUsuario ? editUsuario.curso.nome_curso == curso.curso : ""} key={index} value={curso.value}>{curso.curso}</option>)}
-                    </select>
-                </div>
-                <div className="flex flex-col justify-center p-2">
-                    <label htmlFor="quantidade-pariticpantes">Tipo de usuário</label>
-                    <select ref={tipoUsuarioRef} defaultValue={editUsuario ? editUsuario.usuario.tipo_usuario : ""} className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
-                        <option value="">Escolha um tipo de usuário</option>
-                        <option value="3">Usuário</option>
-                        <option value="2">Responsável</option>
-                        <option value="1">Admin</option>
-                    </select>
-                </div>
-            </Modal.Form>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Curso</label>
+                        <select ref={cursoRef} className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
+                            {cursos.map((curso, index) => <option
+                                selected={editUsuario ? editUsuario.curso.nome_curso == curso.curso : ""} key={index}
+                                value={curso.value}>{curso.curso}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex flex-col justify-center p-2">
+                        <label htmlFor="quantidade-pariticpantes">Tipo de usuário</label>
+                        <select ref={tipoUsuarioRef} defaultValue={editUsuario ? editUsuario.usuario.tipo_usuario : ""}
+                                className={`input-modal bg-white w-[300px]`} name="curso" id="curso">
+                            <option value="">Escolha um tipo de usuário</option>
+                            <option value="3">Usuário</option>
+                            <option value="2">Responsável</option>
+                            <option value="1">Admin</option>
+                        </select>
+                    </div>
+                </Modal.Form>
             </Modal.Root>
 
             <Display.Root title={"Usuários"}>
                 <Display.ActionsRoot>
-                    <Display.ActionsModal setIsModalOpen={()=>setIsModalOpen(true)} text={"Cadastrar Usuários"} />
-                   <Display.ActionsSearch handleSearch={handleSearch} />
+                    <Display.ActionsModal setIsModalOpen={() => setIsModalOpen(true)} text={"Cadastrar Usuários"}/>
+                    <Display.ActionsSearch handleSearch={handleSearch}/>
                 </Display.ActionsRoot>
                 <Display.Main>
-                    {loading ? (<div className="w-full h-full flex justify-center items-center"> <Oval visible={true} height="50" width="50" color="#3BBFA7" secondaryColor="#38A69B" /> </div>) :
+                    {loading ? (
+                            <div className="w-full h-full flex justify-center items-center"><Oval visible={true} height="50"
+                                                                                                  width="50" color="#3BBFA7"
+                                                                                                  secondaryColor="#38A69B"/>
+                            </div>) :
                         (<Table.Root>
-                            <Table.Head className="bg-unifae-green-4 rounded-xl text-white w-full" titles={['Nome', 'Email', 'Curso', 'Telefone', 'Ra', 'Tipo de de usuário', '','','',]}/>
+                            <Table.Head className="bg-unifae-green-4 rounded-xl text-white w-full"
+                                        titles={['Nome', 'Email', 'Curso', 'Telefone', 'Ra', 'Tipo de de usuário', '', '', '',]}/>
                             <Table.Body>
                                 {(input.trim() !== "" ? results : usuarios).map((response) => (
                                     <tr key={response.usuario.id} className="text-center">
                                         <td className="p-5 text-pretty">
-                                            <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.usuario.foto_perfil} />
+                                            <ProfileImage className={"w-10 h-10 rounded-full object-cover"}
+                                                          fotoPerfil={response.usuario.foto_perfil}/>
 
                                         </td>
 
@@ -298,18 +312,26 @@ export const Usuarios = () => {
                                         <td className="p-5 text-pretty">{response.usuario.ra}</td>
                                         <td className="p-5 text-pretty">{(response.usuario.tipo_usuario == 1) ? "Admin" : (response.usuario.tipo_usuario == 2) ? "Responsável" : "Usuário"}</td>
                                         <td className="p-5 text-pretty">
-                                            <button onClick={() => handleTornarResponsavel(response)} className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar Responsável</button>
+                                            <button onClick={() => handleTornarResponsavel(response)}
+                                                    className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar
+                                                Responsável
+                                            </button>
                                         </td>
                                         <td className="p-5 flex gap-3">
-                                            <button onClick={() => handleEditModal(response)} className="btn-sm btn-edit">Editar</button>
-                                            <button onClick={() => handleConfirm(response.usuario.id, "Tem certeza de que quer excluir esse usuário?")} className="btn-sm btn-delete">Excluir</button>
+                                            <button onClick={() => handleEditModal(response)}
+                                                    className="btn-sm btn-edit">Editar
+                                            </button>
+                                            <button
+                                                onClick={() => handleConfirm(response.usuario.id, "Tem certeza de que quer excluir esse usuário?")}
+                                                className="btn-sm btn-delete">Excluir
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
                             </Table.Body>
                         </Table.Root>)}
                 </Display.Main>
-                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage} />
+                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage}/>
             </Display.Root>
 
         </>

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StoreUpdateModalidadesRequest extends FormRequest
@@ -12,7 +14,13 @@ class StoreUpdateModalidadesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+
+        if($user->tipo_usuario == "1"){
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -22,20 +30,19 @@ class StoreUpdateModalidadesRequest extends FormRequest
      */
     public function rules(): array
     {
-        
+
         $rules = [
-            'nome' =>'required|min:3|max:255',
+            'nome' => 'required|min:3|max:255',
             'quantidade_participantes' => "integer",
             'genero' => 'boolean|required',
             'id_categoria' => 'required',
-            Rule::unique('modalidades')->where(function($query){
+            Rule::unique('modalidades')->where(function ($query) {
                 $query->where('nome', request()->nome)
-                ->where('quantidade_participantes', request()->quantidade_participantes)
-                ->where('genere', !request()->genero)
-                ;
-                                
+                    ->where('quantidade_participantes', request()->quantidade_participantes)
+                    ->where('genere', !request()->genero);
+
             })
-        ]; 
+        ];
 
 
         return $rules;

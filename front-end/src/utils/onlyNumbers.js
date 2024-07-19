@@ -1,1 +1,1 @@
-export const onlyNumbers = (str) => str.replace(/\D/g,'')
+export const onlyNumbers = (str) => str.replace(/\D/g, '')

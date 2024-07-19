@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from "react"
-import { useStateContext } from "../../Contexts/ContextProvider"
-import { useAlert } from "../../Components/hooks/useAlert"
+import {useEffect, useRef, useState} from "react"
+import {useStateContext} from "../../Contexts/ContextProvider"
+import {useAlert} from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
-import { Search } from "../../Components/Search bar/Search"
-import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
-import { images } from "../../assets"
-import { ProfileImage } from "../../Components/ProfileImage"
-import { Modal } from "../../Components/Modal"
-import { Table } from "../../Components/Table"
-import { setStatus } from "../../utils/setStatus"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Loading } from "../../Components/Loading"
+import {Search} from "../../Components/Search bar/Search"
+import {faArrowsRotate} from "@fortawesome/free-solid-svg-icons"
+import {images} from "../../assets"
+import {ProfileImage} from "../../Components/ProfileImage"
+import {Modal} from "../../Components/Modal"
+import {Table} from "../../Components/Table"
+import {setStatus} from "../../utils/setStatus"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {Loading} from "../../Components/Loading"
 
-export const Times = ({ idResponsavel, url = "/times" }) => {
-    const { user } = useStateContext()
-    const { isAlertOpen, setIsAlertOpen, handleClose } = useAlert()
+export const Times = ({idResponsavel, url = "/times"}) => {
+    const {user} = useStateContext()
+    const {isAlertOpen, setIsAlertOpen, handleClose} = useAlert()
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [isJogadoresAlertOpen, setisJogadoresAlertOpen] = useState(false);
     const nomeRef = useRef(null)
@@ -30,11 +30,11 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
     const [erros, setErrors] = useState(null);
     const [novoJogador, setNovoJogador] = useState([])
     const [isEditing, setIsEditing] = useState(false)
-    
+
     useEffect(() => {
         if (!times) {
             axiosInstance.get("/times")
-                .then(({ data }) => {
+                .then(({data}) => {
                     setTimes(data.times)
                     setModalidades(data.modalidades)
                     setJogadores(data.jogadores)
@@ -87,7 +87,7 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
             return;
         }
 
-        const responsavel = times.some(({ usuario }) => usuario.id_responsavel === novoJogador);
+        const responsavel = times.some(({usuario}) => usuario.id_responsavel === novoJogador);
 
         if (responsavel) {
             alert("Você não pode se adicionar no time");
@@ -101,9 +101,12 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
             return;
         }
 
-        const { id_modalidade: modalidadeAtualId, quantidade_participantes: quantidade } = times.find(time => time.time.id === timeId).modalidade;
+        const {
+            id_modalidade: modalidadeAtualId,
+            quantidade_participantes: quantidade
+        } = times.find(time => time.time.id === timeId).modalidade;
 
-        const { nome } = modalidades.find(modalidade => modalidade.id === modalidadeAtualId);
+        const {nome} = modalidades.find(modalidade => modalidade.id === modalidadeAtualId);
 
         const jogadorComModalidadeDuplicada = times.some(time =>
             time.time.id !== timeId &&
@@ -127,7 +130,7 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
             return;
         }
 
-        const updatedJogadores = [...editJogadores, { ...aluno, id_usuario: aluno.id, id_time: timeId, status: '0' }];
+        const updatedJogadores = [...editJogadores, {...aluno, id_usuario: aluno.id, id_time: timeId, status: '0'}];
 
         if (updatedJogadores.length === 0) {
             alert("O time deve ter ao menos 1 jogador");
@@ -141,7 +144,7 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
         }));
 
         axiosInstance.post('/jogadores', payload)
-            .then(({ data }) => {
+            .then(({data}) => {
                 setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
                     ...time,
                     informacoes: {
@@ -185,10 +188,10 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
 
         if (isEditAlertOpen) {
             axiosInstance.put(`/times/${editTimes.time.id}`, payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         alert("Time Editado com sucesso!")
-                        setTimes(t => t.map(time => time.time.id === editTimes.time.id ? { ...time, ...data.data } : time))
+                        setTimes(t => t.map(time => time.time.id === editTimes.time.id ? {...time, ...data.data} : time))
                     }
 
                 })
@@ -199,11 +202,9 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                     }
                 })
                 .finally(() => setIsEditAlertOpen(false))
-        }
-
-        else {
+        } else {
             axiosInstance.post('/times', payload)
-                .then(({ data }) => {
+                .then(({data}) => {
                     if (data) {
                         alert("Time cadastrado com sucesso!")
                         setTimes(m => [...m, data.data])
@@ -276,10 +277,10 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
             axiosInstance.put(`/times/${times.time.id}`, {
                 status: status
             })
-                .then(({ data }) => {
+                .then(({data}) => {
 
                     alert(`Time ${times.time.status === '1' ? "inativado" : "ativado"} com sucesso`)
-                    setTimes(t => t.map(time => time.time.id === times.time.id ? { ...time, ...data.data } : time))
+                    setTimes(t => t.map(time => time.time.id === times.time.id ? {...time, ...data.data} : time))
 
                 })
                 .catch(error => {
@@ -301,14 +302,14 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
             status: status
         })
             .then(() => {
-                setEditJogadores(j => j.map(j => j.id === jogador.id ? { ...j, status: status } : j))
+                setEditJogadores(j => j.map(j => j.id === jogador.id ? {...j, status: status} : j))
 
                 setTimes(t => Array.isArray(t) ? t.map(time => ({
                     ...time,
                     informacoes: {
                         ...time.informacoes,
                         jogadores: time.informacoes.jogadores.map(j =>
-                            j.id === jogador.id ? { ...j, status: status } : j
+                            j.id === jogador.id ? {...j, status: status} : j
                         ),
                     }
                 })) : t);
@@ -329,7 +330,7 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                 <Modal.Form onSubmit={handleSubmit} texto="Cadastrar Time">
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Nome do time</label>
-                        <input ref={nomeRef} type="text" className="input-modal" name="nome" />
+                        <input ref={nomeRef} type="text" className="input-modal" name="nome"/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="quantidade-pariticpantes">Modalidade</label>
@@ -344,7 +345,9 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                     </div>
                     {user.tipo_usuario == 1 && <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Responsável pelo time</label>
-                        <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
+                        <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"}
+                                handleSelectUser={handleSelectResponsavel}
+                                data={editTimes ? editTimes.usuario.nome_responsavel : ""}/>
                     </div>}
                 </Modal.Form>
             </Modal.Root>
@@ -354,14 +357,16 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                 <Modal.Form onSubmit={handleSubmit} texto="Editar Time">
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Nome do time</label>
-                        <input ref={nomeRef} defaultValue={editTimes ? editTimes.time.nome : ""} type="text" className="input-modal" name="nome" />
+                        <input ref={nomeRef} defaultValue={editTimes ? editTimes.time.nome : ""} type="text"
+                               className="input-modal" name="nome"/>
                     </div>
                     <div className="flex flex-col justify-center p-2">
                         <label htmlFor="quantidade-pariticpantes">Modalidade</label>
                         <select ref={modalidadeRef} className="input-modal bg-white" name="modalidade" id="modalidade">
                             <option value="">Selecione uma modalidade</option>
                             {modalidades != null && modalidades.map(modalidade => (
-                                <option selected={editTimes ? editTimes.modalidade.nome_modalidade : ""} key={modalidade.id} value={modalidade.id}>
+                                <option selected={editTimes ? editTimes.modalidade.nome_modalidade : ""}
+                                        key={modalidade.id} value={modalidade.id}>
                                     {modalidade.nome}
                                 </option>
                             ))}
@@ -369,7 +374,9 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                     </div>
                     {user.tipo_usuario == 1 && <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Responsável pelo time</label>
-                        <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"} handleSelectUser={handleSelectResponsavel} data={editTimes ? editTimes.usuario.nome_responsavel : ""} />
+                        <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"}
+                                handleSelectUser={handleSelectResponsavel}
+                                data={editTimes ? editTimes.usuario.nome_responsavel : ""}/>
                     </div>}
                 </Modal.Form>
             </Modal.Root>
@@ -379,11 +386,16 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
 
                     <div className="py-5">
 
-                        {!isEditing && <div className="flex justify-center pb-3"><button onClick={() => setIsEditing(true)} className="btn-green p-2 w-32">Editar</button></div>}
+                        {!isEditing && <div className="flex justify-center pb-3">
+                            <button onClick={() => setIsEditing(true)} className="btn-green p-2 w-32">Editar</button>
+                        </div>}
 
                         {isEditing && <div className="flex justify-center items-center p-2 gap-3 w-full">
-                            <Search placeholder={"Insira o RA de um aluno"} url={"/search-jogadores"} handleSelectUser={handleSelectJogador} />
-                            <button type="button" onClick={handleAddJogador} className="btn-green p-2">Adicionar jogador</button>
+                            <Search placeholder={"Insira o RA de um aluno"} url={"/search-jogadores"}
+                                    handleSelectUser={handleSelectJogador}/>
+                            <button type="button" onClick={handleAddJogador} className="btn-green p-2">Adicionar
+                                jogador
+                            </button>
                         </div>
 
                         }
@@ -391,58 +403,70 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                         {editJogadores && editJogadores.length > 0 ? (
                             <table className="w-full table-auto divide-y divide-gray-200">
                                 <thead className="bg-unifae-green-4">
-                                    <tr className="text-center">
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            Nome
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            RA
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        </th>
-                                    </tr>
+                                <tr className="text-center">
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Nome
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        RA
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {editJogadores.map((jogador, index) => (
-                                        <tr key={index}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <ProfileImage className="w-10 h-10 object-cover rounded-full" fotoPerfil={jogador.foto_perfil} />
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {jogador.nome}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {jogador.email}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {jogador.ra}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {setStatus(jogador.status)}
-                                            </td>
-                                            {isEditing && (
-                                                <td className="px-6 py-4 whitespace-nowrap flex gap-6">
-                                                    {/* <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
+                                {editJogadores.map((jogador, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <ProfileImage className="w-10 h-10 object-cover rounded-full"
+                                                          fotoPerfil={jogador.foto_perfil}/>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.nome}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.email}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {jogador.ra}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {setStatus(jogador.status)}
+                                        </td>
+                                        {isEditing && (
+                                            <td className="px-6 py-4 whitespace-nowrap flex gap-6">
+                                                {/* <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
                                                         {setStatus(jogador.status)}
                                                     </button> */}
 
-                                                    {jogador.status === "2" && <button onClick={() => handleEnviarConvite(jogador)} className="btn-green w-10 h-10 text-xl text-center"><FontAwesomeIcon aria-label="enviar novo convite" icon={faArrowsRotate} /></button>}
+                                                {jogador.status === "2" &&
+                                                    <button onClick={() => handleEnviarConvite(jogador)}
+                                                            className="btn-green w-10 h-10 text-xl text-center">
+                                                        <FontAwesomeIcon aria-label="enviar novo convite"
+                                                                         icon={faArrowsRotate}/></button>}
 
-                                                    <button type="button" onClick={() => handleDeleteJogador(jogador.id)} className={`btn-sm btn-delete`}>
-                                                        Retirar
-                                                    </button>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))}
+                                                <button type="button" onClick={() => handleDeleteJogador(jogador.id)}
+                                                        className={`btn-sm btn-delete`}>
+                                                    Retirar
+                                                </button>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                         ) : (
@@ -451,7 +475,7 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                             </div>
                         )}
                         {isEditing && (
-                            <Modal.Button type="button" texto="Salvar" onClick={() => setIsEditing(false)} />
+                            <Modal.Button type="button" texto="Salvar" onClick={() => setIsEditing(false)}/>
                         )}
                     </div>
                 </Modal.Default>
@@ -463,39 +487,55 @@ export const Times = ({ idResponsavel, url = "/times" }) => {
                     <span className="flex justify-around p-5">
                         <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Time</button>
                     </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar" />
+                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar"/>
                 </div>
-                {loading ? (<Loading />) : times && times.length <= 0 ? <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
-                    <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
-                </div> : <div className="flex flex-col justify-center items-center p-5">
+                {loading ? (<Loading/>) : times && times.length <= 0 ?
+                    <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
+                        <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
+                    </div> : <div className="flex flex-col justify-center items-center p-5">
 
-                    <Table.Root>
-                        <Table.Head titles={['Foto','Nome', 'Responsável', "Modalidades", 'Quantidade de Jogadores', 'Status', '', '', '']} />
-                        <Table.Body className="divide-y divide-unifae-gray50-2">
-                            {times && times
-                                .map(response => (
-                                    <tr key={response.time.id} className="text-center">
-                                        <td className="p-5">{response.time.foto_time == null ? <img className={"w-10 h-10 rounded-full object-cover"} src={images.timeFoto} /> : <ProfileImage className={"w-10 h-10 rounded-full object-cover"} fotoPerfil={response.time_foto} alt={response.time.nome} />}</td>
-                                        <td className="p-5">{response.time.nome}</td>
-                                        <td className="p-5">{response.usuario.nome_responsavel ? response.usuario.nome_responsavel : "Sem responsável"}</td>
-                                        <td className="p-5">{response.modalidade.nome_modalidade}</td>
-                                        <td className="p-5">{response.informacoes.quantidade}</td>
-                                        <td className="p-5">{response.time.status === "0" ? "Inativo" : "Ativo"}</td>
-                                        <td className="p-5">
-                                            <button onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id)} className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver jogadores</button>
-                                        </td>
-                                        <td className="p-5 flex justify-center gap-5">
-                                            <button onClick={() => handleEditModal(response)} className="p-2 btn-edit">Editar</button>
-                                            <button onClick={() => handleDeleteTime(response.time.id)} className={`p-2 btn-delete`}>Excluir</button>
-                                            <button onClick={() => handleInativarTime(response)} className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
+                        <Table.Root>
+                            <Table.Head
+                                titles={['Foto', 'Nome', 'Responsável', "Modalidades", 'Quantidade de Jogadores', 'Status', '', '', '']}/>
+                            <Table.Body className="divide-y divide-unifae-gray50-2">
+                                {times && times
+                                    .map(response => (
+                                        <tr key={response.time.id} className="text-center">
+                                            <td className="p-5">{response.time.foto_time == null ?
+                                                <img className={"w-10 h-10 rounded-full object-cover"}
+                                                     src={images.timeFoto}/> :
+                                                <ProfileImage className={"w-10 h-10 rounded-full object-cover"}
+                                                              fotoPerfil={response.time_foto}
+                                                              alt={response.time.nome}/>}</td>
+                                            <td className="p-5">{response.time.nome}</td>
+                                            <td className="p-5">{response.usuario.nome_responsavel ? response.usuario.nome_responsavel : "Sem responsável"}</td>
+                                            <td className="p-5">{response.modalidade.nome_modalidade}</td>
+                                            <td className="p-5">{response.informacoes.quantidade}</td>
+                                            <td className="p-5">{response.time.status === "0" ? "Inativo" : "Ativo"}</td>
+                                            <td className="p-5">
+                                                <button
+                                                    onClick={() => handleJogadoresModal(response.informacoes.jogadores, response.time.id)}
+                                                    className="bg-unifae-gray-3 text-white p-2 rounded-lg ">Ver
+                                                    jogadores
+                                                </button>
+                                            </td>
+                                            <td className="p-5 flex justify-center gap-5">
+                                                <button onClick={() => handleEditModal(response)}
+                                                        className="p-2 btn-edit">Editar
+                                                </button>
+                                                <button onClick={() => handleDeleteTime(response.time.id)}
+                                                        className={`p-2 btn-delete`}>Excluir
+                                                </button>
+                                                <button onClick={() => handleInativarTime(response)}
+                                                        className={`p-2 ${response.time.status === "0" ? 'btn-confirm' : 'btn-delete'}`}>{`${response.time.status === "0" ? 'Ativar' : 'Inativar'}`}</button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
 
-                        </Table.Body>
-                    </Table.Root>
-                </div>}
+                            </Table.Body>
+                        </Table.Root>
+                    </div>}
             </div>
 
         </>

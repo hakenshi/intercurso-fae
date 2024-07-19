@@ -1,9 +1,9 @@
-import { forwardRef, useState } from "react"
+import {forwardRef, useState} from "react"
 import axiosInstance from "../../helper/axios-instance"
 import p from "prop-types"
-import { SearchResultList } from "./SearchResultList"
+import {SearchResultList} from "./SearchResultList"
 
-export const Search = forwardRef(({ placeholder, url, handleSelectUser, data }, ref) => {
+export const Search = forwardRef(({placeholder, url, handleSelectUser, data}, ref) => {
 
     const [input, setInput] = useState(data ? data : "")
     const [results, setResults] = useState([])
@@ -18,7 +18,7 @@ export const Search = forwardRef(({ placeholder, url, handleSelectUser, data }, 
                     value: value
                 }
             })
-                .then(({ data }) => {
+                .then(({data}) => {
                     setResults(data)
                 })
                 .catch(error => console.log(error))
@@ -30,7 +30,7 @@ export const Search = forwardRef(({ placeholder, url, handleSelectUser, data }, 
         fetchData(value)
     }
 
-    const handleResultClick = (id, nome) =>{
+    const handleResultClick = (id, nome) => {
         setInput(nome)
         setResults([])
         handleSelectUser(id)
@@ -39,8 +39,9 @@ export const Search = forwardRef(({ placeholder, url, handleSelectUser, data }, 
     return (
         <>
             <div className="space-y-2">
-                    <input className="input-modal space-y-2" type="text" placeholder={placeholder} value={input} onChange={(e) => handleChange(e.target.value)} />
-                    <SearchResultList results={results} onClick={handleResultClick}/>
+                <input className="input-modal space-y-2" type="text" placeholder={placeholder} value={input}
+                       onChange={(e) => handleChange(e.target.value)}/>
+                <SearchResultList results={results} onClick={handleResultClick}/>
             </div>
         </>
     )

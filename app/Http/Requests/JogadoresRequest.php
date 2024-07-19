@@ -12,7 +12,7 @@ class JogadoresRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,7 +22,7 @@ class JogadoresRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [ 
+        $rules = [
             'array',
             // 'jogadores.*.id_time' => [
             //     'required',

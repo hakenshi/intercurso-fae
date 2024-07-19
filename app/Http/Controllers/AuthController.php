@@ -14,7 +14,8 @@ use Illuminate\Support\Str;
 class AuthController extends Controller
 {
 
-    private function evalResponse($response): bool{
+    private function evalResponse($response): bool
+    {
         return $response == "Sim" ? $response = 1 : $response = 0;
     }
 
@@ -43,7 +44,7 @@ class AuthController extends Controller
                     'problema_osseo_articular' => $this->evalResponse($questionarioInfo['questionario']['question5']),
                     'outra_condicao' => $this->evalResponse($questionarioInfo['questionario']['question6']),
                     'medicamento_pressao_cardiaco' => $this->evalResponse($questionarioInfo['questionario']['question7']),
-                    'assinatura' => (string) Str::uuid(),
+                    'assinatura' => (string)Str::uuid(),
                     'accept_responsability' => $questionarioInfo['questionario']['accept_responsibility'] ? $questionarioInfo['questionario']['accept_responsibility'] = 1 : $questionarioInfo['questionario']['accept_responsibility'] = 0,
                 ];
 

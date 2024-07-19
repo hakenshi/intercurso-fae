@@ -20,11 +20,11 @@ class PlacarResource extends JsonResource
             'placar_time_1' => $this->placar_time_1,
             'placar_time_2' => $this->placar_time_2,
             'time_vencedor' =>
-            $this->id_time_vencedor ?
-                [
-                    "id" => $this->time->id,
-                    "nome" => $this->time->nome,
-                ] : null,
+                $this->id_time_vencedor ?
+                    [
+                        "id" => $this->time->id,
+                        "nome" => $this->time->nome,
+                    ] : null,
         ];
     }
 }

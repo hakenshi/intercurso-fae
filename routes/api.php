@@ -14,33 +14,33 @@ use App\Models\Termo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResources([
-    '/usuarios' => UserController::class,
-    '/modalidades' => ModalidadesController::class,
-    '/times' => TimeController::class,
-    '/jogadores' => JogadoresController::class,
-    '/jogos' => JogosContoller::class,
-    '/categoria' => CategoriaController::class,
-]);
 
-Route::prefix("/times")->group(function(){
+Route::prefix("/times")->group(function () {
     Route::get("/usuario/{id}", [TimeController::class, 'showTimesUsuario']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    
-    //Essa rota é responsável por pegar o usuário que está logado no sistema
+
+    Route::apiResources([
+        '/usuarios' => UserController::class,
+        '/modalidades' => ModalidadesController::class,
+        '/times' => TimeController::class,
+        '/jogadores' => JogadoresController::class,
+        '/jogos' => JogosContoller::class,
+        '/categoria' => CategoriaController::class,
+    ]);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-   //Ações simples
+    //Ações simples
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
+    Route::post('/jogos/gerar-chaves', [JogosContoller::class, 'storeMany']);
     // Rota de notificação
-    Route::prefix('/notificacao')->group(function(){
+    Route::prefix('/notificacao')->group(function () {
         Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
         Route::post('create', [NotificacaoController::class, 'create']);
         Route::post('limpar-notificacao', [NotificacaoController::class, 'limparNotificacoes']);
@@ -53,17 +53,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/search-usuarios', [SearchController::class, 'usuarios']);
     Route::get('/search-times', [SearchController::class, 'times']);
 
-   
+
     //Rotas para o placar
 
-    Route::prefix('/placar')->group(function(){
+    Route::prefix('/placar')->group(function () {
         Route::patch('/{placar}', [PlacarController::class, 'update']);
     });
-    Route::prefix('/paginate')->group(function(){
-        Route::get('jogos', [JogosContoller::class, 'indexPaginate']);
-    });
-    
+
 });
+
+Route::prefix('/paginate')->group(function () {
+    Route::get('jogos', [JogosContoller::class, 'indexPaginate']);
+});
+
 
 Route::get('/termos/{id}', [UserController::class, 'termos']);
 
