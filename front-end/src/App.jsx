@@ -23,6 +23,7 @@ import {ProtectedRoute} from './utils/ProtectedRoute.jsx';
 import {useStateContext} from './Contexts/ContextProvider.jsx';
 import NotAuthorized from './Views/html error codes/NotAuthorized.jsx';
 import {AdminJogos} from './Views/Admin/AdminJogos.jsx';
+import {ResetPassword} from "./Views/Guest/ResetPassword.jsx";
 
 
 export const App = () => {
@@ -33,7 +34,8 @@ export const App = () => {
     return (
         <Routes>
             <Route path='/' element={<GuestLayout/>}>
-                <Route path="jogos" element={<Jogos/>}/>
+                <Route index element={<Jogos/>}/>
+                {/*<Route path="jogos" element={<Jogos/>}/>*/}
                 <Route path="placares" element={<Placares/>}/>
                 <Route path="times-intercurso" element={<VerTimes/>}/>
                 {/* <Route path='nao-autorizado' element={<NotAuthorized />} /> */}
@@ -42,6 +44,7 @@ export const App = () => {
             <Route path="/" element={<LoginLayout/>}>
                 <Route path="login" element={<Login/>}/>
                 <Route path="cadastro" element={<Cadastro/>}/>
+                <Route path="redefinir-senha" element={<ResetPassword/>}/>
             </Route>
 
             <Route element={<ProtectedRoute role={1}/>}>

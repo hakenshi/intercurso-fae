@@ -68,7 +68,7 @@ export default function Login() {
                             {errors && errors.errors ? errors.errors.senha &&
                                 <p className="px-2 py-1 text-xs text-black/80">{errors.errors.senha[0]}</p> : ""}
                         </div>
-                        <p>Esqueceu sua senha? <span className="text-unifae-green-1 font-bold">Clique aqui</span></p>
+                        <p>Esqueceu sua senha? <Link to={'/redefinir-senha'} className="text-unifae-green-1 font-bold">Clique aqui</Link></p>
                         <button className="btn-lg btn-green">Entrar</button>
                         <p>Ainda não tem conta? <Link to={"/cadastro"} className="text-unifae-green-1 font-bold">Clique
                             aqui</Link></p>

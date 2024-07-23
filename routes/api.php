@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\JogosContoller;
 use App\Http\Controllers\ModalidadesController;
@@ -19,16 +20,18 @@ Route::prefix("/times")->group(function () {
     Route::get("/usuario/{id}", [TimeController::class, 'showTimesUsuario']);
 });
 
+Route::apiResources([
+    '/usuarios' => UserController::class,
+    '/modalidades' => ModalidadesController::class,
+    '/times' => TimeController::class,
+    '/jogadores' => JogadoresController::class,
+    '/jogos' => JogosContoller::class,
+    '/categoria' => CategoriaController::class,
+]);
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::apiResources([
-        '/usuarios' => UserController::class,
-        '/modalidades' => ModalidadesController::class,
-        '/times' => TimeController::class,
-        '/jogadores' => JogadoresController::class,
-        '/jogos' => JogosContoller::class,
-        '/categoria' => CategoriaController::class,
-    ]);
+
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -39,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
     Route::post('/jogos/gerar-chaves', [JogosContoller::class, 'storeMany']);
+
+
     // Rota de notificação
     Route::prefix('/notificacao')->group(function () {
         Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
@@ -69,6 +74,7 @@ Route::prefix('/paginate')->group(function () {
 
 Route::get('/termos/{id}', [UserController::class, 'termos']);
 
+Route::post('/reset-password', [EmailController::class, 'sendResetPassword']);
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

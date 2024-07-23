@@ -20,7 +20,7 @@ const AsideContext = createContext();
 const guestLinks = [
 
     {
-        path: '/jogos',
+        path: '/',
         icon: faGamepad,
         text: 'Jogos'
     },
@@ -53,10 +53,8 @@ export default function GuestLayout({isMobile}) {
             axiosInstance.get('/user')
                 .then(({data}) => {
                     setUser(data)
-
                 })
         }
-
     }, [navigate, setUser])
 
     const onLogout = (e) => {
