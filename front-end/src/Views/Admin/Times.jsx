@@ -501,7 +501,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                             className="p-2 rounded bg-white border border-unifae-green-1" name="modalidade"
                             id="modalidade">
                         <option value="0">Sem filtro</option>
-                        {modalidades.map(modalidade => (
+                        {modalidades && modalidades.map(modalidade => (
                             <option key={modalidade.id} value={modalidade.id}>{modalidade.nome}</option>
                         ))}
                     </select>
