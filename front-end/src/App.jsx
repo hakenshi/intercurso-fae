@@ -62,6 +62,7 @@ export const App = () => {
             <Route element={<ProtectedRoute role={2}/>}>
                 <Route path='/responsavel' element={<ResponsavelLayout isMobile={isMobile}/>}>
                     <Route path="meus-times" element={<MeusTimes id={user.id}/>}/>
+                    <Route path="times-intercurso" element={<MeuTime/>}/>
                     <Route path="jogos" element={<Jogos/>}/>
                     <Route path="placares" element={<Placares/>}/>
                     <Route path="times-intercurso" element={<VerTimes/>}/>

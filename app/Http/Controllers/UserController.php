@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateUsuariosRequest;
-use App\Http\Resources\TermosResource;
 use App\Http\Resources\UsuariosResource;
 use App\Models\Jogador;
 use App\Models\Termo;
 use App\Models\Time;
-use App\Models\User as ModelsUser;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,16 +17,22 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $user = ModelsUser::paginate(6);
+        return User::all('id', 'nome', 'email', 'ra');
+    }
+
+    public function indexPaginate()
+    {
+        $user = User::paginate(6);
 
         return UsuariosResource::collection($user);
     }
 
     public function indexResponsaveis()
     {
-        $user = ModelsUser::where("tipo_usuario", 2)->paginate(6);
+        $user = User::where("tipo_usuario", 2)->paginate(6);
 
         return UsuariosResource::collection($user);
     }
@@ -41,7 +46,7 @@ class UserController extends Controller
 
         $data['senha'] = bcrypt($request->password);
 
-        $user = ModelsUser::create($data);
+        $user = User::create($data);
 
         return new UsuariosResource($user);
     }
@@ -51,7 +56,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = ModelsUser::findOrFail($id);
+        $user = User::findOrFail($id);
 
         return new UsuariosResource($user);
     }
@@ -64,7 +69,7 @@ class UserController extends Controller
 
         $data = $request->validated();
 
-        $user = ModelsUser::findOrFail($id);
+        $user = User::findOrFail($id);
 
         if ($request->hasFile('foto_perfil')) {
 
@@ -93,7 +98,7 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        $user = ModelsUser::findOrFail($id);
+        $user = User::findOrFail($id);
         $jogador = Jogador::where('id_usuario', $user->id)->first();
         $timeResponsavel = Time::where('id_responsavel', $user->id)->get();
 
@@ -116,7 +121,7 @@ class UserController extends Controller
     public function tornarResponsavel(string $id, Request $request)
     {
 
-        $user = ModelsUser::findOrFail($id);
+        $user = User::findOrFail($id);
         $user->tipo_usuario = $request->tipo_usuario;
 
         $user->update();

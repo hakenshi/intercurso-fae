@@ -13,15 +13,7 @@ class UpdateStoreTimesResource extends FormRequest
      */
     public function authorize(): bool
     {
-
-        $user = Auth::user();
-
-        if($user->tipo_usuario == "1" || $user->tipo_usuario == "2"){
-            return true;
-        }
-
-
-        return false;
+        return true;
     }
 
     /**
@@ -40,7 +32,7 @@ class UpdateStoreTimesResource extends FormRequest
                 'max:255',
                 'unique:times,nome'
             ],
-            'stauts' => 'boolean',
+            'status' => 'boolean',
         ];
 
         if ($this->method() === "PATCH") {

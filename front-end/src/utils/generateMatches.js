@@ -20,6 +20,28 @@ let teams = [
     // { id: 19, name: "Team S", players: [] }
 ];
 
+const generateKeys = (array) => {
+    const keySize = defineKeySize(array.length);
+    const timesNoChapeu = (array.length - keySize) * 2;
+    const times = shuffle(array);
+
+    if (keySize === 1) {
+        console.log('O tamanho da chave é muito grande');
+        return {
+            times: [],
+            tamanhoDaChave: 1,
+            quantidadeDeTimesNoChapeu: 1,
+            quantidadeDeJogosNoChapeu: 1
+        };
+    }
+
+    return {
+        times: times,
+        tamanhoDaChave: keySize,
+        quantidadeDeTimesNoChapeu: timesNoChapeu,
+        quantidadeDeJogosNoChapeu: Math.floor(timesNoChapeu / 2)
+    };
+};
 
 const defineKeySize = (size) => {
 
@@ -46,31 +68,6 @@ const shuffle = (array) => {
     return array;
 };
 
-// Função responsável por embaralhar os times e gerar as chaves
-
-const generateKeys = (array) => {
-    const keySize = defineKeySize(array.length);
-    const timesNoChapeu = (array.length - keySize) * 2;
-    const times = shuffle(array);
-
-    if (keySize === 1) {
-        console.log('O tamanho da chave é muito grande');
-        return {
-            times: [],
-            tamanhoDaChave: 1,
-            quantidadeDeTimesNoChapeu: 1,
-            quantidadeDeJogosNoChapeu: 1
-        };
-    }
-
-    return {
-        times: times,
-        tamanhoDaChave: keySize,
-        quantidadeDeTimesNoChapeu: timesNoChapeu,
-        quantidadeDeJogosNoChapeu: Math.floor(timesNoChapeu / 2)
-    };
-};
-
 // Função responsável por gerar os jogos com base nos times
 
 export const generateMatches = (array) => {
@@ -88,7 +85,6 @@ export const generateMatches = (array) => {
                 time2: times[i * n + 1] ?? null,
             });
         }
-
         return array
     }
     const arrayFillNull = (array, n) => {

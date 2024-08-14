@@ -38,8 +38,4 @@ class Time extends Model
         return $this->belongsToMany(Jogo::class);
     }
 
-    public function placar()
-    {
-        return $this->hasOne(Placar::class, "id_time_vencedor", "id");
-    }
 }

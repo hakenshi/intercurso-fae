@@ -19,15 +19,19 @@ class TimeController extends Controller
      */
     public function index()
     {
-        $times = Time::all();
-        $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
-        $jogadores = User::all('id', 'nome', 'email', 'ra');
+        $times = Time::paginate(6);
 
-        return [
-            'times' => TimesResource::collection($times),
-            'modalidades' => $modalidades,
-            'jogadores' => $jogadores
-        ];
+        return TimesResource::collection($times);
+    }
+
+    public function indexPaginate(string $id)
+    {
+        if ($id == 0){
+            return TimesResource::collection(Time::paginate(6));
+        }
+        else{
+            return TimesResource::collection(Time::where("id_modalidade", $id)->paginate(6));
+        }
     }
 
     /**
@@ -36,6 +40,13 @@ class TimeController extends Controller
     public function store(UpdateStoreTimesResource $request)
     {
         $data = $request->validated();
+
+        $id_responsavel = User::where('nome', $data['id_responsavel'])
+            ->where('tipo_usuario', 2)
+            ->first()->id;
+
+        $data['id_responsavel'] = $id_responsavel;
+
         $time = Time::create($data);
 
         return new TimesResource($time);
@@ -46,11 +57,9 @@ class TimeController extends Controller
      */
     public function show(string $id)
     {
-        dd($id);
         $times = Time::where("id_responsavel", $id)->get();
         $modalidades = Modalidade::all("nome", "id", 'quantidade_participantes');
         $jogadores = User::all('id', 'nome', 'email', 'ra');
-
 
         return [
             'times' => TimesResource::collection($times),

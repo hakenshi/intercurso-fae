@@ -34,12 +34,6 @@ const responsavelLinks = [
         icon: faFlag,
         text: 'Times'
     },
-    {
-        path: '/responsavel/placares',
-        icon: faTrophy,
-        text: 'Placares'
-    },
-
 ]
 
 

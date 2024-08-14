@@ -9,9 +9,12 @@ use App\Http\Resources\PlacarResource;
 use App\Models\Jogo;
 use App\Models\Modalidade;
 use App\Models\Placar;
+use App\Models\Time;
 use Carbon\Carbon;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PhpParser\Node\Expr\New_;
 
 class JogosContoller extends Controller
@@ -19,10 +22,13 @@ class JogosContoller extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexPaginate()
+    public function indexPaginate(string $id)
     {
-
+        if ($id == 0){
         return JogosResource::collection(Jogo::paginate(6));
+        }
+
+        return  JogosResource::collection(Jogo::where('id_modalidade', $id)->paginate(6));
     }
 
     /**
@@ -66,16 +72,7 @@ class JogosContoller extends Controller
 
             $jogos = Jogo::create($data);
 
-            $placar = Placar::create([
-                'id_jogo' => $jogos->id,
-            ]);
-
-            $jogos->id_placar = $placar->id;
-
-            $jogos->save();
-
             DB::commit();
-
             return new JogosResource($jogos);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -85,47 +82,80 @@ class JogosContoller extends Controller
         }
     }
 
-
-    /*
-        TODO: 
-       1 - Entender como é que caralhos eu vou fazer pra organizar esses dados todos no banco.
-       2 - Gerar os jogos no banco
-       3 - Definir quais times ficarão setados como em aguardo: o critério disso é muito simples, os jogos em aguardo serão aqueles onde o id do time será nulo.
-    */
-
     public function storeMany(Request $request)
     {
-        try {
-            $data = $request->all();
+        $id_modalidade = $request->id_modalidade;
 
-            DB::beginTransaction();
+        $teams = Time::where('id_modalidade', $id_modalidade)->get('id')->toArray();
 
-            $faseChapeu = Jogo::gerarPartida($data['faseChapeu'], $data['id_modalidade'], 1);
-            $primeiraFase = Jogo::gerarPartida($data['primeiraFase'], $data['id_modalidade'], 2);
-            $segundaFase = Jogo::gerarPartida($data['segundaFase'], $data['id_modalidade'], 3);
-            $terceiraFase = Jogo::gerarPartida($data['terceiraFase'], $data['id_modalidade'], 4);
+        $organizedMatches = Jogo::organizeMatches(array_column($teams, 'id'));
 
-            DB::commit();
+        $this->storeMachesAndLink($organizedMatches, $id_modalidade);
 
-            return response()->json([
-                $faseChapeu,
-                $primeiraFase,
-                $segundaFase,
-                $terceiraFase,
-            ]);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 500);
-        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Jogo $jogo)
+    private function storeMachesAndLink($organizedMatches, $id_modalidade)
     {
+        $faseJogos = [];
+
+        foreach ($organizedMatches as $id_fase => $matches){
+            foreach ($matches as $match){
+
+                $jogo = Jogo::create([
+                    'id_fase' => $id_fase,
+                    'id_time_1' => $match['time1'],
+                    'id_time_2' => $match['time2'],
+                    'id_time_vencedor' => null,
+                    'id_proximo_jogo' => null,
+                    'id_modalidade' => $id_modalidade,
+                    'data_jogo' => null,
+                    'local' => null,
+                    'status' => "1",
+                ]);
+                $faseJogos[$id_fase][] = $jogo->id;
+            }
+        }
+        $this->linkMatches($faseJogos, $id_modalidade);
+    }
+
+    private function linkMatches($faseJogos, $id_modalidade)
+    {
+        $allMatchIds = Jogo::where('id_modalidade', $id_modalidade)->where('id_proximo_jogo', null)->where('status', '1')->pluck('id')->toArray();
+
+        foreach ($allMatchIds as $jogoId) {
+            $jogo = Jogo::find($jogoId);
+
+            $jogosProximaFase = Jogo::where('id_fase', ">", $jogo->id_fase)
+                ->where(function ($query) {
+                    $query->whereNull('id_time_1')
+                        ->orWhereNull('id_time_2');
+                })
+                ->whereNotIn('id', function ($query){
+                    $query->select('id_proximo_jogo')
+                    ->from('jogos')
+                    ->groupBy('id_proximo_jogo')
+                    ->havingRaw("COUNT(id_proximo_jogo) >= 2");
+                })
+                ->first();
+
+            if ($jogosProximaFase) {
+                 if (in_array($jogo->id, $allMatchIds)) {
+                    Jogo::where('id', $jogoId)->update(['id_proximo_jogo' => $jogosProximaFase->id]);
+                } else {
+                    Jogo::where('id', $jogoId)->update(['id_proximo_jogo' => null]);
+                }
+            }
+        }
+
+        $lastGameId = end($allMatchIds);
+        Jogo::where('id', $lastGameId)->update(['id_proximo_jogo' => null]);
+
+    }
+
+    public function show(string $id)
+    {
+        $jogo = Jogo::where('id_modalidade', $id)->paginate(6);
+
         return new JogosResource($jogo);
     }
 

@@ -3,11 +3,10 @@ import {Display} from '../../Components/Display'
 import {Table} from '../../Components/Table'
 import axiosInstance from '../../helper/axios-instance'
 import {Modal} from '../../Components/Modal'
-import {ModalDefault} from '../../Components/Modal/ModalDefault'
 import {Loading} from '../../Components/Loading'
 import {Input} from '../../Components/Inputs/Input'
 import {Search} from '../../Components/Search bar/Search'
-import {faL, faMinus, faPlus, faX} from '@fortawesome/free-solid-svg-icons'
+import {faMinus, faPlus} from '@fortawesome/free-solid-svg-icons'
 import {handleRequest} from '../../utils/handleRequest'
 import usePagiante from '../../Components/hooks/usePaginate'
 import {Paginate} from '../../Components/Paginate'
@@ -17,15 +16,17 @@ import {handleError} from '../../utils/handleError'
 import {AlertSucesso} from '../../Components/Alerts/AlertSucesso'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import defineStatus from '../../utils/setStatus'
-import {GerarJogos} from '../../Components/GerarJogos'
 
 export const AdminJogos = () => {
 
-    const {data: jogos, setData, currentPage, lastPage, handlePageChange, loading} = usePagiante("/paginate/jogos")
-    const {setMensagem, mensagem} = useAlert()
+    const [url, setUrl] = useState('/paginate/jogos/0')
 
+    const {data: jogos, setData, currentPage, lastPage, handlePageChange, loading, fetchData} = usePagiante(url)
+    const {setMensagem, mensagem} = useAlert()
     const [modalidades, setModalidades] = useState([])
     const [editPlacar, setEditPlacar] = useState({
+        idJogo: null,
+        idProximoJogo: null,
         placar: null,
         times: null
     })
@@ -33,11 +34,11 @@ export const AdminJogos = () => {
 
     const [carregando, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(null)
-
     const dataRef = useRef(null)
     const localRef = useRef(null)
     const horaRef = useRef(null)
     const modalidadeRef = useRef(null)
+    const filterRef = useRef(null)
     const timeVencedorRef = useRef(null)
     const placarTime1Ref = useRef(null)
     const placarTime2Ref = useRef(null)
@@ -47,33 +48,30 @@ export const AdminJogos = () => {
     const [time2, setTime2] = useState(null)
 
     useEffect(() => {
-
         const fetchModalidades = async () => {
             try {
                 const {data} = await axiosInstance.get("/modalidades");
-
-                data.length > 0 ? setModalidades(data.data) : ""
+                data ? setModalidades(data.data) : ""
 
             } catch (error) {
                 console.log(error);
             }
+
         };
 
-        if (modalidades.length === 0) {
-            fetchModalidades();
+        if (modalidades.length == 0){
+            fetchModalidades()
         }
+    }, [modalidades]);
 
-        if (modalidades.length > 0) {
-            setLoading(false);
-        }
+    const handleEditPlacar = (idJogo, idProximoJogo, placar, times) => {
 
-    }, [modalidades, setData]);
-
-    const handleEditPlacar = (placar, times) => {
         setIsOpen(() => 'placar')
         setEditPlacar(() => ({
-            placar: placar,
-            times: times
+            idJogo,
+            idProximoJogo,
+            placar,
+            times
         }))
     }
 
@@ -93,18 +91,18 @@ export const AdminJogos = () => {
             id_modalidade: modalidadeRef.current.value,
             status: "1"
         }
-
         handleRequest(url, method, payload)
             .then(({data}) => {
-                setData(j => {
-                    if (method === 'post') {
-                        return [
-                            ...j, {...data.data}
-                        ]
-                    } else if (method === 'patch') {
-                        return j.map(({jogo}) => jogo.id === id ? {...jogo, ...data.data} : jogo)
-                    }
-                })
+                fetchData()
+                // setData(j => {
+                //     if (method === 'post') {
+                //         return [
+                //             ...j, {...data.data}
+                //         ]
+                //     } else if (method === 'patch') {
+                //         return j.map(({jogo}) => jogo.id === id ? {...jogo, ...data.data} : jogo)
+                //     }
+                // })
             })
             .catch(e => console.log(e))
             .finally(() => setIsOpen(null))
@@ -143,7 +141,8 @@ export const AdminJogos = () => {
         handleRequest(`/jogos/${id}`, "delete")
             .then(() => {
                 setIsOpen(null)
-                setData(j => j.filter(({jogo}) => jogo.id !== id))
+                fetchData()
+                // setData(j => j.filter(({jogo}) => jogo.id !== id))
             })
             .catch(e => {
                 handleError(e)
@@ -156,7 +155,6 @@ export const AdminJogos = () => {
     }
 
     const increasePlcar = (e, time) => {
-
         e.preventDefault()
         setEditPlacar(p => ({
             ...p,
@@ -169,7 +167,6 @@ export const AdminJogos = () => {
 
     const decreasePlacar = (e, time) => {
         e.preventDefault()
-
         if (editPlacar.placar[time] > 0) {
             setEditPlacar(p => ({
                 ...p,
@@ -181,41 +178,48 @@ export const AdminJogos = () => {
         }
     }
 
-    function handleUpdatePlacar(e, id) {
+    function handleUpdatePlacar(e, id, id_proximo_jogo) {
         e.preventDefault()
         const payload = {
+            id_jogo: parseInt(id),
+            id_proximo_jogo: parseInt(id_proximo_jogo),
             placar_time_1: parseInt(placarTime1Ref.current.value),
             placar_time_2: parseInt(placarTime2Ref.current.value),
             id_time_vencedor: parseInt(timeVencedorRef.current.value),
         }
-
         axiosInstance.patch(`/placar/${id}`, payload)
-            .then(({data}) => {
-                setData(j => j.map(jogo => jogo.placar.id_placar === id ? ({
-                    ...jogo,
-                    jogo: {
-                        ...jogo.jogo,
-                        status: 0,
-                    },
-                    placar: {
-                        ...jogo.placar,
-                        placar_time_1: data.data.placar_time_1,
-                        placar_time_2: data.data.placar_time_2,
-                        time_vencedor: data.data.time_vencedor
-                    }
-                }) : jogo))
+            .then(response => {
+                const {data} = response.data
+                const {placar} = data
+
+                fetchData()
+
+                // setData(j => j.map(jogo =>
+                //     jogo.jogo.id === id ? {
+                //         ...jogo,
+                //         placar: {
+                //             ...jogo.placar,
+                //             placar_time_1: placar.placar_time_1,
+                //             placar_time_2: placar.placar_time_2,
+                //             time_vencedor: placar.time_vencedor
+                //         }
+                //     } : jogo
+                // ));
+
             })
             .catch(e => handleError(e))
             .finally(() => {
-                setIsOpen(null)
+                setIsOpen(false)
             })
+    }
+
+    const handleChangeFilter = () => {
+        setUrl(`/paginate/jogos/${filterRef.current.value}`)
     }
 
     return (
         <>
-
-            {isOpen?.type === 'confirm' && <AlertConfirm isOpen={true} onClose={() => setIsOpen(false)} text={mensagem}
-                                                         onConfirm={() => handleDelete(isOpen.id)}/>}
+            {isOpen?.type === 'confirm' && <AlertConfirm isOpen={true} onClose={() => setIsOpen(false)} text={mensagem} onConfirm={() => handleDelete(isOpen.id)}/>}
 
             {isOpen === 'success' && <AlertSucesso mensagem={mensagem} onClose={() => setIsOpen(null)} isOpen/>}
 
@@ -228,8 +232,7 @@ export const AdminJogos = () => {
                         times: null
                     }))
                 }}>
-                    <Modal.Form texto={"Placar"} hasButton={false}
-                                onSubmit={e => handleUpdatePlacar(e, editPlacar.placar.id_placar)}>
+                    <Modal.Form texto={"Placar"} hasButton={false} onSubmit={e => handleUpdatePlacar(e, editPlacar.idJogo, editPlacar.idProximoJogo)}>
                         <div className='flex flex-col items-center'>
                             <div className='flex justify-around w-full mb-4'>
                                 <div className='text-center'>
@@ -268,8 +271,7 @@ export const AdminJogos = () => {
                                 </select>
                             </div>
                         </div>
-
-                        <Modal.Button texto='Salvar'/>
+                        <Modal.Button texto='Salvar' type={"submit"}/>
                     </Modal.Form>
                 </Modal.Root>
             )}
@@ -310,7 +312,6 @@ export const AdminJogos = () => {
                     </Modal.Form>
                 </Modal.Root>
             )}
-
             {isOpen === 'cadastro' && (
                 <Modal.Root isOpen onClose={() => setIsOpen(null)}>
                     <Modal.Form texto={"Cadastrar Jogo"} onSubmit={(e) => handleSubmit(e, 'post')}>
@@ -345,31 +346,38 @@ export const AdminJogos = () => {
                     </Modal.Form>
                 </Modal.Root>
             )}
-
             <Display.Root title={"Jogos"}>
                 <Display.ActionsRoot>
                     <Display.ActionsModal setIsModalOpen={() => setIsOpen(() => 'cadastro')} text={"Cadastrar Jogo"}>
-                        <GerarJogos/>
                     </Display.ActionsModal>
-                    <Display.ActionsSearch/>
+                    <select ref={filterRef} onChange={handleChangeFilter} className="p-2 rounded bg-white border border-unifae-green-1" name="modalidade" id="modalidade">
+                        <option value="0">Sem filtro</option>
+                        {modalidades.map(modalidade => (
+                            <option key={modalidade.id} value={modalidade.id}>{modalidade.nome}</option>
+                        ))}
+                    </select>
                 </Display.ActionsRoot>
                 <Display.Main>
                     {loading ? (<Loading/>) : jogos.length > 0 ? (<>
                         <Table.Root>
                             <Table.Head
-                                titles={['Partida', 'Local', 'Data do jogo', 'Hora do jogo', 'Modalidade', 'Status', '']}/>
+                                titles={['Fase', 'Time 1', 'Time 2', 'Time Vencedor', 'Local', 'Data do jogo', 'Hora do jogo', 'Modalidade', 'Status', '']}/>
                             <Table.Body>
                                 {jogos && jogos.map((response, i) =>
                                     <tr key={i} className='text-center'>
-                                        <td className='p-5'>{response.times.time1.nome} vs {response.times.time2.nome}</td>
+                                        <td className={'p-5'}>{response.jogo.fase.nome}</td>
+                                        <td className='p-5'>{response.times.time1.nome} </td>
+                                        <td className="p-2">{response.times.time2.nome}</td>
+                                        <td className="p-2">{response.placar.time_vencedor.nome}</td>
                                         <td className='p-5'>{response.jogo.local}</td>
                                         <td className='p-5'>{response.jogo.data_jogo}</td>
                                         <td className='p-5'>{response.jogo.hora_jogo}</td>
                                         <td className='p-5'>{response.modalidade.nome}</td>
                                         <td className='p-5'>{defineStatus(response.jogo.status)}</td>
                                         <td className='p-5 flex gap-5'>
-                                            <button onClick={() => handleEditPlacar(response.placar, response.times)}
-                                                    className='btn-green p-2'>Placar
+                                            <button
+                                                onClick={() => handleEditPlacar(response.jogo.id, response.jogo.id_proximo_jogo, response.placar, response.times)}
+                                                className='btn-green p-2'>Placar
                                             </button>
                                             <button onClick={() => handleEditJogos(response)}
                                                     className='btn-edit p-2'>Editar

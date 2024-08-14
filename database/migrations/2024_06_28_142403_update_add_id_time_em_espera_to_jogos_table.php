@@ -11,7 +11,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('jogos', function (Blueprint $table) {
-            $table->json('jogos_em_espera')->nullable()->after('id_time_2');
             $table->unsignedBigInteger('id_proximo_jogo')->after('id_time_2')->nullable();
             $table->foreign('id_proximo_jogo')->references('id')->on('jogos');
         });
@@ -23,9 +22,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('jogos', function (Blueprint $table) {
-            $table->dropForeign(['id_jogo_em_espera']);
-            $table->dropColumn('id_jogo_em_espera');
-            $table->dropColumn('jogos_em_espera');
+            $table->dropForeign(['id_proximo_jogo']);
+            $table->dropColumn('id_proximo_jogo');
         });
     }
 };

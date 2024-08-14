@@ -25,7 +25,7 @@ export const Usuarios = () => {
         isConfirmAlertOpen, isErrorAlertOpen, setIsConfirmAlertOpen, setIsErrorAlertOpen
     } = useAlert()
     const {handleSearch, input, results} = useSearch("", "/search-usuarios")
-    const {data: usuarios, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/search-usuarios")
+    const {data: usuarios, loading, handlePageChange, currentPage, lastPage, fetchData} = usePagiante("/search-usuarios")
 
     const nomeRef = useRef(null);
     const emailRef = useRef(null);
@@ -77,7 +77,7 @@ export const Usuarios = () => {
                 .then(({data}) => {
                     if (data) {
                         setMensagem("Usuário Editado com sucesso!")
-                        setData(u => u.map(usuario => usuario.usuario.id === editUsuario.usuario.id ? {...usuario, ...data.data} : usuario))
+                        fetchData()
                     }
 
                 })
@@ -96,7 +96,7 @@ export const Usuarios = () => {
                 .then(({data}) => {
                     if (data) {
                         setMensagem("Usuário cadastrado com sucesso!")
-                        setData(u => [...u, data.data])
+                        fetchData()
                     }
                 })
                 .catch(error => {
@@ -117,8 +117,8 @@ export const Usuarios = () => {
             .then(() => {
                 setIsConfirmAlertOpen(false)
                 setMensagem("Usuário excluido com sucesso")
+                fetchData()
                 setIsAlertOpen(true)
-                setData((u) => u.filter(({usuario}) => usuario.id !== id))
             })
             .catch(error => {
                 const response = error.response
@@ -313,7 +313,7 @@ export const Usuarios = () => {
                                         <td className="p-5 text-pretty">{(response.usuario.tipo_usuario == 1) ? "Admin" : (response.usuario.tipo_usuario == 2) ? "Responsável" : "Usuário"}</td>
                                         <td className="p-5 text-pretty">
                                             <button onClick={() => handleTornarResponsavel(response)}
-                                                    className="bg-unifae-green-2 p-2 text-white rounded-lg">Tornar
+                                                    className="bg-unifae-green-2 p-2 text-white rounded-lg text-sm ">Tornar
                                                 Responsável
                                             </button>
                                         </td>

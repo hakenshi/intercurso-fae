@@ -74,6 +74,7 @@ class SearchController extends Controller
         $data = $request->input('value');
         $jogadores = User::where('ra', 'LIKE', "%" . $data . "%")
             ->where('tipo_usuario', "3")
+            ->orWhere('tipo_usuario', "2")
             ->get();
 
         return $this->search($data, $jogadores);

@@ -57,7 +57,7 @@ class AuthController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'msg' => "Algo deu errado",
+                'msg' => "Alg deu errado",
                 'error' => $e->getMessage(),
             ], 502);
         }

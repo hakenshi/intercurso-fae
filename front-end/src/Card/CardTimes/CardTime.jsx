@@ -4,7 +4,7 @@ import {images} from '../../assets'
 
 export const CardTime = ({img, nome}) => {
 
-    const foto = img == null || img === undefined ? images.timeFoto : img
+    const foto = img === null || img === "" ? images.timeFoto : img
     const timeNome = nome == null || img === undefined ? "John Doe" : nome
     return (
         <div className='flex flex-col text-center text-white'>

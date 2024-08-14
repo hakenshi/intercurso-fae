@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\ValidationException;
+use function PHPUnit\Framework\isNull;
 
 class Jogo extends Model
 {
@@ -17,24 +19,17 @@ class Jogo extends Model
 
     protected $fillable = [
         'id_fase',
-        'jogos_em_espera',
-        'id_proximo_jogo',
-        'id_placar',
+        'placar_time_1',
+        'placart_time_2',
         'id_time_1',
         'id_time_2',
+        'id_time_vencedor',
+        'id_proximo_jogo',
         "id_modalidade",
         'data_jogo',
         'local',
         'status',
     ];
-
-    protected $casts = [
-        'jogos_em_espera' => 'array',
-    ];
-    public function placar()
-    {
-        return $this->hasOne(Placar::class, "id_jogo");
-    }
 
     public function modalidade()
     {
@@ -51,88 +46,136 @@ class Jogo extends Model
         return $this->hasOne(Time::class, 'id', 'id_time_2');
     }
 
+    public function timeVencedor() : HasOne{
+        return $this->hasOne(Time::class, 'id', 'id_time_vencedor');
+    }
+
     public function fase(): BelongsTo
     {
         return $this->belongsTo(Fases::class, 'id_fase');
     }
 
-    public static function gerarPartida($array, $modalidade, $fase)
+    public static function defineKeySize(int $size)
     {
-        // Obter os jogos da fase anterior que ainda não têm um próximo jogo atribuído
-        $jogosFaseAnterior = Jogo::where('id_fase', $fase - 1)
-            ->whereNull('id_proximo_jogo')
-            ->get();
-
-        if ($array) {
-            foreach ($array as $item) {
-                $jogosFaseAtual = Jogo::where('id_fase', $fase)
-                    ->where(function ($query) {
-                        $query->whereNull('id_time_1')
-                            ->orWhereNull('id_time_2')
-                            ->orWhere(function ($query) {
-                                $query->whereNotNull('id_time_1')
-                                    ->whereNotNull('id_time_2');
-                            });
-                    })
-                    ->get();
-
-                foreach ($jogosFaseAtual as $jogoAtual) {
-                    // Verificar e atribuir jogos em espera da fase anterior
-                    $jogosEmEspera = json_decode($jogoAtual->jogos_em_espera, true) ?: [];
-
-                    foreach ($jogosFaseAnterior as $jogoAnterior) {
-                        // Verificar se o jogo atual pode receber mais jogos em espera
-                        if (count($jogosEmEspera) < 2) {
-                            $jogosEmEspera[] = $jogoAnterior->id;
-                            $jogoAnterior->id_proximo_jogo = $jogoAtual->id;
-                            $jogoAnterior->save();
-
-                            // Parar se o jogo atual já tiver dois jogos em espera
-                            if (count($jogosEmEspera) >= 2) {
-                                break;
-                            }
-                        }
-                    }
-
-                    // Atualizar o jogo atual com os jogos em espera
-                    $jogoAtual->jogos_em_espera = json_encode($jogosEmEspera);
-                    $jogoAtual->save();
-                }
-
-                // Criar um novo jogo para a fase atual com os times fornecidos
-                $jogoNovo = Jogo::create([
-                    'id_fase' => $fase,
-                    'id_time_1' => $item['time1'],
-                    'id_time_2' => $item['time2'],
-                    'id_modalidade' => $modalidade,
-                    'data_jogo' => null,
-                    'local' => null,
-                    'status' => '1',
-                ]);
-
-                $placar = Placar::create([
-                    'id_jogo' => $jogoNovo->id,
-                ]);
-
-                $jogoNovo->id_placar = $placar->id;
-                $jogoNovo->save();
-
-                // Atualizar o jogo novo com os jogos em espera, se houver
-                $jogosEmEsperaNovo = [];
-                foreach ($jogosFaseAnterior as $jogoAnterior) {
-                    if (count($jogosEmEsperaNovo) < 2) {
-                        $jogosEmEsperaNovo[] = $jogoAnterior->id;
-                        $jogoAnterior->id_proximo_jogo = $jogoNovo->id;
-                        $jogoAnterior->save();
-                    }
-                }
-                $jogoNovo->jogos_em_espera = json_encode($jogosEmEsperaNovo);
-                $jogoNovo->save();
-            }
+        if($size <= 3) {
+            return 2;
         }
-
-        return $jogoNovo ?? null;
+        elseif($size <= 7) {
+            return 4;
+        }
+        elseif($size <= 15) {
+            return 8;
+        }
+        elseif($size <= 31) {
+            return 16;
+        }
+        elseif($size <= 63) {
+            return 32;
+        }
+        return 1;
     }
 
+    public static function organizeMatches ($teams)
+    {
+
+        $keySize = self::defineKeySize(count($teams));
+
+        $timesNoChapeu = (count($teams) - $keySize) * 2;
+
+        $shuffledTeams = shuffle($teams);
+
+        $jogosNoChapeu = floor($timesNoChapeu / 2);
+
+        $faseChapeu = [];
+        $fasePrincipal = [];
+        $quartas = [];
+
+        $oitavas = [];
+
+        $semifinais = [];
+
+        $finais = [];
+
+        $chaveChapeu = array_splice($teams, 0, $timesNoChapeu);
+
+        $chavePrincipal = $teams;
+
+        for($i = 0; $i < count($chaveChapeu); $i+=2) {
+            $faseChapeu[] = [
+                'time1' => $chaveChapeu[$i] ?? null,
+                'time2' => $chaveChapeu[$i + 1] ?? null,
+            ];
+        }
+
+        for($i = 0; $i < $keySize; $i+=2) {
+            $fasePrincipal[] = [
+                'time1' => $chavePrincipal[$i] ?? null,
+                'time2' => $chavePrincipal[$i + 1] ?? null,
+            ];
+        }
+        if ($keySize == 2){
+            return [
+                '2' => $faseChapeu,
+                '6' => $fasePrincipal,
+            ];
+        }
+
+        if ($keySize == 4) {
+            self::arrayFillNull($finais, $keySize, 4);
+            return [
+                '1' => $faseChapeu,
+                '2' => $fasePrincipal,
+                '6' => $finais,
+            ];
+        }
+        if ($keySize == 8) {
+            self::arrayFillNull($semifinais, $keySize, 4);
+            self::arrayFillNull($finais, $keySize, 8);
+            return [
+                '1' => array_filter($faseChapeu),
+                '2' => $fasePrincipal,
+                '5' => $semifinais,
+                '6' => $finais,
+            ];
+
+        }
+        if ($keySize == 16) {
+            self::arrayFillNull($quartas, $keySize, 4);
+            self::arrayFillNull($semifinais, $keySize, 8);
+            self::arrayFillNull($finais, $keySize, 16);
+
+            return [
+                '1' => array_filter($faseChapeu),
+                '2' => $fasePrincipal,
+                '4' => $quartas,
+                '5' => $semifinais,
+                '6' => $finais,
+            ];
+        }
+
+        self::arrayFillNull($quartas, $keySize, 4);
+        self::arrayFillNull($quartas, $keySize, 8);
+        self::arrayFillNull($quartas, $keySize, 16);
+        self::arrayFillNull($quartas, $keySize, 32);
+
+        return [
+            '1' => array_filter($faseChapeu),
+            '2' => $fasePrincipal,
+            '3' => $oitavas,
+            '4' => $quartas,
+            '5' => $semifinais,
+            '6' => $finais,
+        ];
+    }
+
+    public static function arrayFillNull(&$array, $keySize, $n)
+    {
+        for($i = 0; $i < ceil($keySize / $n); $i++){
+            $array[] = [
+                'time1' => null,
+                'time2' => null,
+            ];
+        }
+    }
 
 }

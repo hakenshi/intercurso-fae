@@ -1,4 +1,4 @@
-import {Link, Navigate, json} from "react-router-dom"
+import {Link} from "react-router-dom"
 import logoPadrao from "../../assets/logo-unifae-2021.png"
 import {useRef, useState} from "react"
 import axiosInstance from "../../helper/axios-instance"
@@ -26,6 +26,9 @@ export default function Login() {
 
         axiosInstance.post('/login', payload)
             .then(({data}) => {
+
+                console.log(data)
+
                 setUser(data.user)
                 setSessionToken(data.token)
             })

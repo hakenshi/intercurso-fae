@@ -11,6 +11,7 @@ use App\Http\Controllers\PlacarController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\UsuariosResource;
 use App\Models\Termo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,8 +31,6 @@ Route::apiResources([
 ]);
 
 Route::middleware('auth:sanctum')->group(function () {
-
-
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -68,7 +67,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('/paginate')->group(function () {
-    Route::get('jogos', [JogosContoller::class, 'indexPaginate']);
+    Route::get('jogos/{id}', [JogosContoller::class, 'indexPaginate']);
+    Route::get('/users', [UserController::class, 'indexPaginate']);
+    Route::get('/modalidades', [ModalidadesController::class, 'indexPaginate']);
+    Route::get('/times/{id}', [TimeController::class, 'indexPaginate']);
 });
 
 

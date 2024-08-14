@@ -14,9 +14,7 @@ class PlacarResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         return [
-            'id_placar' => $this->id,
             'placar_time_1' => $this->placar_time_1,
             'placar_time_2' => $this->placar_time_2,
             'time_vencedor' =>

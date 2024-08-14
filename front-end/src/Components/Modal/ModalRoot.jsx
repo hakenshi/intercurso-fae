@@ -4,8 +4,7 @@ import {createPortal} from "react-dom"
 
 const ModalBackground = ({children}) => {
     return (
-        <div
-            className="flex items-center justify-center min-w-full min-h-full bg-unifae-black-1/50 1 z-[2] absolute left-0 top-0">
+        <div className="flex items-center justify-center min-w-full min-h-full bg-unifae-black-1/50 1 z-[2] absolute left-0 top-0">
             {children}
         </div>
     )

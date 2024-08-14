@@ -14,13 +14,7 @@ class StoreUpdateModalidadesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user();
-
-        if($user->tipo_usuario == "1"){
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**

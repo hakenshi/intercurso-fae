@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import axiosInstance from "../../helper/axios-instance";
 import {faL} from "@fortawesome/free-solid-svg-icons";
 
@@ -9,7 +9,8 @@ export default function usePagiante(apiUrl) {
     const [lastPage, setLastPage] = useState(1)
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
+    const fetchData = useCallback((page = currentPage) => {
+        setLoading(true)
         setLoading(true)
         axiosInstance.get(`${apiUrl}?page=${currentPage}`)
             .then(response => {
@@ -20,10 +21,15 @@ export default function usePagiante(apiUrl) {
             .catch(error => console.error('Erro ao carregar os dados' + error))
     }, [apiUrl, currentPage])
 
+    useEffect(() => {
+        fetchData()
+    }, [fetchData]);
+
     const handlePageChange = (page) => {
         setCurrentPage(page)
+        fetchData(page)
     }
 
-    return {data, setData, currentPage, lastPage, loading, handlePageChange}
+    return {data, setData, currentPage, lastPage, loading, handlePageChange, fetchData}
 }
 

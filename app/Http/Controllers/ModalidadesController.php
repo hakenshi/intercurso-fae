@@ -16,6 +16,12 @@ class ModalidadesController extends Controller
      */
     public function index()
     {
+        return MOdalidadesResource::collection(Modalidade::all());
+    }
+
+
+    public function indexPaginate()
+    {
         return ModalidadesResource::collection(Modalidade::paginate(6));
     }
 

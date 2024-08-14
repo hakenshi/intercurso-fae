@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {useStateContext} from "../../Contexts/ContextProvider"
 import {useNavigate} from "react-router-dom"
 import {useAlert} from "../../Components/hooks/useAlert"
@@ -11,6 +11,8 @@ import {Modal} from "../../Components/Modal"
 import {handleError} from "../../utils/handleError"
 import {capitalize} from "../../utils/capitalize"
 import {Loading} from "../../Components/Loading"
+import {Table} from "../../Components/Table/index.jsx";
+import {GerarJogos} from "../../Components/GerarJogos/index.jsx";
 
 export const Modalidades = () => {
 
@@ -19,7 +21,7 @@ export const Modalidades = () => {
     const navigate = useNavigate()
     const {isAlertOpen, setIsAlertOpen, handleClose} = useAlert()
     const {handleSearch, input, results,} = useSearch("", "/search-modalidades")
-    const {data: modalidades, setData, loading, handlePageChange, currentPage, lastPage} = usePagiante("/modalidades")
+    const {data: modalidades, loading, handlePageChange, currentPage, lastPage, fetchData} = usePagiante("/paginate/modalidades")
 
     const nomeRef = useRef(null)
     const quantidadeRef = useRef(null)
@@ -58,13 +60,13 @@ export const Modalidades = () => {
             genero: generoRef.current.value,
             id_categoria: categoriaRef.current.value
         }
-
         if (isEditAlertOpen) {
             axiosInstance.put(`/modalidades/${editModalidade.id}`, payload)
                 .then(({data}) => {
                     if (data) {
                         alert("Modalidade Editada com sucesso!")
-                        setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade))
+                        fetchData()
+                        // setData(m => m.map(modalidade => modalidade.id === editModalidade.id ? {...modalidade, ...data.data} : modalidade))
                     }
 
                 })
@@ -80,7 +82,8 @@ export const Modalidades = () => {
                 .then(({data}) => {
                     if (data) {
                         alert("Modalidade cadastrada com sucesso!")
-                        setData(m => [...m, data.data])
+                        fetchData()
+                        // setData(m => [...m, data.data])
                     }
                 })
                 .catch(error => {
@@ -100,7 +103,8 @@ export const Modalidades = () => {
             axiosInstance.delete(`/modalidades/${id}`)
                 .then(() => {
                     alert("Modalidade excluida com sucesso")
-                    setData(m => m.filter(item => item.id !== id))
+                    fetchData()
+                    // setData(m => m.filter(item => item.id !== id))
                 })
                 .catch(error => {
                     const response = error.response
@@ -192,37 +196,31 @@ export const Modalidades = () => {
                 <div className="flex flex-col justify-center items-center p-5">
                     {loading ? (<Loading/>) :
                         (modalidades.length > 0 ?
-                            <table className="table-fixed bg-card-white-1 round w-[97%] flex-grow rounded-xl p-5 ">
-                                <thead className="bg-unifae-green-4 rounded-xl text-white w-full">
-                                <tr className="text-center">
-                                    <th className="p-5">Nome</th>
-                                    <th className="p-5">Categoria</th>
-                                    <th className="p-5">Participantes</th>
-                                    <th className="p-5">Gênero</th>
-                                    <th className="p-5">Data de adição</th>
-                                    <th className="p-5"></th>
-                                </tr>
-                                </thead>
-                                <tbody className="divide-y divide-unifae-gray50-2">
-                                {(input.trim() !== "" ? results : modalidades).map(response => (
-                                    <tr key={response.id} className="text-center">
-                                        <td className="p-5">{response.nome}</td>
-                                        <td className="p-5">{capitalize(response.categoria.nome)}</td>
-                                        <td className="p-5">{response.quantidade_participantes}</td>
-                                        <td className="p-5">{response.genero === "0" ? "Maculino" : "Feminino"}</td>
-                                        <td className="p-5">{response.data_adicao}</td>
-                                        <td className="p-5 flex gap-5">
-                                            <button onClick={() => handleEditModal(response)}
-                                                    className="btn-sm btn-edit">Editar
-                                            </button>
-                                            <button onClick={() => handleDelete(response.id)}
-                                                    className="btn-sm btn-delete">Excluir
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table> : <p>Ainda não há nenhuma modalidade cadastrada no sistema</p>)}
+                            <Table.Root>
+                                <Table.Head titles={['Nome', 'Categoria', 'Participantes', 'Gênero', 'Data de adição', ""]}/>
+                                    <Table.Body>
+                                        {(input.trim() !== "" ? results : modalidades).map(response => (
+                                            <tr key={response.id} className="text-center">
+                                                <td className="p-5">{response.nome}</td>
+                                                <td className="p-5">{capitalize(response.categoria.nome)}</td>
+                                                <td className="p-5">{response.quantidade_participantes}</td>
+                                                <td className="p-5">{response.genero === "0" ? "Maculino" : "Feminino"}</td>
+                                                <td className="p-5">{response.data_adicao}</td>
+                                                <td className="p-5 flex gap-5">
+                                                    <GerarJogos modalidade={response.id} nome={response.nome}/>
+                                                    <button onClick={() => handleEditModal(response)}
+                                                            className="btn-sm btn-edit">Editar
+                                                    </button>
+                                                    <button onClick={() => handleDelete(response.id)}
+                                                            className="btn-sm btn-delete">Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </Table.Body>
+                            </Table.Root>
+
+                            : <p>Ainda não há nenhuma modalidade cadastrada no sistema</p>)}
                 </div>
                 {modalidades > length > 0 ?
                     <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage}/> : ""}

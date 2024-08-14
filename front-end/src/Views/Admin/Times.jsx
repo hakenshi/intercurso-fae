@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {useStateContext} from "../../Contexts/ContextProvider"
 import {useAlert} from "../../Components/hooks/useAlert"
 import axiosInstance from "../../helper/axios-instance"
@@ -11,41 +11,51 @@ import {Table} from "../../Components/Table"
 import {setStatus} from "../../utils/setStatus"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Loading} from "../../Components/Loading"
+import usePagiante from "../../Components/hooks/usePaginate.jsx";
+import {Paginate} from "../../Components/Paginate.jsx";
 
 export const Times = ({idResponsavel, url = "/times"}) => {
+
+    const filterRef = useRef(null)
+    const [paginateUrl, setPaginateUrl] = useState('/paginate/times/0')
     const {user} = useStateContext()
+
     const {isAlertOpen, setIsAlertOpen, handleClose} = useAlert()
     const [isEditAlertOpen, setIsEditAlertOpen] = useState(false);
     const [isJogadoresAlertOpen, setisJogadoresAlertOpen] = useState(false);
     const nomeRef = useRef(null)
     const modalidadeRef = useRef(null)
+    const responsavelRef = useRef(null)
 
-    const [times, setTimes] = useState(null);
+    // const [times, setTimes] = useState(null);
     const [timeId, setTimeId] = useState(null);
     const [editTimes, setEditTimes] = useState(null)
-    const [modalidades, setModalidades] = useState([])
-    const [jogadores, setJogadores] = useState([])
+    const [modalidades, setModalidades] = useState(null)
+    const [jogadores, setJogadores] = useState(null)
     const [editJogadores, setEditJogadores] = useState([])
     const [loading, setLoading] = useState(true);
     const [erros, setErrors] = useState(null);
     const [novoJogador, setNovoJogador] = useState([])
     const [isEditing, setIsEditing] = useState(false)
+    const {data, handlePageChange,fetchData,lastPage,currentPage} = usePagiante(paginateUrl)
 
     useEffect(() => {
-        if (!times) {
-            axiosInstance.get("/times")
-                .then(({data}) => {
-                    setTimes(data.times)
-                    setModalidades(data.modalidades)
-                    setJogadores(data.jogadores)
-                    setLoading(false)
-                })
-                .catch(error => {
-                    setErrors(error.message)
-                    setLoading(false)
-                })
-        }
-    }, [times, url])
+        const fetchData = async () => {
+            try {
+                setLoading(true)
+                if (!modalidades && !jogadores) {
+                    const { data } = await axiosInstance.get('/modalidades');
+                    const response = await axiosInstance.get('/usuarios');
+                    setModalidades(data.data);
+                    setJogadores(response.data);
+                }
+            } catch (error) {
+                setErrors(error.message);
+            }
+        };
+        fetchData();
+        setLoading(false)
+    }, [jogadores, modalidades])
     const handleEditModal = (time) => {
         setEditTimes(time)
         setIsEditAlertOpen(true)
@@ -67,7 +77,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
     }
 
     const handleSelectResponsavel = (id) => {
-        localStorage.setItem("responsavelId", id)
+        responsavelRef.current.value = id
     }
 
     const handleSelectJogador = (jogador) => {
@@ -87,7 +97,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
             return;
         }
 
-        const responsavel = times.some(({usuario}) => usuario.id_responsavel === novoJogador);
+        const responsavel = data.some(({usuario}) => usuario.id_responsavel === novoJogador);
 
         if (responsavel) {
             alert("Você não pode se adicionar no time");
@@ -104,18 +114,18 @@ export const Times = ({idResponsavel, url = "/times"}) => {
         const {
             id_modalidade: modalidadeAtualId,
             quantidade_participantes: quantidade
-        } = times.find(time => time.time.id === timeId).modalidade;
+        } = data.find(time => time.time.id === timeId).modalidade;
 
         const {nome} = modalidades.find(modalidade => modalidade.id === modalidadeAtualId);
 
-        const jogadorComModalidadeDuplicada = times.some(time =>
+        const jogadorComModalidadeDuplicada = data.some(time =>
             time.time.id !== timeId &&
             time.modalidade.id_modalidade === modalidadeAtualId &&
             time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
         );
 
         if (jogadorComModalidadeDuplicada) {
-            const timeDuplicado = times.find(time =>
+            const timeDuplicado = data.find(time =>
                 time.time.id !== timeId &&
                 time.modalidade.id_modalidade === modalidadeAtualId &&
                 time.informacoes.jogadores.some(jogador => jogador.id_usuario === novoJogador)
@@ -145,24 +155,25 @@ export const Times = ({idResponsavel, url = "/times"}) => {
 
         axiosInstance.post('/jogadores', payload)
             .then(({data}) => {
-                setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
-                    ...time,
-                    informacoes: {
-                        jogadores: [
-                            ...time.informacoes.jogadores,
-                            ...data.data.map(jogador => ({
-                                id: jogador.id,
-                                id_usuario: jogador.usuario.id_usuario,
-                                id_time: jogador.time.id_time,
-                                nome: jogador.usuario.nome_usuario,
-                                email: jogador.usuario.email_usuario,
-                                ra: jogador.usuario.ra_usuario,
-                                status: jogador.status,
-                            }))
-                        ],
-                        quantidade: time.informacoes.quantidade + data.data.length,
-                    }
-                } : time));
+                fetchData()
+                // setTimes(t => t.map(time => time.time.id === data.data[0].time.id_time ? {
+                //     ...time,
+                //     informacoes: {
+                //         jogadores: [
+                //             ...time.informacoes.jogadores,
+                //             ...data.data.map(jogador => ({
+                //                 id: jogador.id,
+                //                 id_usuario: jogador.usuario.id_usuario,
+                //                 id_time: jogador.time.id_time,
+                //                 nome: jogador.usuario.nome_usuario,
+                //                 email: jogador.usuario.email_usuario,
+                //                 ra: jogador.usuario.ra_usuario,
+                //                 status: jogador.status,
+                //             }))
+                //         ],
+                //         quantidade: time.informacoes.quantidade + data.data.length,
+                //     }
+                // } : time));
             })
             .catch(error => {
                 const response = error.message;
@@ -173,16 +184,15 @@ export const Times = ({idResponsavel, url = "/times"}) => {
     };
 
 
-    const getResponasavelId = () => localStorage.getItem("responsavelId")
-
-
     const handleSubmit = e => {
         e.preventDefault()
+
+        const refValue = responsavelRef.current ? responsavelRef.current.value : null
 
         const payload = {
             nome: nomeRef.current.value,
             id_modalidade: modalidadeRef.current.value,
-            id_responsavel: user.tipo_usuario == 2 ? idResponsavel : getResponasavelId(),
+            id_responsavel: user.tipo_usuario === 2 ? idResponsavel : refValue,
             status: "1",
         }
 
@@ -191,7 +201,8 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 .then(({data}) => {
                     if (data) {
                         alert("Time Editado com sucesso!")
-                        setTimes(t => t.map(time => time.time.id === editTimes.time.id ? {...time, ...data.data} : time))
+                        fetchData()
+                        // setTimes(t => t.map(time => time.time.id === editTimes.time.id ? {...time, ...data.data} : time))
                     }
 
                 })
@@ -207,7 +218,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 .then(({data}) => {
                     if (data) {
                         alert("Time cadastrado com sucesso!")
-                        setTimes(m => [...m, data.data])
+
+                        fetchData()
+
+                        // setTimes(m => [...m, data.data])
                     }
                 })
                 .catch(error => {
@@ -227,7 +241,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
             axiosInstance.delete(`/times/${id}`)
                 .then(() => {
                     alert("Time excluido com sucesso")
-                    setTimes(t => t.filter(time => time.time.id !== id))
+
+                    fetchData()
+
+                    // setTimes(t => t.filter(time => time.time.id !== id))
                 })
                 .catch(error => {
                     const response = error.response
@@ -236,8 +253,6 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                     }
                 })
         }
-
-        return
     }
 
     const handleDeleteJogador = (id) => {
@@ -248,14 +263,17 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 .then(() => {
                     alert("Jogador excluido com sucesso")
                     setEditJogadores(j => j.filter(item => item.id !== id))
-                    setTimes(t => t.map(time => time.informacoes.jogadores.some(jogador => jogador.id === id) ? ({
-                        ...time,
-                        informacoes: {
-                            ...time.informacoes,
-                            jogadores: time.informacoes.jogadores.filter(jogador => jogador.id !== id),
-                            quantidade: time.informacoes.quantidade - 1,
-                        }
-                    }) : time))
+
+                    fetchData()
+
+                    // setTimes(t => t.map(time => time.informacoes.jogadores.some(jogador => jogador.id === id) ? ({
+                    //     ...time,
+                    //     informacoes: {
+                    //         ...time.informacoes,
+                    //         jogadores: time.informacoes.jogadores.filter(jogador => jogador.id !== id),
+                    //         quantidade: time.informacoes.quantidade - 1,
+                    //     }
+                    // }) : time))
                 })
                 .catch(error => {
                     const response = error.response
@@ -280,7 +298,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                 .then(({data}) => {
 
                     alert(`Time ${times.time.status === '1' ? "inativado" : "ativado"} com sucesso`)
-                    setTimes(t => t.map(time => time.time.id === times.time.id ? {...time, ...data.data} : time))
+
+                    fetchData()
+
+                    // setTimes(t => t.map(time => time.time.id === times.time.id ? {...time, ...data.data} : time))
 
                 })
                 .catch(error => {
@@ -290,8 +311,6 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                     }
                 })
         }
-
-        return
     }
 
     const handleEnviarConvite = (jogador) => {
@@ -303,16 +322,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
         })
             .then(() => {
                 setEditJogadores(j => j.map(j => j.id === jogador.id ? {...j, status: status} : j))
-
-                setTimes(t => Array.isArray(t) ? t.map(time => ({
-                    ...time,
-                    informacoes: {
-                        ...time.informacoes,
-                        jogadores: time.informacoes.jogadores.map(j =>
-                            j.id === jogador.id ? {...j, status: status} : j
-                        ),
-                    }
-                })) : t);
+                fetchData()
 
             })
             .catch(error => {
@@ -321,9 +331,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                     alert(response.data.message)
                 }
             })
-
-        return
     }
+
+    const handleChangeFilter = () => setPaginateUrl(`/paginate/times/${filterRef.current.value}`)
+
     return (
         <>
             <Modal.Root isOpen={isAlertOpen} onClose={handleClose}>
@@ -345,7 +356,7 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                     </div>
                     {user.tipo_usuario == 1 && <div className="flex flex-col justify-center p-2">
                         <label htmlFor="nome">Responsável pelo time</label>
-                        <Search placeholder={"Insira o RA do responsável"} url={"/responsaveis"}
+                        <Search ref={responsavelRef} placeholder={"Insira o RA do responsável"} url={"/responsaveis"}
                                 handleSelectUser={handleSelectResponsavel}
                                 data={editTimes ? editTimes.usuario.nome_responsavel : ""}/>
                     </div>}
@@ -452,7 +463,6 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                                                 {/* <button type="button" onClick={() => handleInativarJogador(jogador)} className={`btn-sm ${jogador.status === "1" ? 'btn-delete' : 'btn-confirm'}`}>
                                                         {setStatus(jogador.status)}
                                                     </button> */}
-
                                                 {jogador.status === "2" &&
                                                     <button onClick={() => handleEnviarConvite(jogador)}
                                                             className="btn-green w-10 h-10 text-xl text-center">
@@ -487,18 +497,23 @@ export const Times = ({idResponsavel, url = "/times"}) => {
                     <span className="flex justify-around p-5">
                         <button onClick={() => setIsAlertOpen(true)} className="w-fit p-3 btn-green text-sm ">Cadastrar Time</button>
                     </span>
-                    <input type="text" className="input-cadastro" placeholder="Insira algo para buscar"/>
+                    <select ref={filterRef} onChange={handleChangeFilter}
+                            className="p-2 rounded bg-white border border-unifae-green-1" name="modalidade"
+                            id="modalidade">
+                        <option value="0">Sem filtro</option>
+                        {modalidades.map(modalidade => (
+                            <option key={modalidade.id} value={modalidade.id}>{modalidade.nome}</option>
+                        ))}
+                    </select>
                 </div>
-                {loading ? (<Loading/>) : times && times.length <= 0 ?
-                    <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
-                        <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
-                    </div> : <div className="flex flex-col justify-center items-center p-5">
+                {loading ? (<Loading/>) : data && data.length > 0 ?
+                    <div className="flex flex-col justify-center items-center p-5">
 
                         <Table.Root>
                             <Table.Head
                                 titles={['Foto', 'Nome', 'Responsável', "Modalidades", 'Quantidade de Jogadores', 'Status', '', '', '']}/>
                             <Table.Body className="divide-y divide-unifae-gray50-2">
-                                {times && times
+                                {data && data
                                     .map(response => (
                                         <tr key={response.time.id} className="text-center">
                                             <td className="p-5">{response.time.foto_time == null ?
@@ -535,7 +550,10 @@ export const Times = ({idResponsavel, url = "/times"}) => {
 
                             </Table.Body>
                         </Table.Root>
+                    </div> : <div className="flex flex-col h-1/2 justify-evenly items-center w-full ">
+                        <p className="h-72 flex items-center"> {idResponsavel ? "Você ainda não é responsável por nenhum time" : "Ainda não há times cadastrados no sistema"}</p>
                     </div>}
+                <Paginate currentPage={currentPage} handlePageChange={handlePageChange} lastPage={lastPage}/>
             </div>
 
         </>

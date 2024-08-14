@@ -15,10 +15,10 @@ class FasesSeeder extends Seeder
     {
         Fases::factory()->createMany([
             ['nome' => 'Fase Chapéu'],
-            ['nome' => 'Primeira Fase'],
-            ['nome' => 'Segunda Fase'],
-            ['nome' => 'Terceira Fase'],
-            ['nome' => 'Quarta Fase'],
+            ['nome' => 'Fase Principal'],
+            ['nome' => 'Oitavas'],
+            ['nome' => 'Quartas'],
+            ['nome' => 'Semifinais'],
             ['nome' => 'Final'],
         ]);
     }

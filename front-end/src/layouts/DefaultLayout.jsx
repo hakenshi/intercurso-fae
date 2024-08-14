@@ -29,17 +29,6 @@ const userLinks = [
         icon: faUserGroup,
         text: "Meus Times"
     },
-    {
-        path: '/usuario/times-intercurso',
-        icon: faFlag,
-        text: 'Times'
-    },
-    {
-        path: '/usuario/placares',
-        icon: faTrophy,
-        text: 'Placares'
-    },
-
 ]
 
 
