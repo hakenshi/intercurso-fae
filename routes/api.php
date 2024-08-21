@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     //Ações simples
+    
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
@@ -44,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Rota de notificação
+    
     Route::prefix('/notificacao')->group(function () {
         Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
         Route::post('create', [NotificacaoController::class, 'create']);
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('ler-notificacao/{id}', [NotificacaoController::class, "marcarComoLida"]);
     });
     //Rotas de busca
+
     Route::get("/search-jogadores", [SearchController::class, 'jogadores']);
     Route::get("/search-modalidades", [SearchController::class, 'modalidades']);
     Route::get("/responsaveis", [SearchController::class, 'responsaveis']);
