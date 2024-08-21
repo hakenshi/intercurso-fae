@@ -14,14 +14,7 @@ class StoreUpdateUsuariosRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user();
-
-        if($user->tipo_usuario == "1"){
-            return true;
-        }
-
-
-        return false;
+        return true;
     }
 
     /**
@@ -60,8 +53,13 @@ class StoreUpdateUsuariosRequest extends FormRequest
                 'nullable',
                 'image'
             ],
+            'senha' => [
+                Rule::unique('usuarios')->ignore($this->route('id'))->where(function ($query) {
+                    return $query->where('id', $this->id);
+                }),
+            ],
             'bio' => 'nullable|max:120',
-            'data_nascimento' => 'nullable',
+            'data_de_nascimento' => 'nullable',
             'tipo_usuario' => 'nullable|integer',
         ];
         return $rules;

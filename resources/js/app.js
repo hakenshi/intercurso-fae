@@ -34,7 +34,6 @@ form.addEventListener('submit', e => {
             if (e){
                 const error = e.response.data
                 alert(error.msg)
-                return
             }
         })
 })

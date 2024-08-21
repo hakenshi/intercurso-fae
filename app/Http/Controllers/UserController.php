@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
 
     public function index()
     {
@@ -66,8 +63,9 @@ class UserController extends Controller
      */
     public function update(StoreUpdateUsuariosRequest $request, string $id)
     {
-
         $data = $request->validated();
+
+        $data_nascimento = Carbon::createFromFormat("d/m/Y", $data['data_de_nascimento'])->format('Y-m-d');
 
         $user = User::findOrFail($id);
 
@@ -83,9 +81,13 @@ class UserController extends Controller
             $data['foto_perfil'] = $user->foto_perfil;
         }
 
-        if (!empty($data['data_de_nascimento'])) $data['data_de_nascimento'] = Carbon::createFromFormat("dmY", $request->input('data_de_nascimento'))->format('Y-m-d');
+        if (!empty($data['data_de_nascimento'])) $data['data_de_nascimento'] = $data_nascimento;
 
-        if (!empty($data['senha'])) $data['senha'] = bcrypt($request->password);
+        if (!empty($data['senha'])) {
+            $data['senha'] = bcrypt($request->senha);
+        }
+
+        else $data['senha'] = $user->senha;
 
         if (!empty($data['email'])) $data['email'] = $request->email;
 
