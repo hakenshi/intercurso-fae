@@ -41,12 +41,6 @@ class TimeController extends Controller
     {
         $data = $request->validated();
 
-        $id_responsavel = User::where('nome', $data['id_responsavel'])
-            ->where('tipo_usuario', 2)
-            ->first()->id;
-
-        $data['id_responsavel'] = $id_responsavel;
-
         $time = Time::create($data);
 
         return new TimesResource($time);
