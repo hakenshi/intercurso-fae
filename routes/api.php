@@ -64,13 +64,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/search-usuarios', [SearchController::class, 'usuarios']);
     Route::get('/search-times', [SearchController::class, 'times']);
 
-
     //Rotas para o placar
 
     Route::prefix('/placar')->group(function () {
         Route::patch('/{placar}', [PlacarController::class, 'update']);
     });
-
 });
 
 Route::prefix('/paginate')->group(function () {

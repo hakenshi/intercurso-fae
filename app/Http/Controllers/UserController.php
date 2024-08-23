@@ -104,6 +104,8 @@ class UserController extends Controller
         $jogador = Jogador::where('id_usuario', $user->id)->first();
         $timeResponsavel = Time::where('id_responsavel', $user->id)->get();
 
+        $termos = Termo::where('id_usuario', $user->id)->get();
+
         if ($timeResponsavel) {
             foreach ($timeResponsavel as $responsavel) {
                 $responsavel->id_responsavel = null;
@@ -113,6 +115,10 @@ class UserController extends Controller
 
         if ($jogador) {
             $jogador->delete();
+        }
+
+        if($termos){
+            $termos->delete();
         }
 
         $user->delete();
