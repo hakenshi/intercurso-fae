@@ -74,7 +74,6 @@ class JogadoresController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $data = $request->all();
 
         $jogadores = Jogador::findOrFail($id);

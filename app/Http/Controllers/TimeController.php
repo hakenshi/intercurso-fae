@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateStoreTimesResource;
+use App\Http\Resources\JogadoresTimeResource;
 use App\Http\Resources\ModalidadesResource;
 use App\Http\Resources\TimesResource;
 use App\Models\Jogador;
@@ -67,11 +68,9 @@ class TimeController extends Controller
 
     public function showTimesUsuario(string $id)
     {
-        $times = Time::whereHas('jogadores', function ($query) use ($id) {
-            $query->where('id_usuario', $id);
-        })->with('jogadores')->get();
 
-        return TimesResource::collection($times);
+        $times = Jogador::where('id_usuario', $id)->get();
+        return JogadoresTimeResource::collection($times);
     }
 
     public function update(Request $request, string $id)
