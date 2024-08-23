@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateStoreTimesResource;
 use App\Http\Resources\ModalidadesResource;
 use App\Http\Resources\TimesResource;
 use App\Models\Jogador;
+use App\Models\Jogo;
 use App\Models\Modalidade;
 use App\Models\Time;
 use App\Models\User;
@@ -40,6 +41,8 @@ class TimeController extends Controller
     public function store(UpdateStoreTimesResource $request)
     {
         $data = $request->validated();
+
+        $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
 
         $time = Time::create($data);
 
