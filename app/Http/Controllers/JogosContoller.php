@@ -52,6 +52,7 @@ class JogosContoller extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validate([
+                'id_fase' => 'required',
                 'id_modalidade' => 'required',
                 'id_time_1' => 'required',
                 'id_time_2' => 'required',
