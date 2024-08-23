@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\FasesController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\JogosContoller;
 use App\Http\Controllers\ModalidadesController;
@@ -22,15 +23,18 @@ Route::prefix("/times")->group(function () {
 });
 
 Route::apiResources([
-    '/usuarios' => UserController::class,
     '/modalidades' => ModalidadesController::class,
     '/times' => TimeController::class,
-    '/jogadores' => JogadoresController::class,
     '/jogos' => JogosContoller::class,
     '/categoria' => CategoriaController::class,
 ]);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::apiResources([
+        '/jogadores' => JogadoresController::class,
+        '/usuarios' => UserController::class,
+    ]);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -42,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
     Route::post('/jogos/gerar-chaves', [JogosContoller::class, 'storeMany']);
-
+    Route::get('/fases', [FasesController::class, 'index']);
 
     // Rota de notificação
     

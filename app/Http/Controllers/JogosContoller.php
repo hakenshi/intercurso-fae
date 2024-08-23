@@ -6,6 +6,7 @@ use App\Http\Resources\JogadoresResource;
 use App\Http\Resources\JogosResource;
 use App\Http\Resources\ModalidadesResource;
 use App\Http\Resources\PlacarResource;
+use App\Models\Fases;
 use App\Models\Jogo;
 use App\Models\Modalidade;
 use App\Models\Placar;
@@ -19,9 +20,6 @@ use PhpParser\Node\Expr\New_;
 
 class JogosContoller extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function indexPaginate(string $id)
     {
         if ($id == 0){
