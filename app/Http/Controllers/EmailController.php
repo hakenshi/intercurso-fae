@@ -64,7 +64,7 @@ class EmailController extends Controller
         $user->update();
 
         try{
-            Mail::to('nyfornaziero@gmail.com')->send(new ResetPassword($data));
+            Mail::to($user->email)->send(new ResetPassword($data));
 
         } catch (\Exception $e) {
             // Se houver uma exceção, algo deu errado
