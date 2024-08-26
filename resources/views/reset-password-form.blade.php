@@ -5,35 +5,32 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{asset('css/form-styles.css')}}">
     <title>Intercurso</title>
 </head>
-<body>
- <div class="bg-[#262626] min-h-screen flex justify-center items-center">
-
-<div class="md:w-1/2 bg-white rounded-md lg:w-[33vw] p-3 md:p-5 lg:p-10">
-    <div class="flex items-center flex-col h-[15vh] justify-center">
-        <img src="{{ asset("logo-unifae-2021.png") }}" alt="unifae-logo" class="w-3/4"/>
-        <span class="text-unifae-green-1 font-semibold">Intercurso</span>
+<body class="form-page">
+<div class="form-container">
+    <div class="logo-container">
+        <img src="{{ asset('logo-unifae-2021.png') }}" alt="unifae-logo" class="logo"/>
+        <span class="logo-text">Intercurso</span>
     </div>
-    <form id="form" class="flex flex-col items-center gap-6 p-4 lg:p-0">
+    <form id="form" class="form">
         @csrf
-        <div class="flex flex-col justify-center">
-            <input type="hidden" id="reset-token" name="password_reset_token" value="{{$token ?? ""}}">
-            <label class="text-lg" for="email">Senha</label>
-            <input class="input-login" type="password" name="senha" id="senha" placeholder="••••••••"/>
-            <p class="px-2 py-1 text-xs text-black/80" id="email-error"></p>
+        <div class="input-group">
+            <input type="hidden" id="reset-token" name="password_reset_token" value="{{$token ?? ''}}">
+            <label class="label" for="senha">Senha</label>
+            <input class="input" type="password" name="senha" id="senha" placeholder="••••••••"/>
+            <p class="error-message" id="email-error"></p>
         </div>
-        <div class="flex flex-col justify-center">
-            <label class="text-lg" for="senha">Confirmar Senha</label>
-            <input class="input-login" type="password" name="confirm-senha" id="confirm-senha" placeholder="••••••••"/>
-            <p class="px-2 py-1 text-xs text-black/80" id="senha-error"></p>
+        <div class="input-group">
+            <label class="label" for="confirm-senha">Confirmar Senha</label>
+            <input class="input" type="password" name="confirm-senha" id="confirm-senha" placeholder="••••••••"/>
+            <p class="error-message" id="senha-error"></p>
         </div>
-        <button type="submit" class="btn-lg btn-green">Entrar</button>
-
+        <button type="submit" class="submit-button">Entrar</button>
     </form>
- </div>
 </div>
+<script src="{{asset('js/script.js')}}"></script>
 </body>
 </html>
