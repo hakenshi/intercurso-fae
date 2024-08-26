@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     //Ações simples
-    
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::patch('/expulsar-jogador/{id}', [JogadoresController::class, 'expulsarJogador']);
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/fases', [FasesController::class, 'index']);
 
     // Rota de notificação
-    
+
     Route::prefix('/notificacao')->group(function () {
         Route::get("{id}", [NotificacaoController::class, 'verNotificacao']);
         Route::post('create', [NotificacaoController::class, 'create']);
@@ -82,6 +82,7 @@ Route::prefix('/paginate')->group(function () {
 Route::get('/termos/{id}', [UserController::class, 'termos']);
 
 Route::post('/reset-password', [EmailController::class, 'sendResetPassword']);
+Route::get('/testeemail', [EmailController::class, 'sendTestEmail']);
 
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
 Route::post('/login', [AuthController::class, 'login']);

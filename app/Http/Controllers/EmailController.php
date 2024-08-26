@@ -40,6 +40,17 @@ class EmailController extends Controller
         }
     }
 
+    public function sendTestEmail()
+    {
+        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
+
+        Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
+            $message->to($toEmail)
+                ->subject('Teste de E-mail');
+        });
+
+        return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
+    }
     public function resetPassword(Request $request){
         try {
 
