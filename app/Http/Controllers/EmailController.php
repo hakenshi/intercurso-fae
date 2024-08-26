@@ -27,7 +27,7 @@ class EmailController extends Controller
 
             $user->update();
 
-            Mail::to($data['email'])->send(new ResetPassword($data));
+           dd(Mail::to($data['email'])->send(new ResetPassword($data)));
 
             return response()->json(["success" => true]);
 
