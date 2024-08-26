@@ -27,7 +27,7 @@ class EmailController extends Controller
 
             $user->update();
 
-           dd(Mail::to($data['email'])->send(new ResetPassword($data)));
+            Mail::to($data['email'])->send(new ResetPassword($data));
 
             return response()->json(["success" => true]);
 
@@ -42,16 +42,30 @@ class EmailController extends Controller
 
     public function sendTestEmail()
     {
-        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
+//        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
+//
+//        try {
+//            Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
+//                $message->to($toEmail)
+//                    ->subject('Teste de E-mail');
+//            });
+//        }catch (\Exception $e){
+//            dd($e->getMessage());
+//        }
 
-        try {
-            Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
-                $message->to($toEmail)
-                    ->subject('Teste de E-mail');
-            });
-        }catch (\Exception $e){
-            dd($e->getMessage());
-        }
+        $user = User::where('email', 'nykolas.santos@prof.fae.br')->firstOrFail();
+
+        $data['user'] = $user->nome;
+
+        $data['token'] = strval(rand(100000, 999999));
+
+        $user->password_reset_token = $data['token'];
+
+        $user->update();
+
+        dd($data);
+        Mail::to($data['email'])->send(new ResetPassword($data));
+
 
 
         return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
