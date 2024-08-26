@@ -63,7 +63,14 @@ class EmailController extends Controller
 
         $user->update();
 
-        dd(Mail::to($user->email)->send(new ResetPassword($data)));
+        try{
+            Mail::to($user->email)->send(new ResetPassword($data));
+
+        } catch (\Exception $e) {
+            // Se houver uma exceção, algo deu errado
+        dd('Falha ao enviar o e-mail: ' . $e->getMessage());
+
+        }
 
         return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
     }
