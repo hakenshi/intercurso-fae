@@ -43,7 +43,7 @@ class EmailController extends Controller
     public function sendTestEmail()
     {
         $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
-
+        dd($toEmail);
         Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
             $message->to($toEmail)
                 ->subject('Teste de E-mail');
