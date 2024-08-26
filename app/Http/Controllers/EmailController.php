@@ -63,7 +63,7 @@ class EmailController extends Controller
 
         $user->update();
 
-        dd($data);
+        dd($user);
         Mail::to($data['email'])->send(new ResetPassword($data));
 
 
