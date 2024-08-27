@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class EmailController extends Controller
 {
@@ -43,15 +42,6 @@ class EmailController extends Controller
 
     public function sendTestEmail()
     {
-
-
-
-        try {
-            Mail::mailer()->getSymfonyTransport()->ping();
-            echo "Conexão com o servidor SMTP estabelecida com sucesso!";
-        } catch (TransportExceptionInterface $e) {
-            echo "Erro ao conectar com o servidor SMTP: " . $e->getMessage();
-        }
 //        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
 //
 //        try {
@@ -63,24 +53,24 @@ class EmailController extends Controller
 //            dd($e->getMessage());
 //        }
 
-//        $user = User::where('email', 'nykolas.santos@prof.fae.br')->firstOrFail();
-//
-//        $data['user'] = $user->nome;
-//
-//        $data['token'] = strval(rand(100000, 999999));
-//
-//        $user->password_reset_token = $data['token'];
-//
-//        $user->update();
-//
-//        try{
-//            Mail::to($user->email)->send(new ResetPassword($data));
-//
-//        } catch (\Exception $e) {
-//            // Se houver uma exceção, algo deu errado
-//        dd('Falha ao enviar o e-mail: ' . $e->getMessage());
-//
-//        }
+        $user = User::where('email', 'nykolas.santos@prof.fae.br')->firstOrFail();
+
+        $data['user'] = $user->nome;
+
+        $data['token'] = strval(rand(100000, 999999));
+
+        $user->password_reset_token = $data['token'];
+
+        $user->update();
+
+        try{
+            Mail::to($user->email)->send(new ResetPassword($data));
+
+        } catch (\Exception $e) {
+            // Se houver uma exceção, algo deu errado
+        dd('Falha ao enviar o e-mail: ' . $e->getMessage());
+
+        }
 
         return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
     }
