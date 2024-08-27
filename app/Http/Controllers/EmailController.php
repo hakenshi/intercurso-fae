@@ -42,37 +42,37 @@ class EmailController extends Controller
 
     public function sendTestEmail()
     {
-//        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
-//
-//        try {
-//            Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
-//                $message->to($toEmail)
-//                    ->subject('Teste de E-mail');
-//            });
-//        }catch (\Exception $e){
-//            dd($e->getMessage());
-//        }
+        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
 
-        $user = User::where('email', 'nykolas.santos@prof.fae.br')->firstOrFail();
-
-        $data['user'] = $user->nome;
-
-        $data['token'] = strval(rand(100000, 999999));
-
-        $user->password_reset_token = $data['token'];
-
-        $user->update();
-
-        try{
-            Mail::to($user->email)->send(new ResetPassword($data));
-
-        } catch (\Exception $e) {
-            // Se houver uma exceção, algo deu errado
-        dd('Falha ao enviar o e-mail: ' . $e->getMessage());
-
+        try {
+            Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
+                $message->to($toEmail)
+                    ->subject('Teste de E-mail');
+            });
+        }catch (\Exception $e){
+            dd($e->getMessage());
         }
 
-        return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
+//        $user = User::where('email', 'nyfornaziero@gmail.com')->firstOrFail();
+//
+//        $data['user'] = $user->nome;
+//
+//        $data['token'] = strval(rand(100000, 999999));
+//
+//        $user->password_reset_token = $data['token'];
+//
+//        $user->update();
+//
+//        try{
+//            Mail::to($user->email)->send(new ResetPassword($data));
+//
+//        } catch (\Exception $e) {
+//            // Se houver uma exceção, algo deu errado
+//        dd('Falha ao enviar o e-mail: ' . $e->getMessage());
+//
+//        }
+//
+//        return response()->json(['message' => 'E-mail de teste enviado com sucesso!']);
     }
     public function resetPassword(Request $request){
         try {
