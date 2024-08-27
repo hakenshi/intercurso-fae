@@ -45,7 +45,7 @@ class EmailController extends Controller
         $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
 
         try {
-            Mail::raw('Este é um e-mail de teste!', function ($message) use ($toEmail) {
+            Mail::raw('Ta funcionando o envio de email!', function ($message) use ($toEmail) {
                 $message->to($toEmail)
                     ->subject('Teste de E-mail');
             });
