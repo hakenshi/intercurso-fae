@@ -42,7 +42,7 @@ class EmailController extends Controller
 
     public function sendTestEmail()
     {
-        $toEmail = 'nyfornaziero@gmail.com'; // Endereço de e-mail para onde o e-mail será enviado
+        $toEmail = 'nykolas.santos@prof.fae.br'; // Endereço de e-mail para onde o e-mail será enviado
 
         try {
             Mail::raw('Ta funcionando o envio de email!', function ($message) use ($toEmail) {
