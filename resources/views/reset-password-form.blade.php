@@ -16,7 +16,6 @@
         <span class="logo-text">Intercurso</span>
     </div>
     <form id="form" class="form">
-        @csrf
         <div class="input-group">
             <input type="hidden" id="reset-token" name="password_reset_token" value="{{$token ?? ''}}">
             <label class="label" for="senha">Senha</label>

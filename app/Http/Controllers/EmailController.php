@@ -77,8 +77,6 @@ class EmailController extends Controller
     public function resetPassword(Request $request){
         try {
 
-//            dd($request->all());
-
             $data = $request->validate([
                 'password-reset-token' => 'required',
                 'senha' => 'required',
