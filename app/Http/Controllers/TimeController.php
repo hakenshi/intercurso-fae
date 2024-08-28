@@ -43,13 +43,9 @@ class TimeController extends Controller
     {
         $data = $request->validated();
 
-        dd($data['id_responsavel']);
-        if($data['id_responsavel']){
-            $data['id_responsavel']=auth()->user()->id;
-        }else{
+        if(!is_int($data['id_responsavel'])){
             $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
         }
-
 
 
         $time = Time::create($data);
