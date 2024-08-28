@@ -43,7 +43,8 @@ class TimeController extends Controller
     {
         $data = $request->validated();
 
-        if(!isset($data['id_responsavel'])){
+        dd($data['id_responsavel']);
+        if($data['id_responsavel']){
             $data['id_responsavel']=auth()->user()->id;
         }else{
             $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
