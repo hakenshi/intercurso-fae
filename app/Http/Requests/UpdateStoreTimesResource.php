@@ -29,8 +29,7 @@ class UpdateStoreTimesResource extends FormRequest
             'nome' => [
                 'required',
                 'min:3',
-                'max:255',
-                'unique:times,nome'
+                'max:255'
             ],
             'status' => 'boolean',
         ];
