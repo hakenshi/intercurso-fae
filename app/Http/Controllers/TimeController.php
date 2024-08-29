@@ -36,6 +36,15 @@ class TimeController extends Controller
         }
     }
 
+    public function paginateResponsaveis($id_responsavel, $id){
+        if ($id == 0){
+            return TimesResource::collection(Time::where("id_responsavel", $id_responsavel)->paginate(6));
+        }
+        else{
+            return TimesResource::collection(Time::where("id_responsavel", $id_responsavel)->where('id_modalidade', $id)->paginate(6));
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('/paginate')->group(function () {
+    Route::get('times/{id_responsavel}/{id}', [TimeController::class, 'paginateResponsaveis']);
     Route::get('jogos/{id}', [JogosContoller::class, 'indexPaginate']);
     Route::get('/users', [UserController::class, 'indexPaginate']);
     Route::get('/modalidades', [ModalidadesController::class, 'indexPaginate']);
