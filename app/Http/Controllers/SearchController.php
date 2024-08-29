@@ -73,7 +73,7 @@ class SearchController extends Controller
     {
         $data = $request->input('value');
         $jogadores = User::where('ra', 'LIKE', "%'" . $data . "'%")
-            ->whereIn('tipo_usuario',[2,3])
+            ->whereIn('tipo_usuario',['2','3'])
             ->get();
 
         return $this->search($data, $jogadores);
