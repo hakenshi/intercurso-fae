@@ -52,7 +52,10 @@ class TimeController extends Controller
     {
         $data = $request->validated();
 
-        $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
+        if(!is_int($data['id_responsavel'])){
+            $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
+        }
+
 
         $time = Time::create($data);
 
