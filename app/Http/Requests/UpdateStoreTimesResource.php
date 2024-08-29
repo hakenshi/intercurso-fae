@@ -47,8 +47,7 @@ class UpdateStoreTimesResource extends FormRequest
             $rules['nome'] = [
                 'required',
                 'min:3',
-                'max:255',
-                Rule::unique("time")->ignore($this->id)
+                'max:255'
             ];
         }
 
