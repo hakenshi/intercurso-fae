@@ -52,7 +52,6 @@ class UpdateStoreTimesResource extends FormRequest
                 Rule::unique("time")->ignore($this->id)
             ];
         }
-
         return $rules;
     }
 }
