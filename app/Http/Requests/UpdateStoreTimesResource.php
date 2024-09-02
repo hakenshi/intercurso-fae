@@ -50,7 +50,6 @@ class UpdateStoreTimesResource extends FormRequest
                 'max:255'
             ];
         }
-
         return $rules;
     }
 }
