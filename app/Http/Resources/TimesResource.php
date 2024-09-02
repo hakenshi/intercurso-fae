@@ -23,6 +23,7 @@ class TimesResource extends JsonResource
             'modalidade' => [
                 'id_modalidade' => $this->modalidade->id,
                 'nome_modalidade' => $this->modalidade->nome,
+                'quantidade_participantes' => $this->modalidade->quantidade_participantes,
             ],
             'usuario' => [
                 'id_responsavel' => $this->id_responsavel ? $this->id_responsavel : "",

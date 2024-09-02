@@ -22,14 +22,14 @@ class UserController extends Controller
 
     public function indexPaginate()
     {
-        $user = User::paginate(6);
+        $user = User::paginate(10);
 
         return UsuariosResource::collection($user);
     }
 
     public function indexResponsaveis()
     {
-        $user = User::where("tipo_usuario", 2)->paginate(6);
+        $user = User::where("tipo_usuario", 2)->paginate(10);
 
         return UsuariosResource::collection($user);
     }

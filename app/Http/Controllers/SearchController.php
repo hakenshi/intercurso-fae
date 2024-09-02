@@ -37,7 +37,7 @@ class SearchController extends Controller
     {
         $data = $request->input('value');
 
-        $usuarios = User::paginate(4);
+        $usuarios = User::paginate(7);
 
         if ($data) {
             $usuarios = User::where("nome", "LIKE", "%" . $data . "%")->paginate(4);
@@ -50,7 +50,7 @@ class SearchController extends Controller
     {
         $data = $request->input('value');
 
-        $modalidades = Modalidade::paginate(6);
+        $modalidades = Modalidade::paginate(7);
 
         if ($data) {
             $modalidades = Modalidade::where("nome", "LIKE", "%" . $data . "%")->paginate(6);
