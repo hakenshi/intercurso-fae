@@ -14,7 +14,7 @@ class EmailRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!preg_match("/@(sou|prof)\.fae\.br$/", $value)) {
+        if (!preg_match("/@(sou\.fae\.br|prof\.fae\.br|fae\.br)$/", $value)) {
             $fail("o :attribute precisa ser um email institucional");
         }
     }
