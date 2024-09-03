@@ -35,10 +35,9 @@ class JogosContoller extends Controller
 
     public function index()
     {
-
-        $jogos = Jogo::orderBy('status', 'desc')->get();
-
-        return JogosResource::collection($jogos);
+        return JogosResource::collection(Jogo::whereNotNull('id_time_1')
+            ->whereNotNull('id_time_2')
+            ->orderBy('status', 'desc')->get());
     }
 
 

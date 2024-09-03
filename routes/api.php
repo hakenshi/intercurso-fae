@@ -6,6 +6,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FasesController;
 use App\Http\Controllers\JogadoresController;
 use App\Http\Controllers\JogosContoller;
+use App\Http\Controllers\LikesController;
 use App\Http\Controllers\ModalidadesController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlacarController;
@@ -20,6 +21,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix("/times")->group(function () {
     Route::get("/usuario/{id}", [TimeController::class, 'showTimesUsuario']);
+});
+Route::prefix('/likes')->group(function () {
+    Route::post('/store', [LikesController::class, 'store']);
+    Route::delete('/remove', [LikesController::class, 'destroy']);
+    Route::get('{id}', [LikesController::class, 'show']);
 });
 
 Route::apiResources([

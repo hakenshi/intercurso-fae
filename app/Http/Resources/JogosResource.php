@@ -64,6 +64,10 @@ class JogosResource extends JsonResource
                 'hora_jogo' => $this->data_jogo ? Carbon::make($this->data_jogo)->format('H:i') : "Sem hora definida",
                 'status' => $this->status,
                 'local' => $this->local ?? "A definir",
+                'likes' => [
+                    'likes_time_1' => $this->likes_time_1,
+                    'likes_time_2' => $this->likes_time_2,
+                ],
             ]
         ];
     }
