@@ -25,7 +25,6 @@ class JogosContoller extends Controller
         if ($id == 0){
         return JogosResource::collection(Jogo::paginate(6));
         }
-
         return  JogosResource::collection(Jogo::where('id_modalidade', $id)->paginate(6));
     }
 
@@ -84,7 +83,7 @@ class JogosContoller extends Controller
     {
         $id_modalidade = $request->id_modalidade;
 
-        $teams = Time::where('id_modalidade', $id_modalidade)->get('id')->toArray();
+        $teams = Time::where('id_modalidade', $id_modalidade)->where('status', '1')->get('id')->toArray();
 
         $organizedMatches = Jogo::organizeMatches(array_column($teams, 'id'));
 

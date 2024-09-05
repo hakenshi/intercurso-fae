@@ -29,10 +29,10 @@ class TimeController extends Controller
     public function indexPaginate(string $id)
     {
         if ($id == 0){
-            return TimesResource::collection(Time::paginate(6));
+            return TimesResource::collection(Time::orderBy('status')->paginate(6));
         }
         else{
-            return TimesResource::collection(Time::where("id_modalidade", $id)->paginate(6));
+            return TimesResource::collection(Time::where("id_modalidade", $id)->orderBy("status")->paginate(6));
         }
     }
 

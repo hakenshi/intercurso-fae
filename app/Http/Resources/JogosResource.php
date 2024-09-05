@@ -23,28 +23,39 @@ class JogosResource extends JsonResource
                     'id' => $this->time1->id ?? "",
                     "nome" => $this->time1->nome ?? "Sem time",
                     'image' => $this->time1->foto_time ?? "",
-                   'jogadores' => $this->time1?->jogadores->map(fn ($jogador) => [
-                           'id' => $jogador->id,
-                           'foto_perfil' => $jogador->usuario->foto_perfil,
-                           'nome' => $jogador->usuario->nome,
-                           'email' => $jogador->usuario->email,
-                           'ra' => $jogador->usuario->ra,
-                       ]),
-                ],
-                'time2' => [
-                    'id' => $this->time2->id ?? "",
-                    "nome" => $this->time2->nome ?? "Sem time",
-                    'image' => $this->time2->foto_time ?? "",
-                    'jogadores' => $this->time2?->jogadores->map(fn ($jogador) => [
+                    'jogadores' => $this->time1?->jogadores
+                        ->map(fn($jogador) => [
                             'id' => $jogador->id,
                             'foto_perfil' => $jogador->usuario->foto_perfil,
                             'nome' => $jogador->usuario->nome,
                             'email' => $jogador->usuario->email,
                             'ra' => $jogador->usuario->ra,
+                            'status' => $jogador->status == "0"
+                                ? "Pendente"
+                                : ($jogador->status == "1"
+                                    ? "Ativo"
+                                    : "Negado"),
                         ]),
                 ],
+                'time2' => [
+                    'id' => $this->time2->id ?? "",
+                    "nome" => $this->time2->nome ?? "Sem time",
+                    'image' => $this->time2->foto_time ?? "",
+                    'jogadores' => $this->time2?->jogadores->map(fn($jogador) => [
+                        'id' => $jogador->id,
+                        'foto_perfil' => $jogador->usuario->foto_perfil,
+                        'nome' => $jogador->usuario->nome,
+                        'email' => $jogador->usuario->email,
+                        'ra' => $jogador->usuario->ra,
+                        'status' => $jogador->status == "0"
+                            ? "Pendente"
+                            : ($jogador->status == "1"
+                                ? "Ativo"
+                                : "Negado"),
+                    ]),
+                ],
             ],
-            'placar' =>[
+            'placar' => [
                 'placar_time_1' => $this->placar_time_1 ?? "",
                 'placar_time_2' => $this->placar_time_2 ?? "",
                 'time_vencedor' => [
