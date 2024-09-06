@@ -41,6 +41,8 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
+        $data['data_de_nascimento'] = Carbon::createFromFormat('d/m/Y', $data['data_de_nascimento'])->format('Y-m-d');
+
         $data['senha'] = bcrypt($request->password);
 
         $user = User::create($data);
