@@ -2,21 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\JogadoresResource;
+use App\Exports\TimesExport;
 use App\Http\Resources\JogosResource;
-use App\Http\Resources\ModalidadesResource;
-use App\Http\Resources\PlacarResource;
-use App\Models\Fases;
 use App\Models\Jogo;
-use App\Models\Modalidade;
-use App\Models\Placar;
 use App\Models\Time;
 use Carbon\Carbon;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use PhpParser\Node\Expr\New_;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JogosContoller extends Controller
 {
@@ -176,9 +169,8 @@ class JogosContoller extends Controller
         return new JogosResource($jogo);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
+
     public function destroy(Jogo $jogo)
     {
         if ($jogo->placar) {
@@ -187,4 +179,17 @@ class JogosContoller extends Controller
         $jogo->delete();
         return new JogosResource($jogo);
     }
+
+    public function export(Request $request)
+    {
+
+        $data = $request->all();
+
+        dd($data);
+
+        return Excel::download(new TimesExport($data), 'jogos.csv', \Maatwebsite\Excel\Excel::CSV, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
 }
