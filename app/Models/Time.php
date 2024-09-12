@@ -30,7 +30,7 @@ class Time extends Model
 
     public function jogadores()
     {
-        return $this->hasMany(Jogador::class, "id_time");
+        return $this->hasMany(Jogador::class, "id_time", "id");
     }
 
     public function jogos()

@@ -180,16 +180,4 @@ class JogosContoller extends Controller
         return new JogosResource($jogo);
     }
 
-    public function export(Request $request)
-    {
-
-        $data = $request->all();
-
-        dd($data);
-
-        return Excel::download(new TimesExport($data), 'jogos.csv', \Maatwebsite\Excel\Excel::CSV, [
-            'Content-Type' => 'text/csv',
-        ]);
-    }
-
 }

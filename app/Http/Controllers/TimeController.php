@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateStoreTimesResource;
 use App\Http\Resources\JogadoresTimeResource;
-use App\Http\Resources\ModalidadesResource;
 use App\Http\Resources\TimesResource;
 use App\Models\Jogador;
-use App\Models\Jogo;
 use App\Models\Modalidade;
 use App\Models\Time;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Psy\Command\WhereamiCommand;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TimesExport;
 
 class TimeController extends Controller
 {
@@ -28,19 +27,18 @@ class TimeController extends Controller
 
     public function indexPaginate(string $id)
     {
-        if ($id == 0){
+        if ($id == 0) {
             return TimesResource::collection(Time::orderBy('status')->paginate(6));
-        }
-        else{
+        } else {
             return TimesResource::collection(Time::where("id_modalidade", $id)->orderBy("status")->paginate(6));
         }
     }
 
-    public function paginateResponsaveis($id_responsavel, $id){
-        if ($id == 0){
+    public function paginateResponsaveis($id_responsavel, $id)
+    {
+        if ($id == 0) {
             return TimesResource::collection(Time::where("id_responsavel", $id_responsavel)->paginate(6));
-        }
-        else{
+        } else {
             return TimesResource::collection(Time::where("id_responsavel", $id_responsavel)->where('id_modalidade', $id)->paginate(6));
         }
     }
@@ -52,7 +50,7 @@ class TimeController extends Controller
     {
         $data = $request->validated();
 
-        if(!is_int($data['id_responsavel'])){
+        if (!is_int($data['id_responsavel'])) {
             $data['id_responsavel'] = User::where('nome', $data['id_responsavel'])->first()->id;
         }
 
@@ -106,5 +104,14 @@ class TimeController extends Controller
         $time->delete();
 
         return new TimesResource($time);
+    }
+
+    public function export(Request $request)
+    {
+
+        $data = $request->all();
+        $time = Time::findOrFail($data['id']);
+
+        return Excel::download(new TimesExport($time->jogadores, $time->nome), 'jogos.csv', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

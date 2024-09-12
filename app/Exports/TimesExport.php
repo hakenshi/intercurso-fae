@@ -8,26 +8,20 @@ use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class TimesExport implements WithMultipleSheets, WithCustomCsvSettings
+class TimesExport implements WithMultipleSheets
 {
     protected $data;
-
-    public function __construct($data)
+    protected $nome_time;
+    public function __construct($data, $nome_time)
     {
         $this->data = $data;
+        $this->nome_time = $nome_time;
     }
 
     public function sheets(): array
     {
-        $sheets[] = new TimeSheet($this->data['nome'], $this->data['jogadores']);
+        $sheets[] = new TimeSheet($this->nome_time, $this->data);
         return $sheets;
-    }
-
-    public function getCsvSettings(): array
-    {
-        return [
-          'delimiter' => ';'
-        ];
     }
 }
 
@@ -40,7 +34,6 @@ class TimeSheet implements FromArray, WithTitle
     {
         $this->title = $title;
         $this->info = $info;
-
     }
 
     public function title(): string
@@ -52,13 +45,14 @@ class TimeSheet implements FromArray, WithTitle
     {
         $data = [];
         $data[] = ['Time', 'Nome dos Usuários', 'Email', 'RA', 'Status'];
+        
         foreach ($this->info as $jogador) {
             $data[] = [
                 $this->title,
-                $jogador['nome'],
-                $jogador['email'],
-                $jogador['ra'],
-                $jogador['status'],
+                $jogador->usuario->nome,
+                $jogador->usuario->email,
+                $jogador->usuario->ra,
+                $jogador->status == "0" ? "Pendente" : ($jogador->status == "1" ? "Ativo" : "Negado"),
             ];
         }
         return $data;

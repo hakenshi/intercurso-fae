@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/tornar-responsavel/{id}', [UserController::class, 'tornarResponsavel']);
     Route::post('/jogos/gerar-chaves', [JogosContoller::class, 'storeMany']);
     Route::get('/fases', [FasesController::class, 'index']);
-    Route::post('/export', [JogosContoller::class, 'export']);
+    Route::post('/export', [TimeController::class, 'export']);
     // Rota de notificação
 
     Route::prefix('/notificacao')->group(function () {
