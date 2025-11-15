@@ -6,8 +6,10 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^3.0.4",
     "better-auth": "^1.3.34",
     "drizzle-orm": "^0.44.7",
+    "drizzle-typebox": "^0.3.3",
     "elysia": "latest"
   },
   "devDependencies": {
