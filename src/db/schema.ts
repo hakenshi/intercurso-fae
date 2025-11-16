@@ -11,6 +11,8 @@ import {
     varchar,
 } from "drizzle-orm/pg-core";
 
+import { relations } from "drizzle-orm";
+
 export const userTypeEnum = pgEnum("user_type", [
     "student",
     "responsible",
@@ -30,11 +32,11 @@ export const gameStatusEnum = pgEnum("game_status", [
     "inactive",
     "finished",
 ]);
-const user = pgTable("user", {
+export const user = pgTable("user", {
     id: text("id").primaryKey(),
     courseId: text("course_id")
         .notNull()
-        .references(() => courses.id),
+        .references(() => courses.id, { onDelete: "cascade" }),
     profilePicture: text("profile_picture"),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
@@ -52,7 +54,7 @@ const user = pgTable("user", {
         .notNull(),
 });
 
-const session = pgTable("session", {
+export const session = pgTable("session", {
     id: text("id").primaryKey(),
     expiresAt: timestamp("expires_at").notNull(),
     token: text("token").notNull().unique(),
@@ -69,7 +71,7 @@ const session = pgTable("session", {
         .references(() => user.id, { onDelete: "cascade" }),
 });
 
-const account = pgTable("account", {
+export const account = pgTable("account", {
     id: text("id").primaryKey(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
@@ -91,7 +93,7 @@ const account = pgTable("account", {
         .notNull(),
 });
 
-const verification = pgTable("verification", {
+export const verification = pgTable("verification", {
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
@@ -105,7 +107,7 @@ const verification = pgTable("verification", {
         .notNull(),
 });
 
-const courses = pgTable("courses", {
+export const courses = pgTable("courses", {
     id: text("id")
         .$defaultFn(() => createId())
         .primaryKey(),
@@ -119,8 +121,8 @@ const courses = pgTable("courses", {
         .notNull(),
 });
 
-const modalities = pgTable("modalities", {
-    id: text().$defaultFn(() => createId()),
+export const modalities = pgTable("modalities", {
+    id: text().$defaultFn(() => createId()).primaryKey(),
     name: text("name").notNull(),
     description: text("description").notNull(),
     gender: genderEnum("gender").notNull(),
@@ -132,9 +134,9 @@ const modalities = pgTable("modalities", {
         .notNull(),
 });
 
-const teams = pgTable("teams", {
-    id: text().$defaultFn(() => createId()),
-    modalityId: text("modality_id").references(() => modalities.id),
+export const teams = pgTable("teams", {
+    id: text().$defaultFn(() => createId()).primaryKey(),
+    modalityId: text("modality_id").references(() => modalities.id, { onDelete: "cascade" }),
     responsibleId: text("responsible_id").references(() => user.id),
     teamPhoto: text("team_photo").notNull(),
     name: text("name").notNull(),
@@ -147,10 +149,10 @@ const teams = pgTable("teams", {
         .notNull(),
 });
 
-const players = pgTable("players", {
-    id: text().$defaultFn(() => createId()),
-    teamId: text("team_id").references(() => teams.id),
-    userId: text("user_id").references(() => user.id),
+export const players = pgTable("players", {
+    id: text().$defaultFn(() => createId()).primaryKey(),
+    teamId: text("team_id").references(() => teams.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     status: playerStatusEnum("status").notNull(),
     createdAt: timestamp("created_at")
         .$defaultFn(() => new Date())
@@ -160,9 +162,9 @@ const players = pgTable("players", {
         .notNull(),
 });
 
-const games = pgTable("games", {
-    id: text().$defaultFn(() => createId()),
-    modalityId: text("modality_id").references(() => modalities.id),
+export const games = pgTable("games", {
+    id: text().$defaultFn(() => createId()).primaryKey(),
+    modalityId: text("modality_id").references(() => modalities.id, { onDelete: "cascade" }),
     nextGameId: text("next_game_id").references((): AnyPgColumn => games.id),
     team1Id: text("team1_id").references(() => teams.id),
     team2Id: text("team2_id").references(() => teams.id),
@@ -178,8 +180,6 @@ const games = pgTable("games", {
         .$onUpdate(() => new Date())
         .notNull(),
 });
-
-import { relations } from "drizzle-orm";
 
 export const userRelations = relations(user, ({ one, many }) => ({
     course: one(courses, {
@@ -280,3 +280,5 @@ export const tables = {
 } as const;
 
 export type Table = typeof tables;
+
+export type UserTypeEnum = typeof userTypeEnum.enumValues
